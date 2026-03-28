@@ -1,0 +1,8 @@
+Optimal Filter Configuration:
+- Janelamento: 7
+- Ocupacao: 0
+- K-Folds: 100
+- Pulse shape: [2.30400e-05 1.72264e-02 4.52445e-01 1.00000e+00 5.63307e-01 1.49335e-01
+ 4.23598e-02]
+- Derivative pulse: [ 5.18800e-05  3.67028e-03  3.10812e-02  0.00000e+00 -2.43449e-02
+ -8.00683e-03 -2.43344e-03]
