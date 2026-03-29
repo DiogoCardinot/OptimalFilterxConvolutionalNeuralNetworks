@@ -13,10 +13,6 @@ a_tau_data = os.path.join(path,"A_tau_OF", f'janelamento_{n_janelamento}')
 base_path = os.path.dirname(os.path.dirname(path))
 cnn_data = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks","RedeNeuralConvolucional", "CNN_8")
 
-
-output_folder = os.path.join(path, "FaseEstimada", f'janelamento_{n_janelamento}')
-os.makedirs(output_folder, exist_ok=True)
-
 ocupacoes = [0,10,20,30,40,50,60,70,80,90,100]
 
 results_summary = {
@@ -57,5 +53,59 @@ for ocupacao in ocupacoes:
 
     cnn_estimated_amplitude = cnn_amp_data_file['estimated_amplitude']
     
+    a_tau_dict = {idx: val for idx, val in zip(a_tau_indices, a_tau_estimated)}
+    real_phase_dic = {idx: val for idx, val in zip(a_tau_indices, real_phase)}
+    of_amp_dict = {idx: val for idx, val in zip(of_indices, of_estimated_amplitude)}
 
-    # estimar a amplitude alinhando os indices 
+    common_indices = sorted(set(a_tau_dict.keys()) & set(of_amp_dict.keys()))
+    print(f'Indices comuns: \n{len(common_indices)}')
+
+    if len(common_indices)==0:
+        print(f'ERRO: Nenhum indice igual!')
+        continue
+    
+    a_tau_aligned = np.array([a_tau_dict[idx] for idx in common_indices])
+    real_phase_aligned = np.array([real_phase_dic[idx] for idx in common_indices])
+    of_amp_aligned = np.array([of_amp_dict[idx] for idx in common_indices])
+
+    total_indices_iguais = len(common_indices)
+    of_estimated_phase = np.zeros(total_indices_iguais)
+
+    for i in range(total_indices_iguais):
+        if of_amp_aligned[i]==0:
+            of_estimated_phase[i] = a_tau_aligned[i]/EPS
+        else:
+            of_estimated_phase[i] = a_tau_aligned[i]/of_amp_aligned[i]
+
+    of_phase_error = of_estimated_phase - real_phase_aligned
+
+    rms_of = np.sqrt(np.mean(of_phase_error**2))
+    mae_of = np.mean(np.abs(of_phase_error))
+    medae_of = np.median(np.abs(of_phase_error))
+
+    ss_res_of = np.sum((real_phase_aligned - of_estimated_phase)**2)
+    ss_tot_of = np.sum((real_phase_aligned - np.mean(real_phase_aligned))**2)
+    r2_of = 1 - (ss_res_of / ss_tot_of) if ss_tot_of > 0 else 0
+    
+    corr_of = np.corrcoef(real_phase_aligned, of_estimated_phase)[0, 1] if len(real_phase_aligned) > 1 else 0
+
+    output_path = os.path.join(path, "FaseEstimada_OF", f'janelamento_{n_janelamento}')
+    os.makedirs(output_path, exist_ok=True)
+    output_file = os.path.join(output_path,f"phase_of_occupation_{ocupacao}.npz")
+    if os.path.exists(output_file):
+        os.remove(output_file)
+    np.savez_compressed(
+        output_file,
+        estimated_phase=of_estimated_phase,
+        real_phase=real_phase_aligned,
+        error=of_phase_error,
+        estimated_A_tau=a_tau_aligned,
+        estimated_amplitude=of_amp_aligned,
+        indices=common_indices,
+        rms=rms_of,
+        mae=mae_of,
+        medae=medae_of,
+        r2=r2_of,
+        correlation=corr_of,
+        n_samples=len(common_indices)
+    )

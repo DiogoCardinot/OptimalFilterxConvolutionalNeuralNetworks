@@ -21,17 +21,15 @@ def PlotErrors():
         fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
         if stats_por_intervalo_of and stats_por_intervalo_cnn:
             medias_of = [stats['media'] for stats in stats_por_intervalo_of.values()]
-            desvios_of = [stats['std'] for stats in stats_por_intervalo_of.values()]
             labels_of = list(stats_por_intervalo_of.keys())
 
             medias_cnn = [stats['media'] for stats in stats_por_intervalo_cnn.values()]
-            desvios_cnn = [stats['std'] for stats in stats_por_intervalo_cnn.values()]
             labels_cnn = list(stats_por_intervalo_cnn.keys())
             
-            ax1.errorbar(range(len(labels_of)), medias_of, yerr=desvios_of, fmt='o-', capsize=5, label='OF', color='purple')
+            ax1.plot(range(len(labels_of)), medias_of, marker='o', label='OF', color='purple')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
-            ax1.errorbar(range(len(labels_cnn)), medias_cnn, yerr=desvios_cnn, fmt='o-', capsize=5, label='CNN', color='black')
+            ax1.plot(range(len(labels_cnn)), medias_cnn, marker='o', label='CNN', color='black')
             ax1.set_xticks(range(len(labels_cnn)))
             ax1.set_xticklabels(labels_cnn, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Amplitude (ADC counts) - Occupancy {ocupacao}%')
@@ -40,6 +38,39 @@ def PlotErrors():
             ax1.grid(True, alpha=0.3)
         plt.tight_layout()
         plt.show()
+
+def PlotDispersion():
+    for ocupacao in ocupacoes:
+        # OF
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_of = np.load(data_of_path, allow_pickle=True)
+        stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
+        # CNN
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_cnn = np.load(data_cnn_path, allow_pickle=True)
+        stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
+        
+        fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
+        if stats_por_intervalo_of and stats_por_intervalo_cnn:
+            desvios_of = [stats['std'] for stats in stats_por_intervalo_of.values()]
+            labels_of = list(stats_por_intervalo_of.keys())
+
+            desvios_cnn = [stats['std'] for stats in stats_por_intervalo_cnn.values()]
+            labels_cnn = list(stats_por_intervalo_cnn.keys())
+            
+            ax1.plot(range(len(labels_of)), desvios_of, marker='o', label='OF', color='purple')
+            ax1.set_xticks(range(len(labels_of)))
+            ax1.set_xticklabels(labels_of, rotation=45, ha='right')
+            ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o', label='CNN', color='black')
+            ax1.set_xticks(range(len(labels_cnn)))
+            ax1.set_xticklabels(labels_cnn, rotation=45, ha='right')
+            ax1.set_xlabel(f'Real Amplitude (ADC counts) - Occupancy {ocupacao}%')
+            ax1.set_ylabel('Mean Dispersion Values\n(ADC counts)')
+            ax1.legend(loc='best')
+            ax1.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.show()
+
 
 def PlotBoxPlots():
     for ocupacao in ocupacoes:
@@ -86,5 +117,6 @@ def PlotBoxPlots():
         plt.show()
 
 
-# PlotErrors()
+PlotErrors()
+PlotDispersion()
 PlotBoxPlots()
