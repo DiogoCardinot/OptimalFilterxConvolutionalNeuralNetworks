@@ -28,16 +28,19 @@ Training:
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
-dataset_path = os.path.join(path, "AllSamples_Amplitudes", "dataset_completo.npz")
+N_JANELAMENTO=7
+
+base_path = os.path.dirname(os.path.dirname(path))
+dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks","ManipulacaoDados", "DadosConcatenados",f'janelamento_{N_JANELAMENTO}', "dataset_completo.npz")
 
 dataset_output = os.path.join(path, f"CNN_4")
 
 #----------------------------- Data loading -------------------------------------------
 data = np.load(dataset_path)
 
-X_total = data['X']
-Y_total = data['y']
-occ_total = data['occ']
+MatrizAmostras = data['MatrizAmostras']
+AmplitudeAssociada = data['AmplitudeReal']
+Ocupacao = data['Ocupacao']
 
 #--------------------------- PARAMS -----------------------------------------------------
 
@@ -103,7 +106,7 @@ kf = KFold(n_splits=K_FOLDS, shuffle=True, random_state=RANDOM_STATE)
 
 results_occupations = {}
 stats_occupations = {}
-occupations = np.unique(occ_total)
+occupations = np.unique(Ocupacao)
 
 for occupation in occupations:
     results_occupations[occupation] = {
@@ -135,7 +138,7 @@ for occupation in occupations:
     }
 
 
-for fold, (train_index, test_index) in enumerate(kf.split(X_total)):
+for fold, (train_index, test_index) in enumerate(kf.split(MatrizAmostras)):
     print(f"Processando Fold {fold + 1}/{K_FOLDS}")
     # ---------------------------- Otimization -----------------------------------------------
 
@@ -146,9 +149,9 @@ for fold, (train_index, test_index) in enumerate(kf.split(X_total)):
         restore_best_weights=True
     )
     start_time = time.time()
-    X_treino, X_teste = X_total[train_index], X_total[test_index]
-    y_treino, y_teste = Y_total[train_index], Y_total[test_index]
-    occ_teste = occ_total[test_index]
+    X_treino, X_teste = MatrizAmostras[train_index], MatrizAmostras[test_index]
+    y_treino, y_teste = AmplitudeAssociada[train_index], AmplitudeAssociada[test_index]
+    occ_teste = Ocupacao[test_index]
 
     print(f"  Treino: {len(X_treino)} amostras")
     print(f"  Teste: {len(X_teste)} amostras")
