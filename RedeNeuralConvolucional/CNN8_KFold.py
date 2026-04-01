@@ -12,9 +12,9 @@ CNN Architecture: DenserClassifier_32-16
 - Conv1D: 16 filters, kernel_size=3, ReLU, same padding  
 - BatchNormalization
 - Flatten
-- Dense: 64 units, ReLU  ← LARGER DENSE
+- Dense: 64 units, ReLU
 - Dropout: 0.3
-- Dense: 32 units, ReLU  ← EXTRA DENSE LAYER
+- Dense: 32 units, ReLU
 - Dropout: 0.2
 - Output: 1 unit (amplitude regression)
 
@@ -30,12 +30,10 @@ Training:
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
-
-N_JANELAMENTO=7
+N_JANELAMENTO = 7
 
 base_path = os.path.dirname(os.path.dirname(path))
 dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks","ManipulacaoDados", "DadosConcatenados",f'janelamento_{N_JANELAMENTO}', "dataset_completo.npz")
-
 
 dataset_output = os.path.join(path, f"CNN_8")
 
@@ -47,20 +45,18 @@ AmplitudeAssociada = data['AmplitudeReal']
 Ocupacao = data['Ocupacao']
 
 #--------------------------- PARAMS -----------------------------------------------------
-
 N_JANELAMENTO = 7                   
-K_FOLDS = 100                                        
+K_FOLDS = 100                                       
 VALIDATION_SPLIT = 0.1
 RANDOM_STATE = 42
 BATCH_SIZE = 4096  
-EPOCHS =  15
+EPOCHS = 15
 
 # ----------------------------- CNN configuration ------------------------------------------
 def criar_cnn_config_base():
     """Configuração base: 2 camadas convolucionais + batch norm + dropout"""
     model = tf.keras.Sequential([
         tf.keras.layers.Reshape((N_JANELAMENTO, 1), input_shape=(N_JANELAMENTO,)),
-        # Primeira camada convolucional
         tf.keras.layers.Conv1D(
             filters=32,           
             kernel_size=5,       
@@ -68,8 +64,6 @@ def criar_cnn_config_base():
             padding='same'       
         ),
         tf.keras.layers.BatchNormalization(),
-        
-        # Segunda camada convolucional  
         tf.keras.layers.Conv1D(
             filters=16,           
             kernel_size=3,       
@@ -77,8 +71,6 @@ def criar_cnn_config_base():
             padding='same'
         ),
         tf.keras.layers.BatchNormalization(),
-        
-        # Camadas densas
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(64, activation='relu'),
         tf.keras.layers.Dropout(0.3),
@@ -86,7 +78,6 @@ def criar_cnn_config_base():
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(1)
     ])
-    
     
     model.compile(
         optimizer='adam',
@@ -96,30 +87,46 @@ def criar_cnn_config_base():
     
     return model
 
-
 # ----------------------------- GPU Configuration -----------------------------------------
-
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
-    print(f"Usando RTX 4070 com {gpus[0].name}")
+    print(f"Usando GPU: {gpus[0].name}")
 
 # ----------------------------- K-fold configuration ---------------------------------------
 kf = KFold(n_splits=K_FOLDS, shuffle=True, random_state=RANDOM_STATE)
 
-results_ocupacaos = {}
-stats_ocupacaos = {}
+results_ocupacoes = {}
+stats_ocupacoes = {}
 ocupacoes = np.unique(Ocupacao)
 
+# ===================== OTIMIZAÇÃO: Criar mapeamento de índices locais UMA VEZ =====================
+print("\n=== CRIANDO MAPEAMENTO DE ÍNDICES LOCAIS ===")
+indices_locais_global = np.zeros(len(MatrizAmostras), dtype=np.int64)
+ocupacao_limites = {}
+
 for ocupacao in ocupacoes:
-    results_ocupacaos[ocupacao] = {
+    mask_ocupacao = (Ocupacao == ocupacao)
+    n_amostras = np.sum(mask_ocupacao)
+    indices_locais_global[mask_ocupacao] = np.arange(n_amostras)
+    
+    ocupacao_limites[ocupacao] = {
+        'inicio': np.where(mask_ocupacao)[0][0],
+        'fim': np.where(mask_ocupacao)[0][-1] + 1,
+        'n_amostras': n_amostras
+    }
+    print(f"Ocupação {ocupacao}: {n_amostras} amostras (índices locais 0 a {n_amostras-1})")
+
+# ===================== INICIALIZAR ESTRUTURAS =====================
+for ocupacao in ocupacoes:
+    results_ocupacoes[ocupacao] = {
         'error': [],
         'real_amplitude': [],
         'estimated_amplitude': [],
-        'indices': []
+        'indices_locais': []  # Apenas índices locais (para comparar com OF)
     }
-    stats_ocupacaos[ocupacao] = {
+    stats_ocupacoes[ocupacao] = {
         'mean_error': 0.0,    
         'std_error': 0.0,    
         'rms': 0.0,
@@ -142,24 +149,27 @@ for ocupacao in ocupacoes:
         'medae_folds': []       
     }
 
-
+# ===================== LOOP PRINCIPAL =====================
 for fold, (train_index, test_index) in enumerate(kf.split(MatrizAmostras)):
+    print(f"\n{'='*50}")
     print(f"Processando Fold {fold + 1}/{K_FOLDS}")
-    # ---------------------------- Otimization -----------------------------------------------
-
-    # stop if there is no improvement in patience epochs
+    print(f"{'='*50}")
+    
+    # Callbacks
     early_stopping = tf.keras.callbacks.EarlyStopping(
         monitor='val_loss',
         patience=3,           
         restore_best_weights=True
     )
+    
     start_time = time.time()
+    
     X_treino, X_teste = MatrizAmostras[train_index], MatrizAmostras[test_index]
     y_treino, y_teste = AmplitudeAssociada[train_index], AmplitudeAssociada[test_index]
     occ_teste = Ocupacao[test_index]
 
-    print(f"  Treino: {len(X_treino)} amostras")
-    print(f"  Teste: {len(X_teste)} amostras")
+    print(f"  Treino: {len(X_treino):,} amostras")
+    print(f"  Teste: {len(X_teste):,} amostras")
     print(f"  Ocupacoes no teste: {np.unique(occ_teste)}")
 
     print(f"  Treinando CNN...")
@@ -175,120 +185,140 @@ for fold, (train_index, test_index) in enumerate(kf.split(MatrizAmostras)):
             verbose=1 
         )
 
-    # Fazer predições reais
+    # Predições
     y_pred = modelo.predict(X_teste, batch_size=BATCH_SIZE, verbose=0).flatten()
-
-    #Error
     error = y_pred - y_teste
 
     end_time = time.time()  
     fold_time = end_time - start_time
 
+    # Processar cada ocupação
     for ocupacao in ocupacoes:
         mask = (occ_teste == ocupacao)
-        if np.sum(mask) > 0:
-            indices_ocupacao = test_index[mask]
-            results_ocupacaos[ocupacao]['error'].extend(error[mask])
-            results_ocupacaos[ocupacao]['real_amplitude'].extend(y_teste[mask])
-            results_ocupacaos[ocupacao]['estimated_amplitude'].extend(y_pred[mask])
-            # adicionar essa linha
-            results_ocupacaos[ocupacao]['indices'].extend(indices_ocupacao)
+        n_mask = np.sum(mask)
+        
+        if n_mask > 0:
+            # OTIMIZAÇÃO: Usar o array pré-calculado de índices locais
+            indices_globais = test_index[mask]
+            indices_locais = indices_locais_global[indices_globais]  # Mapeamento direto!
+            
+            # Armazenar resultados
+            results_ocupacoes[ocupacao]['error'].extend(error[mask].tolist())
+            results_ocupacoes[ocupacao]['real_amplitude'].extend(y_teste[mask].tolist())
+            results_ocupacoes[ocupacao]['estimated_amplitude'].extend(y_pred[mask].tolist())
+            results_ocupacoes[ocupacao]['indices_locais'].extend(indices_locais.tolist())
 
+            # Calcular métricas para este fold
             error_ocupacao = error[mask]
             y_teste_ocupacao = y_teste[mask]   
             y_pred_ocupacao = y_pred[mask]   
     
-            stats_ocupacaos[ocupacao]['mean_folds'].append(np.mean(error_ocupacao))
-            stats_ocupacaos[ocupacao]['std_folds'].append(np.std(error_ocupacao))
+            stats_ocupacoes[ocupacao]['mean_folds'].append(np.mean(error_ocupacao))
+            stats_ocupacoes[ocupacao]['std_folds'].append(np.std(error_ocupacao))
+            stats_ocupacoes[ocupacao]['rms_folds'].append(np.sqrt(np.mean(error_ocupacao**2)))
             
-            stats_ocupacaos[ocupacao]['rms_folds'].append(np.sqrt(np.mean(error_ocupacao**2)))
-            
+            # R²
             ss_res_ocup = np.sum((y_teste_ocupacao - y_pred_ocupacao)**2)
             ss_tot_ocup = np.sum((y_teste_ocupacao - np.mean(y_teste_ocupacao))**2)
-
             if len(y_teste_ocupacao) <= 1 or ss_tot_ocup < 1e-12:
                 r2 = 0.0 
             else:
                 r2 = 1 - (ss_res_ocup / ss_tot_ocup)
-
             r2 = np.clip(r2, -100, 1) 
-            stats_ocupacaos[ocupacao]['r2_folds'].append(r2)
+            stats_ocupacoes[ocupacao]['r2_folds'].append(r2)
             
+            # Correlação
             if len(y_teste_ocupacao) > 1 and np.std(y_teste_ocupacao) > 1e-12 and np.std(y_pred_ocupacao) > 1e-12:
                 corr = np.corrcoef(y_teste_ocupacao, y_pred_ocupacao)[0, 1]
             else:
                 corr = 0.0
-                
-            stats_ocupacaos[ocupacao]['corr_folds'].append(corr)
-            stats_ocupacaos[ocupacao]['time_folds'].append(fold_time)
-
-            stats_ocupacaos[ocupacao]['mae_folds'].append(np.mean(np.abs(error_ocupacao)))
+            stats_ocupacoes[ocupacao]['corr_folds'].append(corr)
+            
+            stats_ocupacoes[ocupacao]['time_folds'].append(fold_time)
+            stats_ocupacoes[ocupacao]['mae_folds'].append(np.mean(np.abs(error_ocupacao)))
+            
             mape = np.mean(np.abs(error_ocupacao / (y_teste_ocupacao + 1e-8))) * 100
-            stats_ocupacaos[ocupacao]['mape_folds'].append(mape)
+            stats_ocupacoes[ocupacao]['mape_folds'].append(mape)
+            
+            stats_ocupacoes[ocupacao]['max_error_folds'].append(np.max(np.abs(error_ocupacao)))
+            stats_ocupacoes[ocupacao]['medae_folds'].append(np.median(np.abs(error_ocupacao)))
 
-            stats_ocupacaos[ocupacao]['max_error_folds'].append(np.max(np.abs(error_ocupacao)))
+            print(f"  Ocupacao: {ocupacao} -> MAE: {np.mean(np.abs(error_ocupacao)):.4f}, R²: {r2:.4f}")
 
-            stats_ocupacaos[ocupacao]['medae_folds'].append(np.median(np.abs(error_ocupacao)))
-
-            print(f"Ocupacao: {ocupacao} -> Media: {np.mean(error_ocupacao):.4f}, STD: {np.std(error_ocupacao):.4f}, R^2: {stats_ocupacaos[ocupacao]['r2_folds'][-1]:.4f}")
-
-    
-    print(f"  Fold {fold + 1} concluido")
+    print(f"  Fold {fold + 1} concluído em {fold_time:.2f} segundos")
     print("-" * 50)
 
+# ===================== CALCULAR ESTATÍSTICAS FINAIS =====================
+print("\n=== CALCULANDO ESTATÍSTICAS FINAIS ===")
 for ocupacao in ocupacoes:
-    if len(stats_ocupacaos[ocupacao]['mean_folds']) > 0:
-        # Média das médias dos folds
-        stats_ocupacaos[ocupacao]['mean_error'] = np.mean(stats_ocupacaos[ocupacao]['mean_folds'])
-        # Std dos stds dos folds (mais robusto)
-        stats_ocupacaos[ocupacao]['std_error'] = np.mean(stats_ocupacaos[ocupacao]['std_folds'])
-        stats_ocupacaos[ocupacao]['rms'] = np.mean(stats_ocupacaos[ocupacao]['rms_folds'])
-        stats_ocupacaos[ocupacao]['r2'] = np.mean(stats_ocupacaos[ocupacao]['r2_folds'])
-        stats_ocupacaos[ocupacao]['corr_mean'] = np.mean(stats_ocupacaos[ocupacao]['corr_folds'])
-        stats_ocupacaos[ocupacao]['time_mean'] = np.mean(stats_ocupacaos[ocupacao]['time_folds'])
-        stats_ocupacaos[ocupacao]['mae'] = np.mean(stats_ocupacaos[ocupacao]['mae_folds'])
-        stats_ocupacaos[ocupacao]['mape'] = np.mean(stats_ocupacaos[ocupacao]['mape_folds'])
-        stats_ocupacaos[ocupacao]['max_error'] = np.mean(stats_ocupacaos[ocupacao]['max_error_folds'])
-        stats_ocupacaos[ocupacao]['medae'] = np.mean(stats_ocupacaos[ocupacao]['medae_folds'])
+    if len(stats_ocupacoes[ocupacao]['mean_folds']) > 0:
+        stats_ocupacoes[ocupacao]['mean_error'] = np.mean(stats_ocupacoes[ocupacao]['mean_folds'])
+        stats_ocupacoes[ocupacao]['std_error'] = np.mean(stats_ocupacoes[ocupacao]['std_folds'])
+        stats_ocupacoes[ocupacao]['rms'] = np.mean(stats_ocupacoes[ocupacao]['rms_folds'])
+        stats_ocupacoes[ocupacao]['r2'] = np.mean(stats_ocupacoes[ocupacao]['r2_folds'])
+        stats_ocupacoes[ocupacao]['corr_mean'] = np.mean(stats_ocupacoes[ocupacao]['corr_folds'])
+        stats_ocupacoes[ocupacao]['time_mean'] = np.mean(stats_ocupacoes[ocupacao]['time_folds'])
+        stats_ocupacoes[ocupacao]['mae'] = np.mean(stats_ocupacoes[ocupacao]['mae_folds'])
+        stats_ocupacoes[ocupacao]['mape'] = np.mean(stats_ocupacoes[ocupacao]['mape_folds'])
+        stats_ocupacoes[ocupacao]['max_error'] = np.mean(stats_ocupacoes[ocupacao]['max_error_folds'])
+        stats_ocupacoes[ocupacao]['medae'] = np.mean(stats_ocupacoes[ocupacao]['medae_folds'])
 
-print("\n=== RESUMO ===")
+print("\n=== RESUMO FINAL ===")
 for ocupacao in ocupacoes:
-    n_amostras = len(results_ocupacaos[ocupacao]['error'])
-    print(f"Ocupacao {ocupacao}: {n_amostras} amostras")
+    n_amostras = len(results_ocupacoes[ocupacao]['error'])
+    print(f"Ocupação {ocupacao}: {n_amostras:,} amostras | MAE: {stats_ocupacoes[ocupacao]['mae']:.4f} | R²: {stats_ocupacoes[ocupacao]['r2']:.4f}")
 
-
-# --------------------------------------- Save Data ---------------------------------------
+# ===================== SALVAR DADOS =====================
 os.makedirs(dataset_output, exist_ok=True)
 
-# Salvar resultados por ocupação
 for ocupacao in ocupacoes:
-    if len(results_ocupacaos[ocupacao]['error']) > 0:
+    if len(results_ocupacoes[ocupacao]['error']) > 0:
+        # Converter para arrays numpy com dtype apropriado
+        indices_locais = np.array(results_ocupacoes[ocupacao]['indices_locais'], dtype=np.int64)
+        error_array = np.array(results_ocupacoes[ocupacao]['error'], dtype=np.float64)
+        real_amplitude_array = np.array(results_ocupacoes[ocupacao]['real_amplitude'], dtype=np.float64)
+        estimated_amplitude_array = np.array(results_ocupacoes[ocupacao]['estimated_amplitude'], dtype=np.float32)
+        
+        # Verificação de integridade
+        print(f"\nSalvando ocupação {ocupacao}:")
+        print(f"  Índices locais - shape: {indices_locais.shape}, min: {indices_locais.min()}, max: {indices_locais.max()}")
+        print(f"  Range esperado: 0 a {ocupacao_limites[ocupacao]['n_amostras']-1}")
+        
+        if indices_locais.max() < ocupacao_limites[ocupacao]['n_amostras']:
+            print(f"  Índices locais dentro do range esperado!")
+        else:
+            print(f"   ATENÇÃO: Índices locais fora do range esperado!")
+        
         np.savez(
             os.path.join(dataset_output, f"results_ocupacao_{ocupacao}.npz"),
-            error=np.array(results_ocupacaos[ocupacao]['error']),
-            real_amplitude=np.array(results_ocupacaos[ocupacao]['real_amplitude']),
-            estimated_amplitude=np.array(results_ocupacaos[ocupacao]['estimated_amplitude']),
-            indices=np.array(results_ocupacaos[ocupacao]['indices']),
-            mean_error=stats_ocupacaos[ocupacao]['mean_error'], 
-            std_error=stats_ocupacaos[ocupacao]['std_error'],
-            rms =  stats_ocupacaos[ocupacao]['rms'] ,
-            r2 = stats_ocupacaos[ocupacao]['r2'],
-            corr_mean = stats_ocupacaos[ocupacao]['corr_mean'],
-            time_mean = stats_ocupacaos[ocupacao]['time_mean'],
-            mae=stats_ocupacaos[ocupacao]['mae'],
-            mape=stats_ocupacaos[ocupacao]['mape'],
-            max_error=stats_ocupacaos[ocupacao]['max_error'],
-            medae=stats_ocupacaos[ocupacao]['medae']
+            error=error_array,
+            real_amplitude=real_amplitude_array,
+            estimated_amplitude=estimated_amplitude_array,
+            indices=indices_locais, 
+            mean_error=stats_ocupacoes[ocupacao]['mean_error'], 
+            std_error=stats_ocupacoes[ocupacao]['std_error'],
+            rms=stats_ocupacoes[ocupacao]['rms'],
+            r2=stats_ocupacoes[ocupacao]['r2'],
+            corr_mean=stats_ocupacoes[ocupacao]['corr_mean'],
+            time_mean=stats_ocupacoes[ocupacao]['time_mean'],
+            mae=stats_ocupacoes[ocupacao]['mae'],
+            mape=stats_ocupacoes[ocupacao]['mape'],
+            max_error=stats_ocupacoes[ocupacao]['max_error'],
+            medae=stats_ocupacoes[ocupacao]['medae']
         )
 
+# Salvar configuração
 with open(os.path.join(dataset_output, "model_config.txt"), "w") as f:
     f.write("CNN Configuration:\n")
     f.write("- 2 convolutional layers (32, 16 filters)\n")
     f.write("- BatchNormalization after each conv layer\n")
-    f.write("- Dense layer with 32 units + Dropout 0.3\n")
-    f.write("- Output: 1 unit (amplitude)\n")
+    f.write("- Dense layers: 64 and 32 units with Dropout (0.3, 0.2)\n")
+    f.write("- Output: 1 unit (amplitude regression)\n")
     f.write(f"- K-Folds: {K_FOLDS}\n")
     f.write(f"- Epochs: {EPOCHS}\n")
     f.write(f"- Batch size: {BATCH_SIZE}\n")
+    f.write(f"- Validation split: {VALIDATION_SPLIT}\n")
+    f.write(f"- Random state: {RANDOM_STATE}\n")
 
-print("Resultados salvos em:", dataset_output)
+print(f"\n✅ Resultados salvos em: {dataset_output}")
+print("=" * 50)
