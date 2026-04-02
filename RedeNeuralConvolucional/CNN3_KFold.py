@@ -104,18 +104,35 @@ if gpus:
 # ----------------------------- K-fold configuration ---------------------------------------
 kf = KFold(n_splits=K_FOLDS, shuffle=True, random_state=RANDOM_STATE)
 
-results_occupations = {}
-stats_occupations = {}
-occupations = np.unique(Ocupacao)
+results_ocupacoes = {}
+stats_ocupacoes = {}
+ocupacoes = np.unique(Ocupacao)
 
-for occupation in occupations:
-    results_occupations[occupation] = {
+# ===================== OTIMIZAÇÃO: Criar mapeamento de índices locais UMA VEZ =====================
+print("\n=== CRIANDO MAPEAMENTO DE ÍNDICES LOCAIS ===")
+indices_locais_global = np.zeros(len(MatrizAmostras), dtype=np.int64)
+ocupacao_limites = {}
+
+for ocupacao in ocupacoes:
+    mask_ocupacao = (Ocupacao == ocupacao)
+    n_amostras = np.sum(mask_ocupacao)
+    indices_locais_global[mask_ocupacao] = np.arange(n_amostras)
+    
+    ocupacao_limites[ocupacao] = {
+        'inicio': np.where(mask_ocupacao)[0][0],
+        'fim': np.where(mask_ocupacao)[0][-1] + 1,
+        'n_amostras': n_amostras
+    }
+    print(f"Ocupação {ocupacao}: {n_amostras} amostras (índices locais 0 a {n_amostras-1})")
+
+for ocupacao in ocupacoes:
+    results_ocupacoes[ocupacao] = {
         'error': [],
         'real_amplitude': [],
         'estimated_amplitude': [],
-        'indices': []
+        'indices_locais': [] 
     }
-    stats_occupations[occupation] = {
+    stats_ocupacoes[ocupacao] = {
         'mean_error': 0.0,    
         'std_error': 0.0,    
         'rms': 0.0,
@@ -180,22 +197,24 @@ for fold, (train_index, test_index) in enumerate(kf.split(MatrizAmostras)):
     end_time = time.time()  
     fold_time = end_time - start_time
 
-    for ocupacao in occupations:
+    for ocupacao in ocupacoes:
         mask = (occ_teste == ocupacao)
         if np.sum(mask) > 0:
-            indices_ocupacao = test_index[mask]
-            results_occupations[ocupacao]['error'].extend(error[mask])
-            results_occupations[ocupacao]['real_amplitude'].extend(y_teste[mask])
-            results_occupations[ocupacao]['estimated_amplitude'].extend(y_pred[mask])
+            indices_globais = test_index[mask]
+            indices_locais = indices_locais_global[indices_globais]  # Mapeamento direto!
+            results_ocupacoes[ocupacao]['error'].extend(error[mask].tolist())
+            results_ocupacoes[ocupacao]['real_amplitude'].extend(y_teste[mask].tolist())
+            results_ocupacoes[ocupacao]['estimated_amplitude'].extend(y_pred[mask].tolist())
+            results_ocupacoes[ocupacao]['indices_locais'].extend(indices_locais.tolist())
 
             error_ocupacao = error[mask]
             y_teste_ocupacao = y_teste[mask]   
             y_pred_ocupacao = y_pred[mask]   
     
-            stats_occupations[ocupacao]['mean_folds'].append(np.mean(error_ocupacao))
-            stats_occupations[ocupacao]['std_folds'].append(np.std(error_ocupacao))
+            stats_ocupacoes[ocupacao]['mean_folds'].append(np.mean(error_ocupacao))
+            stats_ocupacoes[ocupacao]['std_folds'].append(np.std(error_ocupacao))
             
-            stats_occupations[ocupacao]['rms_folds'].append(np.sqrt(np.mean(error_ocupacao**2)))
+            stats_ocupacoes[ocupacao]['rms_folds'].append(np.sqrt(np.mean(error_ocupacao**2)))
             
             ss_res_ocup = np.sum((y_teste_ocupacao - y_pred_ocupacao)**2)
             ss_tot_ocup = np.sum((y_teste_ocupacao - np.mean(y_teste_ocupacao))**2)
@@ -206,73 +225,90 @@ for fold, (train_index, test_index) in enumerate(kf.split(MatrizAmostras)):
                 r2 = 1 - (ss_res_ocup / ss_tot_ocup)
 
             r2 = np.clip(r2, -100, 1) 
-            stats_occupations[ocupacao]['r2_folds'].append(r2)
+            stats_ocupacoes[ocupacao]['r2_folds'].append(r2)
             
             if len(y_teste_ocupacao) > 1 and np.std(y_teste_ocupacao) > 1e-12 and np.std(y_pred_ocupacao) > 1e-12:
                 corr = np.corrcoef(y_teste_ocupacao, y_pred_ocupacao)[0, 1]
             else:
                 corr = 0.0
                 
-            stats_occupations[ocupacao]['corr_folds'].append(corr)
-            stats_occupations[ocupacao]['time_folds'].append(fold_time)
+            stats_ocupacoes[ocupacao]['corr_folds'].append(corr)
+            stats_ocupacoes[ocupacao]['time_folds'].append(fold_time)
 
-            stats_occupations[ocupacao]['mae_folds'].append(np.mean(np.abs(error_ocupacao)))
+            stats_ocupacoes[ocupacao]['mae_folds'].append(np.mean(np.abs(error_ocupacao)))
             mape = np.mean(np.abs(error_ocupacao / (y_teste_ocupacao + 1e-8))) * 100
-            stats_occupations[ocupacao]['mape_folds'].append(mape)
+            stats_ocupacoes[ocupacao]['mape_folds'].append(mape)
 
-            stats_occupations[ocupacao]['max_error_folds'].append(np.max(np.abs(error_ocupacao)))
+            stats_ocupacoes[ocupacao]['max_error_folds'].append(np.max(np.abs(error_ocupacao)))
 
-            stats_occupations[ocupacao]['medae_folds'].append(np.median(np.abs(error_ocupacao)))
+            stats_ocupacoes[ocupacao]['medae_folds'].append(np.median(np.abs(error_ocupacao)))
 
-            print(f"Ocupacao: {ocupacao} -> Media: {np.mean(error_ocupacao):.4f}, STD: {np.std(error_ocupacao):.4f}, R^2: {stats_occupations[ocupacao]['r2_folds'][-1]:.4f}")
+            print(f"Ocupacao: {ocupacao} -> Media: {np.mean(error_ocupacao):.4f}, STD: {np.std(error_ocupacao):.4f}, R^2: {stats_ocupacoes[ocupacao]['r2_folds'][-1]:.4f}")
 
     
     print(f"  Fold {fold + 1} concluido")
     print("-" * 50)
 
-for occupation in occupations:
-    if len(stats_occupations[occupation]['mean_folds']) > 0:
+# ===================== CALCULAR ESTATÍSTICAS FINAIS =====================
+print("\n=== CALCULANDO ESTATÍSTICAS FINAIS ===")
+for ocupacao in ocupacoes:
+    if len(stats_ocupacoes[ocupacao]['mean_folds']) > 0:
         # Média das médias dos folds
-        stats_occupations[occupation]['mean_error'] = np.mean(stats_occupations[occupation]['mean_folds'])
+        stats_ocupacoes[ocupacao]['mean_error'] = np.mean(stats_ocupacoes[ocupacao]['mean_folds'])
         # Std dos stds dos folds (mais robusto)
-        stats_occupations[occupation]['std_error'] = np.mean(stats_occupations[occupation]['std_folds'])
-        stats_occupations[occupation]['rms'] = np.mean(stats_occupations[occupation]['rms_folds'])
-        stats_occupations[occupation]['r2'] = np.mean(stats_occupations[occupation]['r2_folds'])
-        stats_occupations[occupation]['corr_mean'] = np.mean(stats_occupations[occupation]['corr_folds'])
-        stats_occupations[occupation]['time_mean'] = np.mean(stats_occupations[occupation]['time_folds'])
-        stats_occupations[occupation]['mae'] = np.mean(stats_occupations[occupation]['mae_folds'])
-        stats_occupations[occupation]['mape'] = np.mean(stats_occupations[occupation]['mape_folds'])
-        stats_occupations[occupation]['max_error'] = np.mean(stats_occupations[occupation]['max_error_folds'])
-        stats_occupations[occupation]['medae'] = np.mean(stats_occupations[occupation]['medae_folds'])
+        stats_ocupacoes[ocupacao]['std_error'] = np.mean(stats_ocupacoes[ocupacao]['std_folds'])
+        stats_ocupacoes[ocupacao]['rms'] = np.mean(stats_ocupacoes[ocupacao]['rms_folds'])
+        stats_ocupacoes[ocupacao]['r2'] = np.mean(stats_ocupacoes[ocupacao]['r2_folds'])
+        stats_ocupacoes[ocupacao]['corr_mean'] = np.mean(stats_ocupacoes[ocupacao]['corr_folds'])
+        stats_ocupacoes[ocupacao]['time_mean'] = np.mean(stats_ocupacoes[ocupacao]['time_folds'])
+        stats_ocupacoes[ocupacao]['mae'] = np.mean(stats_ocupacoes[ocupacao]['mae_folds'])
+        stats_ocupacoes[ocupacao]['mape'] = np.mean(stats_ocupacoes[ocupacao]['mape_folds'])
+        stats_ocupacoes[ocupacao]['max_error'] = np.mean(stats_ocupacoes[ocupacao]['max_error_folds'])
+        stats_ocupacoes[ocupacao]['medae'] = np.mean(stats_ocupacoes[ocupacao]['medae_folds'])
 
-print("\n=== RESUMO ===")
-for ocupacao in occupations:
-    n_amostras = len(results_occupations[ocupacao]['error'])
-    print(f"Ocupacao {ocupacao}: {n_amostras} amostras")
+print("\n=== RESUMO FINAL ===")
+for ocupacao in ocupacoes:
+    n_amostras = len(results_ocupacoes[ocupacao]['error'])
+    print(f"Ocupação {ocupacao}: {n_amostras:,} amostras | MAE: {stats_ocupacoes[ocupacao]['mae']:.4f} | R²: {stats_ocupacoes[ocupacao]['r2']:.4f}")
 
 
 # --------------------------------------- Save Data ---------------------------------------
 os.makedirs(dataset_output, exist_ok=True)
 
 # Salvar resultados por ocupação
-for occupation in occupations:
-    if len(results_occupations[occupation]['error']) > 0:
+for ocupacao in ocupacoes:
+    if len(results_ocupacoes[ocupacao]['error']) > 0:
+        indices_locais = np.array(results_ocupacoes[ocupacao]['indices_locais'], dtype=np.int64)
+        error_array = np.array(results_ocupacoes[ocupacao]['error'], dtype=np.float64)
+        real_amplitude_array = np.array(results_ocupacoes[ocupacao]['real_amplitude'], dtype=np.float64)
+        estimated_amplitude_array = np.array(results_ocupacoes[ocupacao]['estimated_amplitude'], dtype=np.float32)
+        
+        # Verificação de integridade
+        print(f"\nSalvando ocupação {ocupacao}:")
+        print(f"  Índices locais - shape: {indices_locais.shape}, min: {indices_locais.min()}, max: {indices_locais.max()}")
+        print(f"  Range esperado: 0 a {ocupacao_limites[ocupacao]['n_amostras']-1}")
+        
+        if indices_locais.max() < ocupacao_limites[ocupacao]['n_amostras']:
+            print(f"  Índices locais dentro do range esperado!")
+        else:
+            print(f"   ATENÇÃO: Índices locais fora do range esperado!")
+
         np.savez(
-            os.path.join(dataset_output, f"results_occupation_{occupation}.npz"),
-            error=np.array(results_occupations[occupation]['error']),
-            real_amplitude=np.array(results_occupations[occupation]['real_amplitude']),
-            estimated_amplitude=np.array(results_occupations[occupation]['estimated_amplitude']),
-            indices=np.array(results_occupations[occupation]['indices']),
-            mean_error=stats_occupations[occupation]['mean_error'], 
-            std_error=stats_occupations[occupation]['std_error'],
-            rms =  stats_occupations[occupation]['rms'] ,
-            r2 = stats_occupations[occupation]['r2'],
-            corr_mean = stats_occupations[occupation]['corr_mean'],
-            time_mean = stats_occupations[occupation]['time_mean'],
-            mae=stats_occupations[occupation]['mae'],
-            mape=stats_occupations[occupation]['mape'],
-            max_error=stats_occupations[occupation]['max_error'],
-            medae=stats_occupations[occupation]['medae']
+            os.path.join(dataset_output, f"results_ocupacao_{ocupacao}.npz"),
+            error=np.array(results_ocupacoes[ocupacao]['error']),
+            real_amplitude=np.array(results_ocupacoes[ocupacao]['real_amplitude']),
+            estimated_amplitude=np.array(results_ocupacoes[ocupacao]['estimated_amplitude']),
+            indices=indices_locais,
+            mean_error=stats_ocupacoes[ocupacao]['mean_error'], 
+            std_error=stats_ocupacoes[ocupacao]['std_error'],
+            rms =  stats_ocupacoes[ocupacao]['rms'] ,
+            r2 = stats_ocupacoes[ocupacao]['r2'],
+            corr_mean = stats_ocupacoes[ocupacao]['corr_mean'],
+            time_mean = stats_ocupacoes[ocupacao]['time_mean'],
+            mae=stats_ocupacoes[ocupacao]['mae'],
+            mape=stats_ocupacoes[ocupacao]['mape'],
+            max_error=stats_ocupacoes[ocupacao]['max_error'],
+            medae=stats_ocupacoes[ocupacao]['medae']
         )
 
 with open(os.path.join(dataset_output, "model_config.txt"), "w") as f:
@@ -285,4 +321,5 @@ with open(os.path.join(dataset_output, "model_config.txt"), "w") as f:
     f.write(f"- Epochs: {EPOCHS}\n")
     f.write(f"- Batch size: {BATCH_SIZE}\n")
 
-print("Resultados salvos em:", dataset_output)
+print(f"\n✅ Resultados salvos em: {dataset_output}")
+print("=" * 50)
