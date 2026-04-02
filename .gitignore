@@ -4,6 +4,7 @@ FiltroOtimo/AmplitudeEstimada_OF/
 FiltroOtimo/A_tau_OF/
 FiltroOtimo/FaseEstimada_OF/
 FiltroOtimo/FaseEstimada_CNN/
+FiltroOtimo/FaseEstimada_RealAmplitude/
 ManipulacaoDados/DadosPorOcupacao/
 ManipulacaoDados/DadosConcatenados/
 Plots/Dados/

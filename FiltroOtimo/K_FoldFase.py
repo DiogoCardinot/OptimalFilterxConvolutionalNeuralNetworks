@@ -49,15 +49,18 @@ for ocupacao in ocupacoes:
     real_phase = a_tau_data_file['real_phase']
     
     of_estimated_amplitude = of_amp_data_file['estimated_amplitude']
+    real_amplitude = of_amp_data_file['real_amplitude']
     of_indices = of_amp_data_file['indices']
 
     cnn_estimated_amplitude = cnn_amp_data_file['estimated_amplitude']
     cnn_indices = cnn_amp_data_file['indices']
+
     
     a_tau_dict = {idx: val for idx, val in zip(a_tau_indices, a_tau_estimated)}
     real_phase_dic = {idx: val for idx, val in zip(a_tau_indices, real_phase)}
     of_amp_dict = {idx: val for idx, val in zip(of_indices, of_estimated_amplitude)}
     cnn_amp_dict = {idx: val for idx, val in zip(cnn_indices, cnn_estimated_amplitude)}
+    real_amplitude_dict = {idx: val for idx, val in zip(of_indices, real_amplitude)}
 
     common_indices = sorted(set(a_tau_dict.keys()) & set(of_amp_dict.keys()) & set(cnn_amp_dict.keys()))
     print(f'Indices comuns: \n{len(common_indices)}')
@@ -70,10 +73,12 @@ for ocupacao in ocupacoes:
     real_phase_aligned = np.array([real_phase_dic[idx] for idx in common_indices])
     of_amp_aligned = np.array([of_amp_dict[idx] for idx in common_indices])
     cnn_amp_aligned = np.array([cnn_amp_dict[idx] for idx in common_indices])
+    real_amplitude_aligned = np.array([real_amplitude_dict[idx] for idx in common_indices])
 
     total_indices_iguais = len(common_indices)
     of_estimated_phase = np.zeros(total_indices_iguais)
     cnn_estimated_phase = np.zeros(total_indices_iguais)
+    real_amplitude_estimated_phase = np.zeros(total_indices_iguais)
 
     for i in range(total_indices_iguais):
         if of_amp_aligned[i]==0:
@@ -86,9 +91,15 @@ for ocupacao in ocupacoes:
         else:
             cnn_estimated_phase[i] = a_tau_aligned[i]/cnn_amp_aligned[i]
 
+        if real_amplitude_aligned[i]==0:
+            real_amplitude_estimated_phase[i] = a_tau_aligned[i]/EPS
+        else:
+            real_amplitude_estimated_phase[i] = a_tau_aligned[i]/real_amplitude_aligned[i]
+
 
     of_phase_error = of_estimated_phase - real_phase_aligned
     cnn_phase_error = cnn_estimated_phase - real_phase_aligned
+    real_amplitude_phase_error = real_amplitude_estimated_phase - real_phase_aligned
 
     rms_of = np.sqrt(np.mean(of_phase_error**2))
     mae_of = np.mean(np.abs(of_phase_error))
@@ -110,6 +121,16 @@ for ocupacao in ocupacoes:
     r2_cnn = 1 - (ss_res_cnn / ss_tot_cnn) if ss_tot_cnn > 0 else 0
     
     corr_cnn = np.corrcoef(real_phase_aligned, cnn_estimated_phase)[0, 1] if len(real_phase_aligned) > 1 else 0
+
+    rms_real_amplitude = np.sqrt(np.mean(real_amplitude_phase_error**2))
+    mae_real_amplitude = np.mean(np.abs(real_amplitude_phase_error))
+    medae_real_amplitude = np.median(np.abs(real_amplitude_phase_error))
+
+    ss_res_real_amplitude = np.sum((real_phase_aligned - real_amplitude_estimated_phase)**2)
+    ss_tot_real_amplitude = np.sum((real_phase_aligned - np.mean(real_phase_aligned))**2)
+    r2_real_amplitude = 1 - (ss_res_real_amplitude / ss_tot_real_amplitude) if ss_tot_real_amplitude > 0 else 0
+    
+    corr_real_amplitude = np.corrcoef(real_phase_aligned, real_amplitude_estimated_phase)[0, 1] if len(real_phase_aligned) > 1 else 0
 
     output_path = os.path.join(path, "FaseEstimada_OF", f'janelamento_{n_janelamento}')
     os.makedirs(output_path, exist_ok=True)
@@ -149,4 +170,25 @@ for ocupacao in ocupacoes:
         r2=r2_cnn,
         correlation=corr_cnn,
         n_samples=len(common_indices)
+    )
+
+    output_path_real_amplitude = os.path.join(path, "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
+    os.makedirs(output_path_real_amplitude, exist_ok=True)
+    output_file_real_amplitude = os.path.join(output_path_real_amplitude, f'phase_real_amplitude_occupation_{ocupacao}.npz')
+
+    np.savez_compressed(
+        output_file_real_amplitude,
+        estimated_phase=real_amplitude_estimated_phase,
+        real_phase=real_phase_aligned,
+        error=real_amplitude_phase_error,
+        estimated_A_tau=a_tau_aligned,
+        estimated_amplitude=real_amplitude_aligned,
+        indices=common_indices,
+        rms=rms_real_amplitude,
+        mae=mae_real_amplitude,
+        medae=medae_real_amplitude,
+        r2=r2_real_amplitude,
+        correlation=corr_real_amplitude,
+        n_samples=len(common_indices)
+
     )
