@@ -23,7 +23,7 @@ results_summary = {
 for ocupacao in ocupacoes:
     print(f"Ocupacao - {ocupacao}")
     of_amplitude_filepath = os.path.join(of_data, f'results_occupation_{ocupacao}.npz')
-    cnn_amplitude_filepath = os.path.join(cnn_data, f'results_occupation_{ocupacao}.npz')
+    cnn_amplitude_filepath = os.path.join(cnn_data, f'results_ocupacao_{ocupacao}.npz')
     a_tau_filepath = os.path.join(a_tau_data, f'results_occupation_{ocupacao}.npz')
 
     if not os.path.exists(a_tau_filepath):
@@ -52,12 +52,14 @@ for ocupacao in ocupacoes:
     of_indices = of_amp_data_file['indices']
 
     cnn_estimated_amplitude = cnn_amp_data_file['estimated_amplitude']
+    cnn_indices = cnn_amp_data_file['indices']
     
     a_tau_dict = {idx: val for idx, val in zip(a_tau_indices, a_tau_estimated)}
     real_phase_dic = {idx: val for idx, val in zip(a_tau_indices, real_phase)}
     of_amp_dict = {idx: val for idx, val in zip(of_indices, of_estimated_amplitude)}
+    cnn_amp_dict = {idx: val for idx, val in zip(cnn_indices, cnn_estimated_amplitude)}
 
-    common_indices = sorted(set(a_tau_dict.keys()) & set(of_amp_dict.keys()))
+    common_indices = sorted(set(a_tau_dict.keys()) & set(of_amp_dict.keys()) & set(cnn_amp_dict.keys()))
     print(f'Indices comuns: \n{len(common_indices)}')
 
     if len(common_indices)==0:
@@ -67,9 +69,11 @@ for ocupacao in ocupacoes:
     a_tau_aligned = np.array([a_tau_dict[idx] for idx in common_indices])
     real_phase_aligned = np.array([real_phase_dic[idx] for idx in common_indices])
     of_amp_aligned = np.array([of_amp_dict[idx] for idx in common_indices])
+    cnn_amp_aligned = np.array([cnn_amp_dict[idx] for idx in common_indices])
 
     total_indices_iguais = len(common_indices)
     of_estimated_phase = np.zeros(total_indices_iguais)
+    cnn_estimated_phase = np.zeros(total_indices_iguais)
 
     for i in range(total_indices_iguais):
         if of_amp_aligned[i]==0:
@@ -77,7 +81,14 @@ for ocupacao in ocupacoes:
         else:
             of_estimated_phase[i] = a_tau_aligned[i]/of_amp_aligned[i]
 
+        if cnn_amp_aligned[i]==0:
+            cnn_estimated_phase[i] = a_tau_aligned[i]/EPS
+        else:
+            cnn_estimated_phase[i] = a_tau_aligned[i]/cnn_amp_aligned[i]
+
+
     of_phase_error = of_estimated_phase - real_phase_aligned
+    cnn_phase_error = cnn_estimated_phase - real_phase_aligned
 
     rms_of = np.sqrt(np.mean(of_phase_error**2))
     mae_of = np.mean(np.abs(of_phase_error))
@@ -89,11 +100,21 @@ for ocupacao in ocupacoes:
     
     corr_of = np.corrcoef(real_phase_aligned, of_estimated_phase)[0, 1] if len(real_phase_aligned) > 1 else 0
 
+
+    rms_cnn = np.sqrt(np.mean(cnn_phase_error**2))
+    mae_cnn = np.mean(np.abs(cnn_phase_error))
+    medae_cnn = np.median(np.abs(cnn_phase_error))
+
+    ss_res_cnn = np.sum((real_phase_aligned - cnn_estimated_phase)**2)
+    ss_tot_cnn = np.sum((real_phase_aligned - np.mean(real_phase_aligned))**2)
+    r2_cnn = 1 - (ss_res_cnn / ss_tot_cnn) if ss_tot_cnn > 0 else 0
+    
+    corr_cnn = np.corrcoef(real_phase_aligned, cnn_estimated_phase)[0, 1] if len(real_phase_aligned) > 1 else 0
+
     output_path = os.path.join(path, "FaseEstimada_OF", f'janelamento_{n_janelamento}')
     os.makedirs(output_path, exist_ok=True)
     output_file = os.path.join(output_path,f"phase_of_occupation_{ocupacao}.npz")
-    if os.path.exists(output_file):
-        os.remove(output_file)
+    
     np.savez_compressed(
         output_file,
         estimated_phase=of_estimated_phase,
@@ -107,5 +128,25 @@ for ocupacao in ocupacoes:
         medae=medae_of,
         r2=r2_of,
         correlation=corr_of,
+        n_samples=len(common_indices)
+    )
+    # CNN
+    output_path_cnn = os.path.join(path, "FaseEstimada_CNN", f'janelamento_{n_janelamento}')
+    os.makedirs(output_path_cnn, exist_ok=True)
+    output_file_cnn = os.path.join(output_path_cnn,f"phase_cnn_occupation_{ocupacao}.npz")
+    
+    np.savez_compressed(
+        output_file_cnn,
+        estimated_phase=cnn_estimated_phase,
+        real_phase=real_phase_aligned,
+        error=cnn_phase_error,
+        estimated_A_tau=a_tau_aligned,
+        estimated_amplitude=cnn_amp_aligned,
+        indices=common_indices,
+        rms=rms_cnn,
+        mae=mae_cnn,
+        medae=medae_cnn,
+        r2=r2_cnn,
+        correlation=corr_cnn,
         n_samples=len(common_indices)
     )
