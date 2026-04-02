@@ -14,18 +14,21 @@ def PlotErrors():
         data_of = np.load(data_of_path, allow_pickle=True)
         stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
         # # CNN
-        # data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
-        # data_cnn = np.load(data_cnn_path, allow_pickle=True)
-        # stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_cnn = np.load(data_cnn_path, allow_pickle=True)
+        stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
         
         fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
         if stats_por_intervalo_of:
             medias_of = [stats['media'] for stats in stats_por_intervalo_of.values()]
-            desvios_of = [stats['std'] for stats in stats_por_intervalo_of.values()]
             labels_of = list(stats_por_intervalo_of.keys())
+
+            medias_cnn = [stats['media'] for stats in stats_por_intervalo_cnn.values()]
+            labels_cnn = list(stats_por_intervalo_cnn.keys())
 
             
             ax1.plot(range(len(labels_of)), medias_of, label='OF', marker='o', color='purple')
+            ax1.plot(range(len(labels_cnn)), medias_cnn, label='CNN', marker='o', color='black')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Phase(ns) - Occupancy {ocupacao}%')
@@ -43,17 +46,20 @@ def PlotDispersion():
         data_of = np.load(data_of_path, allow_pickle=True)
         stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
         # # CNN
-        # data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
-        # data_cnn = np.load(data_cnn_path, allow_pickle=True)
-        # stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_cnn = np.load(data_cnn_path, allow_pickle=True)
+        stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
         
         fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
         if stats_por_intervalo_of:
-            medias_of = [stats['media'] for stats in stats_por_intervalo_of.values()]
             desvios_of = [stats['std'] for stats in stats_por_intervalo_of.values()]
             labels_of = list(stats_por_intervalo_of.keys())
 
+            desvios_cnn = [stats['std'] for stats in stats_por_intervalo_cnn.values()]
+            labels_cnn = list(stats_por_intervalo_cnn.keys())
+
             ax1.plot(range(len(labels_of)), desvios_of, marker='o',  label='OF', color='purple')
+            ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label='CNN', color='black')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Phase(ns) - Occupancy {ocupacao}%')

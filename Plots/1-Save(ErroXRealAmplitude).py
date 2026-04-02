@@ -135,5 +135,5 @@ def ErrorCNN():
             np.savez_compressed(alt_file, stats_por_intervalo=stats_por_intervalo, erros_por_intervalo= erros_por_intervalo)
             print(f"Arquivo salvo como alternativa: {alt_file}")
 
-# ErrorOF()
+ErrorOF()
 ErrorCNN()
