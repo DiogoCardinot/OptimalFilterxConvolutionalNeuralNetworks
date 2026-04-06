@@ -11,7 +11,8 @@ of_data = os.path.join(path, "AmplitudeEstimada_OF", f'janelamento_{n_janelament
 a_tau_data = os.path.join(path,"A_tau_OF", f'janelamento_{n_janelamento}')
 
 base_path = os.path.dirname(os.path.dirname(path))
-cnn_data = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks","RedeNeuralConvolucional", "CNN_8")
+CNN = 5
+cnn_data = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks","RedeNeuralConvolucional", f"CNN_{CNN}")
 
 ocupacoes = [0,10,20,30,40,50,60,70,80,90,100]
 
@@ -136,23 +137,23 @@ for ocupacao in ocupacoes:
     os.makedirs(output_path, exist_ok=True)
     output_file = os.path.join(output_path,f"phase_of_occupation_{ocupacao}.npz")
     
-    np.savez_compressed(
-        output_file,
-        estimated_phase=of_estimated_phase,
-        real_phase=real_phase_aligned,
-        error=of_phase_error,
-        estimated_A_tau=a_tau_aligned,
-        estimated_amplitude=of_amp_aligned,
-        indices=common_indices,
-        rms=rms_of,
-        mae=mae_of,
-        medae=medae_of,
-        r2=r2_of,
-        correlation=corr_of,
-        n_samples=len(common_indices)
-    )
+    # np.savez_compressed(
+    #     output_file,
+    #     estimated_phase=of_estimated_phase,
+    #     real_phase=real_phase_aligned,
+    #     error=of_phase_error,
+    #     estimated_A_tau=a_tau_aligned,
+    #     estimated_amplitude=of_amp_aligned,
+    #     indices=common_indices,
+    #     rms=rms_of,
+    #     mae=mae_of,
+    #     medae=medae_of,
+    #     r2=r2_of,
+    #     correlation=corr_of,
+    #     n_samples=len(common_indices)
+    # )
     # CNN
-    output_path_cnn = os.path.join(path, "FaseEstimada_CNN", f'janelamento_{n_janelamento}')
+    output_path_cnn = os.path.join(path, "FaseEstimada_CNN", f'janelamento_{n_janelamento}', f'CNN_{CNN}')
     os.makedirs(output_path_cnn, exist_ok=True)
     output_file_cnn = os.path.join(output_path_cnn,f"phase_cnn_occupation_{ocupacao}.npz")
     
@@ -172,23 +173,23 @@ for ocupacao in ocupacoes:
         n_samples=len(common_indices)
     )
 
-    output_path_real_amplitude = os.path.join(path, "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
-    os.makedirs(output_path_real_amplitude, exist_ok=True)
-    output_file_real_amplitude = os.path.join(output_path_real_amplitude, f'phase_real_amplitude_occupation_{ocupacao}.npz')
+    # output_path_real_amplitude = os.path.join(path, "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
+    # os.makedirs(output_path_real_amplitude, exist_ok=True)
+    # output_file_real_amplitude = os.path.join(output_path_real_amplitude, f'phase_real_amplitude_occupation_{ocupacao}.npz')
 
-    np.savez_compressed(
-        output_file_real_amplitude,
-        estimated_phase=real_amplitude_estimated_phase,
-        real_phase=real_phase_aligned,
-        error=real_amplitude_phase_error,
-        estimated_A_tau=a_tau_aligned,
-        estimated_amplitude=real_amplitude_aligned,
-        indices=common_indices,
-        rms=rms_real_amplitude,
-        mae=mae_real_amplitude,
-        medae=medae_real_amplitude,
-        r2=r2_real_amplitude,
-        correlation=corr_real_amplitude,
-        n_samples=len(common_indices)
+    # np.savez_compressed(
+    #     output_file_real_amplitude,
+    #     estimated_phase=real_amplitude_estimated_phase,
+    #     real_phase=real_phase_aligned,
+    #     error=real_amplitude_phase_error,
+    #     estimated_A_tau=a_tau_aligned,
+    #     estimated_amplitude=real_amplitude_aligned,
+    #     indices=common_indices,
+    #     rms=rms_real_amplitude,
+    #     mae=mae_real_amplitude,
+    #     medae=medae_real_amplitude,
+    #     r2=r2_real_amplitude,
+    #     correlation=corr_real_amplitude,
+    #     n_samples=len(common_indices)
 
-    )
+    # )

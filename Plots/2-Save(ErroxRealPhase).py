@@ -8,8 +8,11 @@ path = os.path.dirname(root_path)
 ocupacoes = [0,10,20,30,40,50,60,70,80,90,100]
 n_janelamento = 7
 
+CNN = 8
+
 def ErrorOF():
-    output = os.path.join(path, "Dados", "OF_ErrorxRealPhase")
+    print("OF")
+    output = os.path.join(path, "Dados", "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}')
     os.makedirs(output, exist_ok=True)
     
     base_path = os.path.dirname(os.path.dirname(path))
@@ -70,9 +73,11 @@ def ErrorOF():
             alt_file = os.path.join(output, f'errorxreal_{ocupacao}_temp.npz')
             np.savez_compressed(alt_file, stats_por_intervalo=stats_por_intervalo, erros_por_intervalo= erros_por_intervalo)
             print(f"Arquivo salvo como alternativa: {alt_file}")
+    print(50*"=")
 
 def ErrorCNN():
-    output = os.path.join(path, "Dados", "CNN_ErrorxRealPhase")
+    print("CNN")
+    output = os.path.join(path, "Dados", "CNN_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'CNN_{CNN}')
     os.makedirs(output, exist_ok=True)
     
     base_path = os.path.dirname(os.path.dirname(path))
@@ -88,7 +93,7 @@ def ErrorCNN():
                 print(f"Não foi possível remover {output_file}. Verifique se o arquivo não está aberto em outro programa.")
                 continue
         
-        error_cnn_path = os.path.join(dataset_path,"FiltroOtimo", f'FaseEstimada_CNN',f'janelamento_{n_janelamento}', f'phase_cnn_occupation_{ocupacao}.npz')
+        error_cnn_path = os.path.join(dataset_path,"FiltroOtimo", f'FaseEstimada_CNN',f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'phase_cnn_occupation_{ocupacao}.npz')
         error_cnn_data = np.load(error_cnn_path)
         error_cnn = error_cnn_data['error']
         real_phase = error_cnn_data['real_phase']
@@ -133,9 +138,11 @@ def ErrorCNN():
             alt_file = os.path.join(output, f'errorxreal_{ocupacao}_temp.npz')
             np.savez_compressed(alt_file, stats_por_intervalo=stats_por_intervalo, erros_por_intervalo= erros_por_intervalo)
             print(f"Arquivo salvo como alternativa: {alt_file}")
+    print(50*"=")
 
 def ErrorRealAmplitude():
-    output = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase")
+    print("Real Amplitude")
+    output = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}')
     os.makedirs(output, exist_ok=True)
     
     base_path = os.path.dirname(os.path.dirname(path))
@@ -196,7 +203,8 @@ def ErrorRealAmplitude():
             alt_file = os.path.join(output, f'errorxreal_{ocupacao}_temp.npz')
             np.savez_compressed(alt_file, stats_por_intervalo=stats_por_intervalo, erros_por_intervalo= erros_por_intervalo)
             print(f"Arquivo salvo como alternativa: {alt_file}")
+    print(50*"=")
 
 # ErrorOF()
-# ErrorCNN()
-ErrorRealAmplitude()
+ErrorCNN()
+# ErrorRealAmplitude()

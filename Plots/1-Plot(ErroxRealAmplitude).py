@@ -6,15 +6,18 @@ root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
 ocupacoes = [50, 80]
+n_janelamento = 7
+
+CNN=8
 
 def PlotErrors():
     for ocupacao in ocupacoes:
         # OF
-        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealAmplitude", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_of = np.load(data_of_path, allow_pickle=True)
         stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
         # CNN
-        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'janelamento_{n_janelamento}',f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
         
@@ -29,7 +32,7 @@ def PlotErrors():
             ax1.plot(range(len(labels_of)), medias_of, marker='o', label='OF', color='purple')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
-            ax1.plot(range(len(labels_cnn)), medias_cnn, marker='o', label='CNN', color='black')
+            ax1.plot(range(len(labels_cnn)), medias_cnn, marker='o', label=f'CNN {CNN}', color='black')
             ax1.set_xticks(range(len(labels_cnn)))
             ax1.set_xticklabels(labels_cnn, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Amplitude (ADC counts) - Occupancy {ocupacao}%')
@@ -42,11 +45,11 @@ def PlotErrors():
 def PlotDispersion():
     for ocupacao in ocupacoes:
         # OF
-        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealAmplitude",f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_of = np.load(data_of_path, allow_pickle=True)
         stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
         # CNN
-        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude",f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
         
@@ -61,7 +64,7 @@ def PlotDispersion():
             ax1.plot(range(len(labels_of)), desvios_of, marker='o', label='OF', color='purple')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
-            ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o', label='CNN', color='black')
+            ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o', label=f'CNN {CNN}', color='black')
             ax1.set_xticks(range(len(labels_cnn)))
             ax1.set_xticklabels(labels_cnn, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Amplitude (ADC counts) - Occupancy {ocupacao}%')
@@ -75,11 +78,11 @@ def PlotDispersion():
 def PlotBoxPlots():
     for ocupacao in ocupacoes:
         # OF
-        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealAmplitude", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_of = np.load(data_of_path, allow_pickle=True)
         erros_por_intervalo_of = data_of['erros_por_intervalo'].item()
         # CNN
-        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude",f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         erros_por_intervalo_cnn = data_cnn['erros_por_intervalo'].item()
 
@@ -106,7 +109,7 @@ def PlotBoxPlots():
             ax1.grid(True, alpha=0.3)
             ax1.legend(loc='best')
 
-            bp_cnn = ax2.boxplot(dados_boxplot_cnn, tick_labels=intervalos_cnn_validos, medianprops=dict(color='black', linewidth=1), label='CNN')
+            bp_cnn = ax2.boxplot(dados_boxplot_cnn, tick_labels=intervalos_cnn_validos, medianprops=dict(color='black', linewidth=1), label=f'CNN {CNN}')
             ax2.set_xticklabels(intervalos_cnn_validos, rotation=45, ha='right')
             ax2.set_xlabel(f'Real Amplitude(ADC counts) - Occupancy {ocupacao}%')
             ax2.set_ylabel('Error Values\n(ADC counts)')

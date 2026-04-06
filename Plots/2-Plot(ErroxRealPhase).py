@@ -5,21 +5,23 @@ import matplotlib.pyplot as plt
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
+n_janelamento = 7
 ocupacoes = [50, 80]
+CNN=8
 
 def PlotErrors():
     for ocupacao in ocupacoes:
         # OF
-        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'errorxreal_{ocupacao}.npz')
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_of = np.load(data_of_path, allow_pickle=True)
         stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
         # # CNN
-        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase", f'errorxreal_{ocupacao}.npz')
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase",f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
 
         # Real Amplitude
-        data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'errorxreal_{ocupacao}.npz')
+        data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_real_amplitude = np.load(data_real_amplitude_path, allow_pickle=True)
         stats_por_intervalo_real_amplitude = data_real_amplitude['stats_por_intervalo'].item()
 
@@ -35,7 +37,7 @@ def PlotErrors():
             labels_real_amplitude = list(stats_por_intervalo_real_amplitude.keys())
 
             ax1.plot(range(len(labels_of)), medias_of, label='OF', marker='o', color='purple')
-            ax1.plot(range(len(labels_cnn)), medias_cnn, label='CNN', marker='o', color='black')
+            ax1.plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color='black')
             # ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
@@ -50,16 +52,16 @@ def PlotErrors():
 def PlotDispersion():
     for ocupacao in ocupacoes:
         # OF
-        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'errorxreal_{ocupacao}.npz')
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_of = np.load(data_of_path, allow_pickle=True)
         stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
         # # CNN
-        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase", f'errorxreal_{ocupacao}.npz')
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
 
         # Real Amplitude
-        data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'errorxreal_{ocupacao}.npz')
+        data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_real_amplitude = np.load(data_real_amplitude_path, allow_pickle=True)
         stats_por_intervalo_real_amplitude = data_real_amplitude['stats_por_intervalo'].item()
         
@@ -75,7 +77,7 @@ def PlotDispersion():
             labels_real_amplitude = list(stats_por_intervalo_real_amplitude.keys())
 
             ax1.plot(range(len(labels_of)), desvios_of, marker='o',  label='OF', color='purple')
-            ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label='CNN', color='black')
+            ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label=f'CNN {CNN}', color='black')
             # ax1.plot(range(len(labels_real_amplitude)), desvios_real_amplitude, marker='o',  label='Real Amplitude', color='blue')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
@@ -87,35 +89,35 @@ def PlotDispersion():
         plt.show()
 
 
-# def PlotBoxPlots():
-#     for ocupacao in ocupacoes:
-#         # OF
-#         data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'errorxreal_{ocupacao}.npz')
-#         data_of = np.load(data_of_path, allow_pickle=True)
-#         erros_por_intervalo_of = data_of['erros_por_intervalo'].item()
-#         # CNN
-#         # data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'errorxreal_{ocupacao}.npz')
-#         # data_cnn = np.load(data_cnn_path, allow_pickle=True)
-#         # erros_por_intervalo_cnn = data_cnn['erros_por_intervalo'].item()
+def PlotBoxPlots():
+    for ocupacao in ocupacoes:
+        # OF
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
+        data_of = np.load(data_of_path, allow_pickle=True)
+        erros_por_intervalo_of = data_of['erros_por_intervalo'].item()
+        # CNN
+        # data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealAmplitude", f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
+        # data_cnn = np.load(data_cnn_path, allow_pickle=True)
+        # erros_por_intervalo_cnn = data_cnn['erros_por_intervalo'].item()
 
-#         fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
+        fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
             
-#         intervalos_of = list(erros_por_intervalo_of.keys())
-#         dados_boxplot_of = [erros_por_intervalo_of[intervalo] for intervalo in intervalos_of 
-#                         if erros_por_intervalo_of[intervalo]]
-#         intervalos_of_validos = [intervalo for intervalo in intervalos_of 
-#                                 if erros_por_intervalo_of[intervalo]]
+        intervalos_of = list(erros_por_intervalo_of.keys())
+        dados_boxplot_of = [erros_por_intervalo_of[intervalo] for intervalo in intervalos_of 
+                        if erros_por_intervalo_of[intervalo]]
+        intervalos_of_validos = [intervalo for intervalo in intervalos_of 
+                                if erros_por_intervalo_of[intervalo]]
         
-#         if dados_boxplot_of:
-#             bp = ax1.boxplot(dados_boxplot_of, tick_labels=intervalos_of_validos, medianprops=dict(color='purple', linewidth=1), label='OF')
-#             ax1.set_xticklabels(intervalos_of_validos, rotation=45, ha='right')
-#             ax1.set_xlabel(f'Real Phase(ns) - Occupancy {ocupacao}%')
-#             ax1.set_ylabel('Error Values\n(ADC counts)')
-#             ax1.grid(True, alpha=0.3)
-#             ax1.legend(loc='best')
+        if dados_boxplot_of:
+            bp = ax1.boxplot(dados_boxplot_of, tick_labels=intervalos_of_validos, medianprops=dict(color='purple', linewidth=1), label='OF')
+            ax1.set_xticklabels(intervalos_of_validos, rotation=45, ha='right')
+            ax1.set_xlabel(f'Real Phase(ns) - Occupancy {ocupacao}%')
+            ax1.set_ylabel('Error Values\n(ADC counts)')
+            ax1.grid(True, alpha=0.3)
+            ax1.legend(loc='best')
 
-#         plt.tight_layout()
-#         plt.show()
+        plt.tight_layout()
+        plt.show()
 
 
 PlotErrors()
