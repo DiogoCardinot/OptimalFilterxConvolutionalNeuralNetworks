@@ -253,9 +253,9 @@ def ErrorRealAmplitude():
                     break
             
         for amplitude, erro in zip(real_amplitude, error_real_amplitude):
-            for i in range(len(bins) - 1):
+            for i in range(len(bins_amplitude) - 1):
                 if bins_amplitude[i] <= amplitude < bins_amplitude[i+1]:
-                    chave = f"{bins_amplitude[i]:.2f} - {bins_amplitude[i+1]:.2f}"
+                    chave_amplitude = f"{bins_amplitude[i]:.2f} - {bins_amplitude[i+1]:.2f}"
                     erros_por_intervalo_amplitude[chave_amplitude].append(erro)
                     break
         
