@@ -8,7 +8,7 @@ path = os.path.dirname(root_path)
 ocupacoes = [0,10,20,30,40,50,60,70,80,90,100]
 n_janelamento = 7
 
-CNN = 3
+CNN = 8
 
 def ErrorOF():
     print("OF")
@@ -294,6 +294,6 @@ def ErrorRealAmplitude():
             print(f"Arquivo salvo como alternativa: {alt_file}")
     print(50*"=")
 
-ErrorOF()
+# ErrorOF()
 ErrorCNN()
-ErrorRealAmplitude()
+# ErrorRealAmplitude()

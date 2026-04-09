@@ -15,33 +15,56 @@ def PlotErrors():
         data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_of = np.load(data_of_path, allow_pickle=True)
         stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
+        stats_por_intervalo_of_amplitude = data_of['stats_por_intervalo_amplitude'].item()
         # # CNN
         data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase",f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
+        stats_por_intervalo_cnn_amplitude = data_cnn['stats_por_intervalo_amplitude'].item()
+
 
         # Real Amplitude
         data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_real_amplitude = np.load(data_real_amplitude_path, allow_pickle=True)
         stats_por_intervalo_real_amplitude = data_real_amplitude['stats_por_intervalo'].item()
+        stats_por_intervalo_real_amplitude_ = data_real_amplitude['stats_por_intervalo_amplitude'].item()
 
         fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
-        if stats_por_intervalo_of and stats_por_intervalo_cnn and stats_por_intervalo_real_amplitude:
-            medias_of = [stats['media'] for stats in stats_por_intervalo_of.values()]
-            labels_of = list(stats_por_intervalo_of.keys())
+        # if stats_por_intervalo_of and stats_por_intervalo_cnn and stats_por_intervalo_real_amplitude:
+        #     medias_of = [stats['media'] for stats in stats_por_intervalo_of.values()]
+        #     labels_of = list(stats_por_intervalo_of.keys())
 
-            medias_cnn = [stats['media'] for stats in stats_por_intervalo_cnn.values()]
-            labels_cnn = list(stats_por_intervalo_cnn.keys())
+        #     medias_cnn = [stats['media'] for stats in stats_por_intervalo_cnn.values()]
+        #     labels_cnn = list(stats_por_intervalo_cnn.keys())
 
-            medias_real_amplitude = [stats['media'] for stats in stats_por_intervalo_real_amplitude.values()]
-            labels_real_amplitude = list(stats_por_intervalo_real_amplitude.keys())
+        #     medias_real_amplitude = [stats['media'] for stats in stats_por_intervalo_real_amplitude.values()]
+        #     labels_real_amplitude = list(stats_por_intervalo_real_amplitude.keys())
+
+        #     ax1.plot(range(len(labels_of)), medias_of, label='OF', marker='o', color='purple')
+        #     ax1.plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color='black')
+        #     # ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
+        #     ax1.set_xticks(range(len(labels_of)))
+        #     ax1.set_xticklabels(labels_of, rotation=45, ha='right')
+        #     ax1.set_xlabel(f'Real Phase(ns) - Occupancy {ocupacao}%')
+        #     ax1.set_ylabel('Mean Error Values\n(ns)')
+        #     ax1.legend(loc='best')
+        #     ax1.grid(True, alpha=0.3)
+        if stats_por_intervalo_of_amplitude and stats_por_intervalo_cnn_amplitude and stats_por_intervalo_real_amplitude_:
+            medias_of = [stats['media'] for stats in stats_por_intervalo_of_amplitude.values()]
+            labels_of = list(stats_por_intervalo_of_amplitude.keys())
+
+            medias_cnn = [stats['media'] for stats in stats_por_intervalo_cnn_amplitude.values()]
+            labels_cnn = list(stats_por_intervalo_cnn_amplitude.keys())
+
+            medias_real_amplitude = [stats['media'] for stats in stats_por_intervalo_real_amplitude_.values()]
+            labels_real_amplitude = list(stats_por_intervalo_real_amplitude_.keys())
 
             ax1.plot(range(len(labels_of)), medias_of, label='OF', marker='o', color='purple')
             ax1.plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color='black')
             # ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
-            ax1.set_xlabel(f'Real Phase(ns) - Occupancy {ocupacao}%')
+            ax1.set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
             ax1.set_ylabel('Mean Error Values\n(ns)')
             ax1.legend(loc='best')
             ax1.grid(True, alpha=0.3)
@@ -55,33 +78,36 @@ def PlotDispersion():
         data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_of = np.load(data_of_path, allow_pickle=True)
         stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
+        stats_por_intervalo_of_amplitude = data_of['stats_por_intervalo_amplitude'].item()
         # # CNN
         data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
+        stats_por_intervalo_cnn_amplitude = data_cnn['stats_por_intervalo_amplitude'].item()
 
         # Real Amplitude
         data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_real_amplitude = np.load(data_real_amplitude_path, allow_pickle=True)
         stats_por_intervalo_real_amplitude = data_real_amplitude['stats_por_intervalo'].item()
+        stats_por_intervalo_real_amplitude_ = data_real_amplitude['stats_por_intervalo_amplitude'].item()
         
         fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
-        if stats_por_intervalo_of:
-            desvios_of = [stats['std'] for stats in stats_por_intervalo_of.values()]
-            labels_of = list(stats_por_intervalo_of.keys())
+        if stats_por_intervalo_of_amplitude and stats_por_intervalo_cnn_amplitude and stats_por_intervalo_real_amplitude_:
+            desvios_of = [stats['std'] for stats in stats_por_intervalo_of_amplitude.values()]
+            labels_of = list(stats_por_intervalo_of_amplitude.keys())
 
-            desvios_cnn = [stats['std'] for stats in stats_por_intervalo_cnn.values()]
-            labels_cnn = list(stats_por_intervalo_cnn.keys())
+            desvios_cnn = [stats['std'] for stats in stats_por_intervalo_cnn_amplitude.values()]
+            labels_cnn = list(stats_por_intervalo_cnn_amplitude.keys())
 
-            desvios_real_amplitude = [stats['std'] for stats in stats_por_intervalo_real_amplitude.values()]
-            labels_real_amplitude = list(stats_por_intervalo_real_amplitude.keys())
+            desvios_real_amplitude = [stats['std'] for stats in stats_por_intervalo_real_amplitude_.values()]
+            labels_real_amplitude = list(stats_por_intervalo_real_amplitude_.keys())
 
             ax1.plot(range(len(labels_of)), desvios_of, marker='o',  label='OF', color='purple')
             ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label=f'CNN {CNN}', color='black')
             # ax1.plot(range(len(labels_real_amplitude)), desvios_real_amplitude, marker='o',  label='Real Amplitude', color='blue')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
-            ax1.set_xlabel(f'Real Phase(ns) - Occupancy {ocupacao}%')
+            ax1.set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
             ax1.set_ylabel('Mean Dispersion Values\n(ns)')
             ax1.legend(loc='best')
             ax1.grid(True, alpha=0.3)

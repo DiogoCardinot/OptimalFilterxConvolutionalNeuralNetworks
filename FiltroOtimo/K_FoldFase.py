@@ -11,7 +11,7 @@ of_data = os.path.join(path, "AmplitudeEstimada_OF", f'janelamento_{n_janelament
 a_tau_data = os.path.join(path,"A_tau_OF", f'janelamento_{n_janelamento}')
 
 base_path = os.path.dirname(os.path.dirname(path))
-CNN = 3
+CNN = 8
 cnn_data = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks","RedeNeuralConvolucional", f"CNN_{CNN}")
 
 ocupacoes = [0,10,20,30,40,50,60,70,80,90,100]
