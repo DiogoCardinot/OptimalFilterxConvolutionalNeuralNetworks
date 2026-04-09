@@ -11,7 +11,7 @@ of_data = os.path.join(path, "AmplitudeEstimada_OF", f'janelamento_{n_janelament
 a_tau_data = os.path.join(path,"A_tau_OF", f'janelamento_{n_janelamento}')
 
 base_path = os.path.dirname(os.path.dirname(path))
-CNN = 5
+CNN = 3
 cnn_data = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks","RedeNeuralConvolucional", f"CNN_{CNN}")
 
 ocupacoes = [0,10,20,30,40,50,60,70,80,90,100]
@@ -144,6 +144,7 @@ for ocupacao in ocupacoes:
     #     error=of_phase_error,
     #     estimated_A_tau=a_tau_aligned,
     #     estimated_amplitude=of_amp_aligned,
+    #     real_amplitude = real_amplitude_aligned,
     #     indices=common_indices,
     #     rms=rms_of,
     #     mae=mae_of,
@@ -164,6 +165,7 @@ for ocupacao in ocupacoes:
         error=cnn_phase_error,
         estimated_A_tau=a_tau_aligned,
         estimated_amplitude=cnn_amp_aligned,
+        real_amplitude = real_amplitude_aligned,
         indices=common_indices,
         rms=rms_cnn,
         mae=mae_cnn,
@@ -173,9 +175,9 @@ for ocupacao in ocupacoes:
         n_samples=len(common_indices)
     )
 
-    # output_path_real_amplitude = os.path.join(path, "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
-    # os.makedirs(output_path_real_amplitude, exist_ok=True)
-    # output_file_real_amplitude = os.path.join(output_path_real_amplitude, f'phase_real_amplitude_occupation_{ocupacao}.npz')
+    output_path_real_amplitude = os.path.join(path, "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
+    os.makedirs(output_path_real_amplitude, exist_ok=True)
+    output_file_real_amplitude = os.path.join(output_path_real_amplitude, f'phase_real_amplitude_occupation_{ocupacao}.npz')
 
     # np.savez_compressed(
     #     output_file_real_amplitude,
@@ -184,6 +186,7 @@ for ocupacao in ocupacoes:
     #     error=real_amplitude_phase_error,
     #     estimated_A_tau=a_tau_aligned,
     #     estimated_amplitude=real_amplitude_aligned,
+    #     real_amplitude = real_amplitude_aligned,
     #     indices=common_indices,
     #     rms=rms_real_amplitude,
     #     mae=mae_real_amplitude,
@@ -191,5 +194,4 @@ for ocupacao in ocupacoes:
     #     r2=r2_real_amplitude,
     #     correlation=corr_real_amplitude,
     #     n_samples=len(common_indices)
-
     # )

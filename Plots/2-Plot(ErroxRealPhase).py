@@ -7,7 +7,7 @@ path = os.path.dirname(root_path)
 
 n_janelamento = 7
 ocupacoes = [50, 80]
-CNN=8
+CNN=5
 
 def PlotErrors():
     for ocupacao in ocupacoes:
