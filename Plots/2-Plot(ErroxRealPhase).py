@@ -176,8 +176,55 @@ def PlotHistrograma():
         plt.tight_layout()
         plt.show()
 
+def PlotHistrogramas():
+    base_path = os.path.dirname(os.path.dirname(path))
+    dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks")
+    ocupacoes = [0,30,50,100]
+    numero_ocupacoes = np.zeros(len(ocupacoes))
+    for i in range(len(ocupacoes)-1):
+        numero_ocupacoes[i] = i
 
-# PlotErrors()
-# PlotDispersion()
+    fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
+    ax = ax.flatten()
+    of_color = '#9900ff'
+
+    for idx, ocupacao in enumerate(ocupacoes):
+        if ocupacao == 0 or ocupacao==30 or ocupacao==50:
+            CNN = 5
+            cnn_color = "#1A1A1A"
+        elif ocupacao==100:
+            CNN=3
+            cnn_color = "#B0B0B0"
+
+        # OF
+        of_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_OF', f'janelamento_{n_janelamento}',f'phase_of_occupation_{ocupacao}.npz')      
+        of_data = np.load(of_data_path)
+        of_error = of_data['error']
+        #CNN
+        cnn_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_CNN', f'janelamento_{n_janelamento}',f'CNN_{CNN}',f'phase_cnn_occupation_{ocupacao}.npz')      
+        cnn_data = np.load(cnn_data_path)
+        cnn_error = cnn_data['error']
+        # Real Amplitude
+        real_amplitude_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_RealAmplitude', f'janelamento_{n_janelamento}',f'phase_real_amplitude_occupation_{ocupacao}.npz')      
+        real_amplitude_data = np.load(real_amplitude_data_path)
+        real_amplitude_error = real_amplitude_data['error']
+
+        bins = 150
+        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, label='OF', linewidth=1)
+        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, label=f'CNN {CNN}', linewidth=1)
+        ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color='blue', label='Real Amplitude', linewidth=1)
+
+        ax[idx].set_xlabel(f'Phase estimation error (ns) - Occupancy {ocupacao}%')
+        ax[idx].set_ylabel('Number of Events')
+        ax[idx].legend(loc='best')
+        # ax[idx].set_xlim(-600,600)
+        ax[idx].grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+
+PlotErrors()
+PlotDispersion()
 # PlotBoxPlots()
 PlotHistrograma()
+PlotHistrogramas()
