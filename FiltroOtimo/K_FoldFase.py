@@ -2,7 +2,6 @@ import numpy as np
 import os
 
 n_janelamento = 7
-EPS = 1e-8
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -80,19 +79,22 @@ for ocupacao in ocupacoes:
     of_estimated_phase = np.zeros(total_indices_iguais)
     cnn_estimated_phase = np.zeros(total_indices_iguais)
     real_amplitude_estimated_phase = np.zeros(total_indices_iguais)
-
+    limiar = 10
     for i in range(total_indices_iguais):
-        if of_amp_aligned[i]==0:
+        if of_amp_aligned[i]<limiar:
+            EPS = limiar
             of_estimated_phase[i] = a_tau_aligned[i]/EPS
         else:
             of_estimated_phase[i] = a_tau_aligned[i]/of_amp_aligned[i]
 
-        if cnn_amp_aligned[i]==0:
+        if cnn_amp_aligned[i]<limiar:
+            EPS = limiar
             cnn_estimated_phase[i] = a_tau_aligned[i]/EPS
         else:
             cnn_estimated_phase[i] = a_tau_aligned[i]/cnn_amp_aligned[i]
 
-        if real_amplitude_aligned[i]==0:
+        if real_amplitude_aligned[i]<limiar:
+            EPS = limiar
             real_amplitude_estimated_phase[i] = a_tau_aligned[i]/EPS
         else:
             real_amplitude_estimated_phase[i] = a_tau_aligned[i]/real_amplitude_aligned[i]
@@ -137,22 +139,22 @@ for ocupacao in ocupacoes:
     os.makedirs(output_path, exist_ok=True)
     output_file = os.path.join(output_path,f"phase_of_occupation_{ocupacao}.npz")
     
-    # np.savez_compressed(
-    #     output_file,
-    #     estimated_phase=of_estimated_phase,
-    #     real_phase=real_phase_aligned,
-    #     error=of_phase_error,
-    #     estimated_A_tau=a_tau_aligned,
-    #     estimated_amplitude=of_amp_aligned,
-    #     real_amplitude = real_amplitude_aligned,
-    #     indices=common_indices,
-    #     rms=rms_of,
-    #     mae=mae_of,
-    #     medae=medae_of,
-    #     r2=r2_of,
-    #     correlation=corr_of,
-    #     n_samples=len(common_indices)
-    # )
+    np.savez_compressed(
+        output_file,
+        estimated_phase=of_estimated_phase,
+        real_phase=real_phase_aligned,
+        error=of_phase_error,
+        estimated_A_tau=a_tau_aligned,
+        estimated_amplitude=of_amp_aligned,
+        real_amplitude = real_amplitude_aligned,
+        indices=common_indices,
+        rms=rms_of,
+        mae=mae_of,
+        medae=medae_of,
+        r2=r2_of,
+        correlation=corr_of,
+        n_samples=len(common_indices)
+    )
     # CNN
     output_path_cnn = os.path.join(path, "FaseEstimada_CNN", f'janelamento_{n_janelamento}', f'CNN_{CNN}')
     os.makedirs(output_path_cnn, exist_ok=True)
@@ -179,19 +181,19 @@ for ocupacao in ocupacoes:
     os.makedirs(output_path_real_amplitude, exist_ok=True)
     output_file_real_amplitude = os.path.join(output_path_real_amplitude, f'phase_real_amplitude_occupation_{ocupacao}.npz')
 
-    # np.savez_compressed(
-    #     output_file_real_amplitude,
-    #     estimated_phase=real_amplitude_estimated_phase,
-    #     real_phase=real_phase_aligned,
-    #     error=real_amplitude_phase_error,
-    #     estimated_A_tau=a_tau_aligned,
-    #     estimated_amplitude=real_amplitude_aligned,
-    #     real_amplitude = real_amplitude_aligned,
-    #     indices=common_indices,
-    #     rms=rms_real_amplitude,
-    #     mae=mae_real_amplitude,
-    #     medae=medae_real_amplitude,
-    #     r2=r2_real_amplitude,
-    #     correlation=corr_real_amplitude,
-    #     n_samples=len(common_indices)
-    # )
+    np.savez_compressed(
+        output_file_real_amplitude,
+        estimated_phase=real_amplitude_estimated_phase,
+        real_phase=real_phase_aligned,
+        error=real_amplitude_phase_error,
+        estimated_A_tau=a_tau_aligned,
+        estimated_amplitude=real_amplitude_aligned,
+        real_amplitude = real_amplitude_aligned,
+        indices=common_indices,
+        rms=rms_real_amplitude,
+        mae=mae_real_amplitude,
+        medae=medae_real_amplitude,
+        r2=r2_real_amplitude,
+        correlation=corr_real_amplitude,
+        n_samples=len(common_indices)
+    )

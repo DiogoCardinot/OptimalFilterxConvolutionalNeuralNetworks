@@ -1,6 +1,5 @@
 import numpy as np
 import os
-import matplotlib.pyplot as plt
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -294,6 +293,6 @@ def ErrorRealAmplitude():
             print(f"Arquivo salvo como alternativa: {alt_file}")
     print(50*"=")
 
-# ErrorOF()
+ErrorOF()
 ErrorCNN()
-# ErrorRealAmplitude()
+ErrorRealAmplitude()

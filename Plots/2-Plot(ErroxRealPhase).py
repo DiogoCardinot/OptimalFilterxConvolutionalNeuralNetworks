@@ -7,7 +7,7 @@ path = os.path.dirname(root_path)
 
 n_janelamento = 7
 ocupacoes = [50, 80]
-CNN=5
+CNN= 3
 
 def PlotErrors():
     for ocupacao in ocupacoes:
@@ -21,7 +21,6 @@ def PlotErrors():
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
         stats_por_intervalo_cnn_amplitude = data_cnn['stats_por_intervalo_amplitude'].item()
-
 
         # Real Amplitude
         data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
@@ -61,7 +60,7 @@ def PlotErrors():
 
             ax1.plot(range(len(labels_of)), medias_of, label='OF', marker='o', color='purple')
             ax1.plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color='black')
-            # ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
+            ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
@@ -104,7 +103,7 @@ def PlotDispersion():
 
             ax1.plot(range(len(labels_of)), desvios_of, marker='o',  label='OF', color='purple')
             ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label=f'CNN {CNN}', color='black')
-            # ax1.plot(range(len(labels_real_amplitude)), desvios_real_amplitude, marker='o',  label='Real Amplitude', color='blue')
+            ax1.plot(range(len(labels_real_amplitude)), desvios_real_amplitude, marker='o',  label='Real Amplitude', color='blue')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
