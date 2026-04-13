@@ -144,7 +144,38 @@ def PlotBoxPlots():
         plt.tight_layout()
         plt.show()
 
+def PlotHistrograma():
+    base_path = os.path.dirname(os.path.dirname(path))
+    dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks")
 
-PlotErrors()
-PlotDispersion()
+    for ocupacao in ocupacoes:
+        # OF
+        of_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_OF', f'janelamento_{n_janelamento}',f'phase_of_occupation_{ocupacao}.npz')      
+        of_data = np.load(of_data_path)
+        of_error = of_data['error']
+        #CNN
+        cnn_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_CNN', f'janelamento_{n_janelamento}',f'CNN_{CNN}',f'phase_cnn_occupation_{ocupacao}.npz')      
+        cnn_data = np.load(cnn_data_path)
+        cnn_error = cnn_data['error']
+        # Real Amplitude
+        real_amplitude_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_RealAmplitude', f'janelamento_{n_janelamento}',f'phase_real_amplitude_occupation_{ocupacao}.npz')      
+        real_amplitude_data = np.load(real_amplitude_data_path)
+        real_amplitude_error = real_amplitude_data['error']
+
+        fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
+        ax1.hist(of_error, bins = 50, alpha=0.7,histtype='step', color='purple', label='OF', linewidth=1)
+        ax1.hist(cnn_error, bins = 50, alpha=0.7,histtype='step', color='black', label=f'CNN {CNN}', linewidth=1)
+        ax1.hist(real_amplitude_error, bins = 50, alpha=0.7,histtype='step', color='blue', label='Real Amplitude', linewidth=1)
+
+        ax1.set_xlabel(f'Phase estimation error (ns) - Occupancy {ocupacao}%')
+        ax1.set_ylabel('Number of Events')
+        ax1.legend(loc='best')
+        ax1.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.show()
+
+
+# PlotErrors()
+# PlotDispersion()
 # PlotBoxPlots()
+PlotHistrograma()
