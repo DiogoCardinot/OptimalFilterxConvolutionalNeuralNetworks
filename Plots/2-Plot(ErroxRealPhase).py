@@ -6,7 +6,7 @@ root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
 n_janelamento = 7
-ocupacoes = [50, 80]
+ocupacoes = [80]
 CNN= 3
 
 def PlotErrors():
@@ -163,13 +163,15 @@ def PlotHistrograma():
         real_amplitude_error = real_amplitude_data['error']
 
         fig, (ax1) = plt.subplots(1, 1, figsize=(15, 6))
-        ax1.hist(of_error, bins = 50, alpha=0.7,histtype='step', color='purple', label='OF', linewidth=1)
-        ax1.hist(cnn_error, bins = 50, alpha=0.7,histtype='step', color='black', label=f'CNN {CNN}', linewidth=1)
-        ax1.hist(real_amplitude_error, bins = 50, alpha=0.7,histtype='step', color='blue', label='Real Amplitude', linewidth=1)
+        bins = 150
+        ax1.hist(of_error, bins = bins, alpha=0.7,histtype='step', color='purple', label='OF', linewidth=1)
+        ax1.hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color='black', label=f'CNN {CNN}', linewidth=1)
+        ax1.hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color='blue', label='Real Amplitude', linewidth=1)
 
         ax1.set_xlabel(f'Phase estimation error (ns) - Occupancy {ocupacao}%')
         ax1.set_ylabel('Number of Events')
         ax1.legend(loc='best')
+        ax1.set_xlim(-600,600)
         ax1.grid(True, alpha=0.3)
         plt.tight_layout()
         plt.show()
