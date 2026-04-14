@@ -8,11 +8,9 @@ fontSize = 30
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
+base_path = os.path.dirname(os.path.dirname(path))
 plt.rcParams['savefig.directory'] = os.path.dirname(path)
 
-
-base_path = os.path.dirname(os.path.dirname(path))
-print(base_path)
 
 def load_data_for_occupation(occupation):
     """Carrega dados para uma ocupação específica"""

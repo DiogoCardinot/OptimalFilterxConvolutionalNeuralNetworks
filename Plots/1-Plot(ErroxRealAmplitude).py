@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -9,6 +10,8 @@ ocupacoes = [50, 80]
 n_janelamento = 7
 
 CNN=8
+
+plt.rcParams['savefig.directory'] = os.path.dirname(path)
 
 def PlotErrors():
     for ocupacao in ocupacoes:
@@ -74,7 +77,6 @@ def PlotDispersion():
         plt.tight_layout()
         plt.show()
 
-
 def PlotBoxPlots():
     for ocupacao in ocupacoes:
         # OF
@@ -119,7 +121,84 @@ def PlotBoxPlots():
         plt.tight_layout()
         plt.show()
 
+def PlotHistrogramas():
+    base_path = os.path.dirname(os.path.dirname(path))
+    dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks")
+    ocupacoes = [10,50,80,100]
+    total_inches_image = 6.32
+    fontSize = 24
+    fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
+    ax = ax.flatten()
+    of_color = '#9900ff'
 
-PlotErrors()
-PlotDispersion()
-PlotBoxPlots()
+    for idx, ocupacao in enumerate(ocupacoes):
+        if ocupacao == 10 or ocupacao==50:
+            CNN = 5
+            cnn_color = "#1A1A1A"
+        elif ocupacao==80 or ocupacao==100:
+            CNN=3
+            cnn_color = "#B0B0B0"
+
+        # OF
+        of_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'AmplitudeEstimada_OF', f'janelamento_{n_janelamento}',f'results_occupation_{ocupacao}.npz')      
+        of_data = np.load(of_data_path)
+        of_error = of_data['error']
+        #CNN
+        cnn_data_path = os.path.join(dataset_path,f'RedeNeuralConvolucional', f'CNN_{CNN}',f'results_ocupacao_{ocupacao}.npz')      
+        cnn_data = np.load(cnn_data_path)
+        cnn_error = cnn_data['error']
+        
+        bins = 150
+        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2)
+        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2)
+        ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
+        ax[idx].set_xlabel(f'Amplitude estimation error (ADC Counts)', fontsize=fontSize)
+        ax[idx].set_ylabel('Number of Events', fontsize=fontSize)
+        # ax[idx].legend(loc='best')
+        ax[idx].grid(True, alpha=0.3)
+        formatter = ScalarFormatter(useMathText=False)
+        formatter.set_scientific(True)
+        formatter.set_powerlimits((0, 0))
+        formatter.set_useOffset(True)
+        ax[idx].yaxis.set_major_formatter(formatter)
+        if idx==0:
+            ax[idx].set_xlim(-75,50)
+        elif idx==1:
+            ax[idx].set_xlim(-200,100)
+        elif idx==2:
+            ax[idx].set_xlim(-300,100)
+        elif idx==3:
+            ax[idx].set_xlim(-300,200)
+
+    handles = []
+    labels = []
+    
+    handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
+    labels.append('OF')
+    cnn_types = ['CNN-3', 'CNN-5']
+    unique_cnns = list(set(cnn_types))
+    for cnn_type in unique_cnns:
+        if cnn_type == "CNN-5":
+            color = "#1A1A1A"
+        else: 
+            color = "#B0B0B0"
+       
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
+
+    fig.legend(
+        handles, labels,
+        loc='upper center',
+        ncol=len(handles),
+        bbox_to_anchor=(0.5, 0.9999),
+        frameon=False,
+        fontsize=fontSize
+    )
+    # plt.tight_layout()
+    plt.subplots_adjust(hspace=0.4)
+    plt.show()
+
+# PlotErrors()
+# PlotDispersion()
+# PlotBoxPlots()
+PlotHistrogramas()

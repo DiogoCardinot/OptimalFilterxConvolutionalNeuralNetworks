@@ -9,6 +9,8 @@ n_janelamento = 7
 ocupacoes = [0]
 CNN= 3
 
+plt.rcParams['savefig.directory'] = os.path.dirname(path)
+
 def PlotError():
     for ocupacao in ocupacoes:
         # OF
