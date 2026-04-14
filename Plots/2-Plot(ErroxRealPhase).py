@@ -221,7 +221,7 @@ def PlotHistrogramas():
     plt.show()
 
 def PlotErros():
-    ocupacoes = [30,50,100]
+    ocupacoes = [10,50,80,100]
     total_inches_image = 6.32
     fontSize = 24
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
@@ -229,10 +229,10 @@ def PlotErros():
     of_color = '#9900ff'
 
     for idx, ocupacao in enumerate(ocupacoes):
-        if ocupacao == 0 or ocupacao==30 or ocupacao==50:
+        if ocupacao == 10 or ocupacao==50:
             CNN = 5
             cnn_color = "#1A1A1A"
-        elif ocupacao==100:
+        elif ocupacao==80 or ocupacao==100:
             CNN=3
             cnn_color = "#B0B0B0"
 
@@ -265,7 +265,7 @@ def PlotErros():
 
             ax[idx].plot(range(len(labels_of)), medias_of, label='OF', marker='o', color=of_color)
             ax[idx].plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color=cnn_color)
-            ax[idx].plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
+            ax[idx].plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', linestyle=':', marker='*', color="#56B6AE")
             ax[idx].set_xticks(range(len(labels_of)))
             ax[idx].set_xticklabels(labels_of, rotation=45, ha='right')
             ax[idx].set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
@@ -276,7 +276,7 @@ def PlotErros():
     plt.show()
 
 def PlotDispersions():
-    ocupacoes = [0,30,50,100]
+    ocupacoes = [10,50,80,100]
     total_inches_image = 6.32
     fontSize = 24
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
@@ -284,10 +284,10 @@ def PlotDispersions():
     of_color = '#9900ff'
 
     for idx, ocupacao in enumerate(ocupacoes):
-        if ocupacao == 0 or ocupacao==30 or ocupacao==50:
+        if ocupacao == 10 or ocupacao==50:
             CNN = 5
             cnn_color = "#1A1A1A"
-        elif ocupacao==100:
+        elif ocupacao==80 or ocupacao==100:
             CNN=3
             cnn_color = "#B0B0B0"
 
@@ -320,7 +320,7 @@ def PlotDispersions():
 
             ax[idx].plot(range(len(labels_of)), desvios_of, marker='o',  label='OF', color=of_color)
             ax[idx].plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label=f'CNN {CNN}', color=cnn_color)
-            ax[idx].plot(range(len(labels_real_amplitude)), desvios_real_amplitude, marker='o',  label='Real Amplitude', color='blue')
+            ax[idx].plot(range(len(labels_real_amplitude)), desvios_real_amplitude, linestyle=':', marker='*', color="#56B6AE",  label='Real Amplitude')
             ax[idx].set_xticks(range(len(labels_of)))
             ax[idx].set_xticklabels(labels_of, rotation=45, ha='right')
             ax[idx].set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
@@ -335,5 +335,5 @@ def PlotDispersions():
 # PlotBoxPlots()
 # PlotHistrograma()
 # PlotHistrogramas()
-# PlotErros()
+PlotErros()
 PlotDispersions()
