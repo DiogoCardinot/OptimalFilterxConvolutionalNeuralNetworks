@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -10,6 +11,7 @@ ocupacoes = [0]
 CNN= 3
 
 plt.rcParams['savefig.directory'] = os.path.dirname(path)
+
 
 def PlotError():
     for ocupacao in ocupacoes:
@@ -178,21 +180,22 @@ def PlotHistrograma():
         plt.tight_layout()
         plt.show()
 
+
 def PlotHistrogramas():
     base_path = os.path.dirname(os.path.dirname(path))
     dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks")
-    ocupacoes = [0,30,50,100]
+    ocupacoes = [10,50,80,100]
     total_inches_image = 6.32
     fontSize = 24
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
     of_color = '#9900ff'
-
+    real_amplitude_color = "#FA3232"
     for idx, ocupacao in enumerate(ocupacoes):
-        if ocupacao == 0 or ocupacao==30 or ocupacao==50:
+        if ocupacao == 10 or ocupacao==50:
             CNN = 5
             cnn_color = "#1A1A1A"
-        elif ocupacao==100:
+        elif ocupacao==80 or ocupacao==100:
             CNN=3
             cnn_color = "#B0B0B0"
 
@@ -210,16 +213,47 @@ def PlotHistrogramas():
         real_amplitude_error = real_amplitude_data['error']
 
         bins = 150
-        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, label='OF', linewidth=2)
-        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, label=f'CNN {CNN}', linewidth=2)
-        ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color='blue', label='Real Amplitude', linewidth=2)
+        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2)
+        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2)
+        ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
-        ax[idx].set_xlabel(f'Phase estimation error (ns) - Occupancy {ocupacao}%', fontsize=fontSize)
+        ax[idx].set_xlabel(f'Phase estimation error (ns)', fontsize=fontSize)
         ax[idx].set_ylabel('Number of Events', fontsize=fontSize)
-        ax[idx].legend(loc='best')
-        # ax[idx].set_xlim(-600,600)
         ax[idx].grid(True, alpha=0.3)
-    plt.tight_layout()
+        formatter = ScalarFormatter(useMathText=False)
+        formatter.set_scientific(True)
+        formatter.set_powerlimits((0, 0))
+        formatter.set_useOffset(True)
+        ax[idx].yaxis.set_major_formatter(formatter)
+        ax[idx].set_xlim(-500,500)
+    handles = []
+    labels = []
+    
+    handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
+    labels.append('OF')
+    handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
+    labels.append('Real Amplitude')
+    cnn_types = ['CNN-3', 'CNN-5']
+    unique_cnns = list(set(cnn_types))
+    for cnn_type in unique_cnns:
+        if cnn_type == "CNN-5":
+            color = "#1A1A1A"
+        else: 
+            color = "#B0B0B0"
+       
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
+
+    fig.legend(
+        handles, labels,
+        loc='upper center',
+        ncol=len(handles),
+        bbox_to_anchor=(0.5, 0.9999),
+        frameon=False,
+        fontsize=fontSize
+    )
+    # plt.tight_layout()
+    plt.subplots_adjust(hspace=0.4)
     plt.show()
 
 def PlotErros():
@@ -229,7 +263,7 @@ def PlotErros():
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
     of_color = '#9900ff'
-
+    real_amplitude_color = "#FA3232"
     for idx, ocupacao in enumerate(ocupacoes):
         if ocupacao == 10 or ocupacao==50:
             CNN = 5
@@ -265,16 +299,43 @@ def PlotErros():
             medias_real_amplitude = [stats['media'] for stats in stats_por_intervalo_real_amplitude_.values()]
             labels_real_amplitude = list(stats_por_intervalo_real_amplitude_.keys())
 
-            ax[idx].plot(range(len(labels_of)), medias_of, label='OF', marker='o', color=of_color)
-            ax[idx].plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color=cnn_color)
-            ax[idx].plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', linestyle=':', marker='*', color="#56B6AE")
+            ax[idx].plot(range(len(labels_of)), medias_of, marker='o', color=of_color)
+            ax[idx].plot(range(len(labels_cnn)), medias_cnn, marker='o', color=cnn_color)
+            ax[idx].plot(range(len(labels_real_amplitude)), medias_real_amplitude, linestyle=':', marker='*', color=real_amplitude_color)
+            ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
             ax[idx].set_xticks(range(len(labels_of)))
-            ax[idx].set_xticklabels(labels_of, rotation=45, ha='right')
-            ax[idx].set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
-            ax[idx].set_ylabel('Mean Error Values\n(ns)')
-            ax[idx].legend(loc='best')
+            ax[idx].set_xticklabels(labels_of, rotation=45, ha='right',fontsize=fontSize-17)
+            ax[idx].set_xlabel(f'Real Amplitude(ADC Counts)', fontsize=fontSize-8)
+            ax[idx].set_ylabel('Mean Error Values\nPhase Estimation (ns)', fontsize=fontSize-8)
             ax[idx].grid(True, alpha=0.3)
-    plt.tight_layout()
+    handles = []
+    labels = []
+    
+    handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
+    labels.append('OF')
+    handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle=':', marker='*',))
+    labels.append('Real Amplitude')
+    cnn_types = ['CNN-3', 'CNN-5']
+    unique_cnns = list(set(cnn_types))
+    for cnn_type in unique_cnns:
+        if cnn_type == "CNN-5":
+            color = "#1A1A1A"
+        else: 
+            color = "#B0B0B0"
+       
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
+
+    fig.legend(
+        handles, labels,
+        loc='upper center',
+        ncol=len(handles),
+        bbox_to_anchor=(0.5, 0.9999),
+        frameon=False,
+        fontsize=fontSize
+    )
+    # plt.tight_layout()
+    plt.subplots_adjust(hspace=0.5)
     plt.show()
 
 def PlotDispersions():
@@ -284,6 +345,7 @@ def PlotDispersions():
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
     of_color = '#9900ff'
+    real_amplitude_color = "#FA3232"
 
     for idx, ocupacao in enumerate(ocupacoes):
         if ocupacao == 10 or ocupacao==50:
@@ -320,16 +382,43 @@ def PlotDispersions():
             desvios_real_amplitude = [stats['std'] for stats in stats_por_intervalo_real_amplitude_.values()]
             labels_real_amplitude = list(stats_por_intervalo_real_amplitude_.keys())
 
-            ax[idx].plot(range(len(labels_of)), desvios_of, marker='o',  label='OF', color=of_color)
-            ax[idx].plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label=f'CNN {CNN}', color=cnn_color)
-            ax[idx].plot(range(len(labels_real_amplitude)), desvios_real_amplitude, linestyle=':', marker='*', color="#56B6AE",  label='Real Amplitude')
+            ax[idx].plot(range(len(labels_of)), desvios_of, marker='o',   color=of_color)
+            ax[idx].plot(range(len(labels_cnn)), desvios_cnn, marker='o',   color=cnn_color)
+            ax[idx].plot(range(len(labels_real_amplitude)), desvios_real_amplitude, linestyle=':', marker='*', color=real_amplitude_color)
             ax[idx].set_xticks(range(len(labels_of)))
-            ax[idx].set_xticklabels(labels_of, rotation=45, ha='right')
-            ax[idx].set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
-            ax[idx].set_ylabel('Mean Dispersion Values\n(ns)')
-            ax[idx].legend(loc='best')
+            ax[idx].set_xticklabels(labels_of, rotation=45, ha='right',fontsize=fontSize-17)
+            ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
+            ax[idx].set_xlabel(f'Real Amplitude(ADC Count)', fontsize = fontSize-8)
+            ax[idx].set_ylabel('Mean Dispersion Values\nPhase Estimation (ns)', fontsize = fontSize-8)
             ax[idx].grid(True, alpha=0.3)
-    plt.tight_layout()
+    handles = []
+    labels = []
+    
+    handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
+    labels.append('OF')
+    handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle=':', marker='*',))
+    labels.append('Real Amplitude')
+    cnn_types = ['CNN-3', 'CNN-5']
+    unique_cnns = list(set(cnn_types))
+    for cnn_type in unique_cnns:
+        if cnn_type == "CNN-5":
+            color = "#1A1A1A"
+        else: 
+            color = "#B0B0B0"
+       
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
+
+    fig.legend(
+        handles, labels,
+        loc='upper center',
+        ncol=len(handles),
+        bbox_to_anchor=(0.5, 0.9999),
+        frameon=False,
+        fontsize=fontSize
+    )
+    # plt.tight_layout()
+    plt.subplots_adjust(hspace=0.5)
     plt.show()
 
 # PlotError()
