@@ -6,10 +6,10 @@ root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
 n_janelamento = 7
-ocupacoes = [80]
+ocupacoes = [0]
 CNN= 3
 
-def PlotErrors():
+def PlotError():
     for ocupacao in ocupacoes:
         # OF
         data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
@@ -114,7 +114,7 @@ def PlotDispersion():
         plt.show()
 
 
-def PlotBoxPlots():
+def PlotBoxPlot():
     for ocupacao in ocupacoes:
         # OF
         data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
@@ -220,9 +220,120 @@ def PlotHistrogramas():
     plt.tight_layout()
     plt.show()
 
+def PlotErros():
+    ocupacoes = [30,50,100]
+    total_inches_image = 6.32
+    fontSize = 24
+    fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
+    ax = ax.flatten()
+    of_color = '#9900ff'
 
-# PlotErrors()
+    for idx, ocupacao in enumerate(ocupacoes):
+        if ocupacao == 0 or ocupacao==30 or ocupacao==50:
+            CNN = 5
+            cnn_color = "#1A1A1A"
+        elif ocupacao==100:
+            CNN=3
+            cnn_color = "#B0B0B0"
+
+        # OF
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
+        data_of = np.load(data_of_path, allow_pickle=True)
+        stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
+        stats_por_intervalo_of_amplitude = data_of['stats_por_intervalo_amplitude'].item()
+        # # CNN
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase",f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
+        data_cnn = np.load(data_cnn_path, allow_pickle=True)
+        stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
+        stats_por_intervalo_cnn_amplitude = data_cnn['stats_por_intervalo_amplitude'].item()
+
+        # Real Amplitude
+        data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
+        data_real_amplitude = np.load(data_real_amplitude_path, allow_pickle=True)
+        stats_por_intervalo_real_amplitude = data_real_amplitude['stats_por_intervalo'].item()
+        stats_por_intervalo_real_amplitude_ = data_real_amplitude['stats_por_intervalo_amplitude'].item()
+
+        if stats_por_intervalo_of_amplitude and stats_por_intervalo_cnn_amplitude and stats_por_intervalo_real_amplitude_:
+            medias_of = [stats['media'] for stats in stats_por_intervalo_of_amplitude.values()]
+            labels_of = list(stats_por_intervalo_of_amplitude.keys())
+
+            medias_cnn = [stats['media'] for stats in stats_por_intervalo_cnn_amplitude.values()]
+            labels_cnn = list(stats_por_intervalo_cnn_amplitude.keys())
+
+            medias_real_amplitude = [stats['media'] for stats in stats_por_intervalo_real_amplitude_.values()]
+            labels_real_amplitude = list(stats_por_intervalo_real_amplitude_.keys())
+
+            ax[idx].plot(range(len(labels_of)), medias_of, label='OF', marker='o', color=of_color)
+            ax[idx].plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color=cnn_color)
+            ax[idx].plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
+            ax[idx].set_xticks(range(len(labels_of)))
+            ax[idx].set_xticklabels(labels_of, rotation=45, ha='right')
+            ax[idx].set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
+            ax[idx].set_ylabel('Mean Error Values\n(ns)')
+            ax[idx].legend(loc='best')
+            ax[idx].grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+def PlotDispersions():
+    ocupacoes = [0,30,50,100]
+    total_inches_image = 6.32
+    fontSize = 24
+    fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
+    ax = ax.flatten()
+    of_color = '#9900ff'
+
+    for idx, ocupacao in enumerate(ocupacoes):
+        if ocupacao == 0 or ocupacao==30 or ocupacao==50:
+            CNN = 5
+            cnn_color = "#1A1A1A"
+        elif ocupacao==100:
+            CNN=3
+            cnn_color = "#B0B0B0"
+
+        # OF
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
+        data_of = np.load(data_of_path, allow_pickle=True)
+        stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
+        stats_por_intervalo_of_amplitude = data_of['stats_por_intervalo_amplitude'].item()
+        # # CNN
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
+        data_cnn = np.load(data_cnn_path, allow_pickle=True)
+        stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
+        stats_por_intervalo_cnn_amplitude = data_cnn['stats_por_intervalo_amplitude'].item()
+
+        # Real Amplitude
+        data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
+        data_real_amplitude = np.load(data_real_amplitude_path, allow_pickle=True)
+        stats_por_intervalo_real_amplitude = data_real_amplitude['stats_por_intervalo'].item()
+        stats_por_intervalo_real_amplitude_ = data_real_amplitude['stats_por_intervalo_amplitude'].item()
+        
+        if stats_por_intervalo_of_amplitude and stats_por_intervalo_cnn_amplitude and stats_por_intervalo_real_amplitude_:
+            desvios_of = [stats['std'] for stats in stats_por_intervalo_of_amplitude.values()]
+            labels_of = list(stats_por_intervalo_of_amplitude.keys())
+
+            desvios_cnn = [stats['std'] for stats in stats_por_intervalo_cnn_amplitude.values()]
+            labels_cnn = list(stats_por_intervalo_cnn_amplitude.keys())
+
+            desvios_real_amplitude = [stats['std'] for stats in stats_por_intervalo_real_amplitude_.values()]
+            labels_real_amplitude = list(stats_por_intervalo_real_amplitude_.keys())
+
+            ax[idx].plot(range(len(labels_of)), desvios_of, marker='o',  label='OF', color=of_color)
+            ax[idx].plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label=f'CNN {CNN}', color=cnn_color)
+            ax[idx].plot(range(len(labels_real_amplitude)), desvios_real_amplitude, marker='o',  label='Real Amplitude', color='blue')
+            ax[idx].set_xticks(range(len(labels_of)))
+            ax[idx].set_xticklabels(labels_of, rotation=45, ha='right')
+            ax[idx].set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
+            ax[idx].set_ylabel('Mean Dispersion Values\n(ns)')
+            ax[idx].legend(loc='best')
+            ax[idx].grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+# PlotError()
 # PlotDispersion()
 # PlotBoxPlots()
 # PlotHistrograma()
-PlotHistrogramas()
+# PlotHistrogramas()
+# PlotErros()
+PlotDispersions()
