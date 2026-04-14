@@ -15,7 +15,8 @@ plt.rcParams['savefig.directory'] = os.path.dirname(path)
 def load_data_for_occupation(occupation):
     """Carrega dados para uma ocupação específica"""
     data_dict = {}
-    for i in range(1, 8):
+    n_cnns = 8
+    for i in range(1, n_cnns+1):
         if i==1 or i==2 or i==4 or i==6 or i==7:
             results_ocupacao = 'results_occupation'
         else:
@@ -33,10 +34,10 @@ def load_data_for_occupation(occupation):
 
 def create_heatmap_data(data_dict):
     """Cria matriz para o heatmap: 7 CNNs x 4 métricas"""
-    cnn_names = [f'CNN-{i}' for i in range(1, 8)]
+    cnn_names = [f'CNN-{i}' for i in range(1, 9)]
     metrics = ['rms', 'r2', 'mae', 'medae']
-    
-    heatmap_data = np.zeros((7, 4))
+    n_cnns = 8
+    heatmap_data = np.zeros((n_cnns, 4))
     
     for i, cnn in enumerate(cnn_names):
         for j, metric in enumerate(metrics):

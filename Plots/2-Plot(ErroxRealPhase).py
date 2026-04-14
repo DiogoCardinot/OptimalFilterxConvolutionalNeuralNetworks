@@ -421,10 +421,11 @@ def PlotDispersions():
     plt.subplots_adjust(hspace=0.5)
     plt.show()
 
+
 # PlotError()
 # PlotDispersion()
 # PlotBoxPlots()
 # PlotHistrograma()
-# PlotHistrogramas()
-PlotErros()
-PlotDispersions()
+PlotHistrogramas()
+# PlotErros()
+# PlotDispersions()
