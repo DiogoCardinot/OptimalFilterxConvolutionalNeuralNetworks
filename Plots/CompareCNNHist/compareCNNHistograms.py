@@ -338,7 +338,81 @@ def PlotDispersions():
     plt.subplots_adjust(hspace=0.5)
     plt.show()
 
-PlotHistrogramasAmpitude()
-PlotHistrogramasPhase()
-PlotErros()
-PlotDispersions()
+def SaveDataMeanSTD():
+    occupation_new = [0,10,20,30,40,50,60,70,80,90,100]
+    CNN_paths = [3,5,8]
+    base_path = os.path.dirname(os.path.dirname(path))
+    
+    data_cnn_path = os.path.join(base_path, "RedeNeuralConvolucional")
+    CNN_Data = {}
+    for cnn in CNN_paths:
+        CNN_path =  os.path.join(data_cnn_path, f"CNN_{cnn}")
+        for occupation in occupation_new:
+            CNN_path_complete = os.path.join(CNN_path, f"results_ocupacao_{occupation}.npz")
+            CNN_data = np.load(CNN_path_complete)
+            #{(CNN architecture, occupation): (mean error, std error)}
+            CNN_Data[(cnn, occupation)] = (CNN_data['mean_error'], CNN_data['std_error'])
+
+    return CNN_Data
+
+
+def GetMeanSTDCNN(CNN_Data, cnn_target):
+    filtrado = {
+        occ: (mean, std)
+        for (cnn, occ), (mean, std) in CNN_Data.items()
+        if cnn == cnn_target
+    }
+
+    occupations = list(filtrado.keys())
+    means = [filtrado[o][0] for o in occupations]
+    stds  = [filtrado[o][1] for o in occupations]
+
+    return occupations, means, stds
+
+
+def PlotMeanSTD():
+    CNN_Data = SaveDataMeanSTD()
+
+    occupations_CNN3, means_CNN3, stds_CNN3 = GetMeanSTDCNN(CNN_Data, 3)
+    occupations_CNN5, means_CNN5, stds_CNN5 = GetMeanSTDCNN(CNN_Data, 5)
+    occupations_CNN8, means_CNN8, stds_CNN8 = GetMeanSTDCNN(CNN_Data, 8)
+    total_inches_image = 6.32
+    fontSize = 24
+    cnn8_color ="#006130"
+    fig, ax = plt.subplots(2, 1, figsize=(total_inches_image, 4), constrained_layout=True)
+    ax = ax.flatten()
+
+    x = occupations_CNN8
+    y = means_CNN8
+    yerr = stds_CNN8
+
+    ax[0].errorbar(occupations_CNN5, means_CNN5, yerr=stds_CNN5, fmt='s', capsize=3, color="#1A1A1A", label='CNN-5', zorder=1)
+    ax[0].plot(x, y, linestyle='dashed', marker='*', color=cnn8_color, label='CNN-8', zorder=10)
+    for i, (xi, yi, err) in enumerate(zip(x, y, yerr)):
+        ax[0].plot([xi, xi], [yi - err, yi + err], linestyle='dotted', color=cnn8_color, linewidth=2)
+        ax[0].plot([xi - 0.2, xi + 0.2], [yi - err, yi - err], color=cnn8_color, linewidth=2)
+        ax[0].plot([xi - 0.2, xi + 0.2], [yi + err, yi + err], color=cnn8_color, linewidth=2)
+    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-8)
+    ax[0].set_ylabel("Mean values\n(ADC counts)", fontsize= fontSize-8)
+    ax[0].legend(loc='best')
+    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-8)
+    ax[0].set_ylabel("Mean values\n(ADC counts)", fontsize= fontSize-8)
+    ax[0].legend(loc='best')
+
+    ax[1].errorbar(occupations_CNN3, means_CNN3, yerr=stds_CNN3, fmt='s', capsize=3, color='#B0B0B0', label='CNN-3', zorder=0)
+    ax[1].plot(x, y, linestyle='dashed', marker='*', color=cnn8_color, label='CNN-8', zorder=10)
+    for i, (xi, yi, err) in enumerate(zip(x, y, yerr)):
+        ax[1].plot([xi, xi], [yi - err, yi + err], linestyle='dotted', color=cnn8_color, linewidth=2)
+        ax[1].plot([xi - 0.2, xi + 0.2], [yi - err, yi - err], color=cnn8_color, linewidth=2)
+        ax[1].plot([xi - 0.2, xi + 0.2], [yi + err, yi + err], color=cnn8_color, linewidth=2)
+    ax[1].set_xlabel("Occupancy (%)", fontsize= fontSize-8)
+    ax[1].set_ylabel("Mean values\n(ADC counts)", fontsize= fontSize-8)
+    ax[1].legend(loc='best')
+
+    plt.show()
+
+# PlotHistrogramasAmpitude()
+# PlotHistrogramasPhase()
+# PlotErros()
+# PlotDispersions()
+PlotMeanSTD()
