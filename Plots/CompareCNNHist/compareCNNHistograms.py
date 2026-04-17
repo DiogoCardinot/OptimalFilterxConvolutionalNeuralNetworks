@@ -304,8 +304,9 @@ def PlotDispersions():
             ax[idx].plot(range(len(labels_real_amplitude)), desvios_real_amplitude, linestyle=':', marker='*', color=real_amplitude_color)
             ax[idx].set_xticks(range(len(labels_cnn8)))
             ax[idx].set_xticklabels(labels_cnn8, rotation=45, ha='right',fontsize=fontSize-17)
+            ax[idx].tick_params(axis='y', which='major', labelsize=14)
             ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
-            ax[idx].set_xlabel(f'Real Amplitude(ADC Count)', fontsize = fontSize-8)
+            ax[idx].set_xlabel(f'Real Amplitude(ADC Counts)', fontsize = fontSize-8)
             ax[idx].set_ylabel('Mean Dispersion Values\nPhase Estimation (ns)', fontsize = fontSize-8)
             ax[idx].grid(True, alpha=0.3)
     handles = []
@@ -414,5 +415,5 @@ def PlotMeanSTD():
 # PlotHistrogramasAmpitude()
 # PlotHistrogramasPhase()
 # PlotErros()
-# PlotDispersions()
-PlotMeanSTD()
+PlotDispersions()
+# PlotMeanSTD()
