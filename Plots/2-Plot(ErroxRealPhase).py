@@ -424,6 +424,99 @@ def PlotDispersions():
     plt.subplots_adjust(hspace=0.5)
     plt.show()
 
+def filtrar_ate_750(labels, desvios, limite=750):
+    indices = [i for i, label in enumerate(labels) if float(label.split(' - ')[1]) <= limite]
+    return [labels[i] for i in indices], [desvios[i] for i in indices]
+
+
+def PlotDispersions1():
+    ocupacoes = [10,50,80,100]
+    total_inches_image = 6.32
+    fontSize = 24
+    fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
+    ax = ax.flatten()
+    of_color = '#9900ff'
+    real_amplitude_color = "#FA3232"
+
+    for idx, ocupacao in enumerate(ocupacoes):
+        if ocupacao == 10 or ocupacao==50:
+            CNN = 5
+            cnn_color = "#1A1A1A"
+        elif ocupacao==80 or ocupacao==100:
+            CNN=3
+            cnn_color = "#B0B0B0"
+
+        # OF
+        data_of_path = os.path.join(path, 'Dados', "OF_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
+        data_of = np.load(data_of_path, allow_pickle=True)
+        stats_por_intervalo_of = data_of['stats_por_intervalo'].item()
+        stats_por_intervalo_of_amplitude = data_of['stats_por_intervalo_amplitude'].item()
+        # # CNN
+        data_cnn_path = os.path.join(path, "Dados", "CNN_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'CNN_{CNN}', f'errorxreal_{ocupacao}.npz')
+        data_cnn = np.load(data_cnn_path, allow_pickle=True)
+        stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
+        stats_por_intervalo_cnn_amplitude = data_cnn['stats_por_intervalo_amplitude'].item()
+
+        # Real Amplitude
+        data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
+        data_real_amplitude = np.load(data_real_amplitude_path, allow_pickle=True)
+        stats_por_intervalo_real_amplitude = data_real_amplitude['stats_por_intervalo'].item()
+        stats_por_intervalo_real_amplitude_ = data_real_amplitude['stats_por_intervalo_amplitude'].item()
+        
+        if stats_por_intervalo_of_amplitude and stats_por_intervalo_cnn_amplitude and stats_por_intervalo_real_amplitude_:
+            desvios_of = [stats['std'] for stats in stats_por_intervalo_of_amplitude.values()]
+            labels_of = list(stats_por_intervalo_of_amplitude.keys())
+
+            desvios_cnn = [stats['std'] for stats in stats_por_intervalo_cnn_amplitude.values()]
+            labels_cnn = list(stats_por_intervalo_cnn_amplitude.keys())
+
+            desvios_real_amplitude = [stats['std'] for stats in stats_por_intervalo_real_amplitude_.values()]
+            labels_real_amplitude = list(stats_por_intervalo_real_amplitude_.keys())
+
+            labels_of, desvios_of = filtrar_ate_750(labels_of, desvios_of)
+            labels_cnn, desvios_cnn = filtrar_ate_750(labels_cnn, desvios_cnn)
+            labels_real_amplitude, desvios_real_amplitude = filtrar_ate_750(labels_real_amplitude, desvios_real_amplitude)
+
+            ax[idx].plot(range(len(labels_of)), desvios_of, marker='o',   color=of_color)
+            ax[idx].plot(range(len(labels_cnn)), desvios_cnn, marker='o',   color=cnn_color)
+            ax[idx].plot(range(len(labels_real_amplitude)), desvios_real_amplitude, linestyle=':', marker='*', color=real_amplitude_color)
+            ax[idx].set_xticks(range(len(labels_of)))
+            ax[idx].set_xticklabels(labels_of, rotation=25, ha='right',fontsize=fontSize-12)
+            ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
+            ax[idx].tick_params(axis='y', which='major', labelsize=14)
+
+            ax[idx].set_xlabel(f'Real Amplitude (ADC Counts)', fontsize = fontSize-8)
+            ax[idx].set_ylabel('Mean Dispersion Values\nPhase Estimation (ns)', fontsize = fontSize-8)
+            ax[idx].grid(True, alpha=0.3)
+    handles = []
+    labels = []
+    
+    handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
+    labels.append('OF')
+    handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle=':', marker='*',))
+    labels.append('Real Amplitude')
+    cnn_types = ['CNN-3', 'CNN-5']
+    unique_cnns = list(set(cnn_types))
+    for cnn_type in unique_cnns:
+        if cnn_type == "CNN-5":
+            color = "#1A1A1A"
+        else: 
+            color = "#B0B0B0"
+       
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
+
+    fig.legend(
+        handles, labels,
+        loc='upper center',
+        ncol=len(handles),
+        bbox_to_anchor=(0.5, 0.9999),
+        frameon=False,
+        fontsize=fontSize
+    )
+    # plt.tight_layout()
+    plt.subplots_adjust(hspace=0.5, top=0.90)
+    plt.show()
 
 # PlotError()
 # PlotDispersion()
@@ -431,4 +524,5 @@ def PlotDispersions():
 # PlotHistrograma()
 # PlotHistrogramas()
 # PlotErros()
-PlotDispersions()
+# PlotDispersions()
+PlotDispersions1()
