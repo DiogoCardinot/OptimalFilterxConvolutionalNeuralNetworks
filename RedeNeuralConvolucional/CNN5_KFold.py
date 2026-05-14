@@ -135,7 +135,9 @@ for ocupacao in ocupacoes:
     }
     stats_ocupacoes[ocupacao] = {
         'mean_error': 0.0,    
-        'std_error': 0.0,    
+        'std_mean_error': 0.0,
+        'std_error': 0.0,
+        'std_std_error': 0.0,    
         'rms': 0.0,
         'r2': 0.0,
         'corr_mean': 0.0,
@@ -256,8 +258,10 @@ for ocupacao in ocupacoes:
     if len(stats_ocupacoes[ocupacao]['mean_folds']) > 0:
         # Média das médias dos folds
         stats_ocupacoes[ocupacao]['mean_error'] = np.mean(stats_ocupacoes[ocupacao]['mean_folds'])
+        stats_ocupacoes[ocupacao]['std_mean_error'] = np.std(stats_ocupacoes[ocupacao]['mean_folds'])
         # Std dos stds dos folds (mais robusto)
         stats_ocupacoes[ocupacao]['std_error'] = np.mean(stats_ocupacoes[ocupacao]['std_folds'])
+        stats_ocupacoes[ocupacao]['std_std_error'] = np.std(stats_ocupacoes[ocupacao]['std_folds'])
         stats_ocupacoes[ocupacao]['rms'] = np.mean(stats_ocupacoes[ocupacao]['rms_folds'])
         stats_ocupacoes[ocupacao]['r2'] = np.mean(stats_ocupacoes[ocupacao]['r2_folds'])
         stats_ocupacoes[ocupacao]['corr_mean'] = np.mean(stats_ocupacoes[ocupacao]['corr_folds'])
@@ -302,8 +306,10 @@ for ocupacao in ocupacoes:
             real_amplitude=np.array(results_ocupacoes[ocupacao]['real_amplitude']),
             estimated_amplitude=np.array(results_ocupacoes[ocupacao]['estimated_amplitude']),
             indices=indices_locais,
-            mean_error=stats_ocupacoes[ocupacao]['mean_error'], 
+            mean_error=stats_ocupacoes[ocupacao]['mean_error'],
+            std_mean_error=stats_ocupacoes[ocupacao]['std_mean_error'], 
             std_error=stats_ocupacoes[ocupacao]['std_error'],
+            std_std_error=stats_ocupacoes[ocupacao]['std_std_error'],
             rms =  stats_ocupacoes[ocupacao]['rms'] ,
             r2 = stats_ocupacoes[ocupacao]['r2'],
             corr_mean = stats_ocupacoes[ocupacao]['corr_mean'],
