@@ -9,7 +9,7 @@ base_path = os.path.dirname(os.path.dirname(path))
 ocupacoes = [10,50,80,100]
 n_janelamento = 7
 
-def DefinePath(ocupacao):
+def DefinePath_CNN(ocupacao):
     if ocupacao == 10 or ocupacao == 50:
         CNN = 5
         
@@ -24,18 +24,33 @@ def DefinePath(ocupacao):
 
     return CNN_data_path_amplitude, CNN_data_amplitude, CNN_data_fase, cnn_type
 
-def ImprimeMetricas():
+def ImprimeMetricas_Amplitude():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
     for ocupacao in ocupacoes:
         OF_data_path = os.path.join(of_data_parcial, f"results_occupation_{ocupacao}.npz")
         OF_data = np.load(OF_data_path)
-        _, CNN_data, _, cnn_type = DefinePath(ocupacao)
-        print(f"\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
+        _, CNN_data_amplitude, _, cnn_type = DefinePath_CNN(ocupacao)
+        print(f"{30*'-'} AMPLITUDE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
         print("| Metrica       | RMS      | R^2       | MAE      | MedAE    |")
         print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|")
         print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} |")
-        print(f"| {cnn_type}           | {CNN_data['rms']:.6f} | {CNN_data['r2']:.6f} | {CNN_data['mae']:.6f} | {CNN_data['medae']:.6f} |")
+        print(f"| {cnn_type}           | {CNN_data_amplitude['rms']:.6f} | {CNN_data_amplitude['r2']:.6f} | {CNN_data_amplitude['mae']:.6f} | {CNN_data_amplitude['medae']:.6f} |")
         print(100*"=")
+
+
+def ImprimeMetricas_Fase():
+    of_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_OF", f'janelamento_{n_janelamento}')
+    for ocupacao in ocupacoes:
+        OF_data_path = os.path.join(of_data_parcial, f"phase_of_occupation_{ocupacao}.npz")
+        OF_data = np.load(OF_data_path)
+        _, _, CNN_data_fase, cnn_type = DefinePath_CNN(ocupacao)
+        print(f"{30*'-'} FASE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
+        print("| Metrica       | RMS      | R^2       | MAE      | MedAE    |")
+        print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|")
+        print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} |")
+        print(f"| {cnn_type}           | {CNN_data_fase['rms']:.6f} | {CNN_data_fase['r2']:.6f} | {CNN_data_fase['mae']:.6f} | {CNN_data_fase['medae']:.6f} |")
+        print(100*"=")
+
 
 def MelhoriasCNN():
     of_data_parcial_amplitude = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
@@ -57,7 +72,7 @@ def MelhoriasCNN():
         OF_data_path_fase = os.path.join(of_data_parcial_fase, f"phase_of_occupation_{ocupacao}.npz")
         OF_data_fase = np.load(OF_data_path_fase)
 
-        _, CNN_data_amplitude, CNN_data_fase, cnn_type = DefinePath(ocupacao)
+        _, CNN_data_amplitude, CNN_data_fase, cnn_type = DefinePath_CNN(ocupacao)
         
         # AMPLITUDE
         # std_error : media do desvio padrao do erro de estimacao para os 100 folds
@@ -104,6 +119,7 @@ def MelhoriasCNN():
     # print(r"Amplitude STD: $\frac{\overline{\sigma}_{OF,amp} - \overline{\sigma}_{CNN,amp}}{\overline{\sigma}_{OF,amp}} \cdot 100$")
     # print(r"Fase RMS:      $\frac{\overline{RMS}_{OF,fase} - \overline{RMS}_{CNN,fase}}{\overline{RMS}_{OF,fase}} \cdot 100$")
     # print(r"Fase STD:      $\frac{\overline{\sigma}_{OF,fase} - \overline{\sigma}_{CNN,fase}}{\overline{\sigma}_{OF,fase}} \cdot 100$")
+    print("\n\n")
     print(r"Amplitude RMS: ( (RMS-OF-amp - RMS-CNN-amp) / RMS-OF-amp ) * 100")
     print(r"Amplitude STD: ( (STD-OF-amp - STD-CNN-amp) / STD-OF-amp ) * 100")
     print(r"Fase RMS: ( (RMS-OF-fase - RMS-CNN-fase) / RMS-OF-fase ) * 100")
@@ -114,5 +130,7 @@ def MelhoriasCNN():
     print(f"Melhoria CNN vs OF - Fase STD:      {melhoria_fase_std:.1f}%")
 
 
-# ImprimeMetricas()
+ImprimeMetricas_Amplitude()
+ImprimeMetricas_Fase()
+
 MelhoriasCNN()
