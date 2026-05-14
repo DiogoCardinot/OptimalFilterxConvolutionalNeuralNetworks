@@ -200,6 +200,6 @@ def PlotHistrogramas():
     plt.show()
 
 # PlotErrors()
-PlotDispersion()
+# PlotDispersion()
 # PlotBoxPlots()
 # PlotHistrogramas()
