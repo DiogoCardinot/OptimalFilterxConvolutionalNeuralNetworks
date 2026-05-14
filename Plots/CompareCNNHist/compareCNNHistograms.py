@@ -167,7 +167,6 @@ def PlotHistrogramasPhase():
     plt.subplots_adjust(hspace=0.4)
     plt.show()
 
-
 def PlotErros():
     ocupacoes = [10,50,80,100]
     total_inches_image = 6.32
@@ -251,7 +250,6 @@ def PlotErros():
     # plt.tight_layout()
     plt.subplots_adjust(hspace=0.5)
     plt.show()
-
 
 def PlotDispersions():
     ocupacoes = [10,50,80,100]
@@ -394,10 +392,9 @@ def PlotMeanSTD():
         ax[0].plot([xi - 0.2, xi + 0.2], [yi - err, yi - err], color=cnn8_color, linewidth=2)
         ax[0].plot([xi - 0.2, xi + 0.2], [yi + err, yi + err], color=cnn8_color, linewidth=2)
     ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-8)
-    ax[0].set_ylabel("Mean values\n(ADC counts)", fontsize= fontSize-8)
+    ax[0].set_ylabel("Mean values\n(ADC counts)", fontsize= fontSize-12)
     ax[0].legend(loc='best')
-    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-8)
-    ax[0].set_ylabel("Mean values\n(ADC counts)", fontsize= fontSize-8)
+    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-12)
     ax[0].legend(loc='best')
 
     ax[1].errorbar(occupations_CNN3, means_CNN3, yerr=stds_CNN3, fmt='s', capsize=3, color='#B0B0B0', label='CNN-3', zorder=0)
@@ -406,8 +403,8 @@ def PlotMeanSTD():
         ax[1].plot([xi, xi], [yi - err, yi + err], linestyle='dotted', color=cnn8_color, linewidth=2)
         ax[1].plot([xi - 0.2, xi + 0.2], [yi - err, yi - err], color=cnn8_color, linewidth=2)
         ax[1].plot([xi - 0.2, xi + 0.2], [yi + err, yi + err], color=cnn8_color, linewidth=2)
-    ax[1].set_xlabel("Occupancy (%)", fontsize= fontSize-8)
-    ax[1].set_ylabel("Mean values\n(ADC counts)", fontsize= fontSize-8)
+    ax[1].set_xlabel("Occupancy (%)", fontsize= fontSize-12)
+    ax[1].set_ylabel("Mean values\n(ADC counts)", fontsize= fontSize-12)
     ax[1].legend(loc='best')
 
     plt.show()
@@ -415,5 +412,5 @@ def PlotMeanSTD():
 # PlotHistrogramasAmpitude()
 # PlotHistrogramasPhase()
 # PlotErros()
-PlotDispersions()
-# PlotMeanSTD()
+# PlotDispersions()
+PlotMeanSTD()

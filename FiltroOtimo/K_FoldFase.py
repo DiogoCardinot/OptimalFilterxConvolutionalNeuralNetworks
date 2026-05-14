@@ -105,6 +105,7 @@ for ocupacao in ocupacoes:
     real_amplitude_phase_error = real_amplitude_estimated_phase - real_phase_aligned
 
     rms_of = np.sqrt(np.mean(of_phase_error**2))
+    std_of = np.std(of_phase_error)
     mae_of = np.mean(np.abs(of_phase_error))
     medae_of = np.median(np.abs(of_phase_error))
 
@@ -116,6 +117,7 @@ for ocupacao in ocupacoes:
 
 
     rms_cnn = np.sqrt(np.mean(cnn_phase_error**2))
+    std_cnn = np.std(cnn_phase_error)
     mae_cnn = np.mean(np.abs(cnn_phase_error))
     medae_cnn = np.median(np.abs(cnn_phase_error))
 
@@ -126,6 +128,7 @@ for ocupacao in ocupacoes:
     corr_cnn = np.corrcoef(real_phase_aligned, cnn_estimated_phase)[0, 1] if len(real_phase_aligned) > 1 else 0
 
     rms_real_amplitude = np.sqrt(np.mean(real_amplitude_phase_error**2))
+    std_real_amplitude = np.std(real_amplitude_phase_error)
     mae_real_amplitude = np.mean(np.abs(real_amplitude_phase_error))
     medae_real_amplitude = np.median(np.abs(real_amplitude_phase_error))
 
@@ -149,6 +152,7 @@ for ocupacao in ocupacoes:
         real_amplitude = real_amplitude_aligned,
         indices=common_indices,
         rms=rms_of,
+        std=std_of,
         mae=mae_of,
         medae=medae_of,
         r2=r2_of,
@@ -170,6 +174,7 @@ for ocupacao in ocupacoes:
         real_amplitude = real_amplitude_aligned,
         indices=common_indices,
         rms=rms_cnn,
+        std=std_cnn,
         mae=mae_cnn,
         medae=medae_cnn,
         r2=r2_cnn,
@@ -191,6 +196,7 @@ for ocupacao in ocupacoes:
         real_amplitude = real_amplitude_aligned,
         indices=common_indices,
         rms=rms_real_amplitude,
+        std=std_real_amplitude,
         mae=mae_real_amplitude,
         medae=medae_real_amplitude,
         r2=r2_real_amplitude,
