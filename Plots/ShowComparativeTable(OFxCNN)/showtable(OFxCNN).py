@@ -40,15 +40,20 @@ def ImprimeMetricas_Amplitude():
 
 def ImprimeMetricas_Fase():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_OF", f'janelamento_{n_janelamento}')
+    real_amplitude_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
     for ocupacao in ocupacoes:
         OF_data_path = os.path.join(of_data_parcial, f"phase_of_occupation_{ocupacao}.npz")
         OF_data = np.load(OF_data_path)
+        Real_Amplitude_data_path = os.path.join(real_amplitude_data_parcial, f"phase_real_amplitude_occupation_{ocupacao}.npz")
+        Real_Amplitude_data = np.load(Real_Amplitude_data_path)
+
         _, _, CNN_data_fase, cnn_type = DefinePath_CNN(ocupacao)
         print(f"{30*'-'} FASE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
         print("| Metrica       | RMS      | R^2       | MAE      | MedAE    |")
         print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|")
         print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} |")
         print(f"| {cnn_type}           | {CNN_data_fase['rms']:.6f} | {CNN_data_fase['r2']:.6f} | {CNN_data_fase['mae']:.6f} | {CNN_data_fase['medae']:.6f} |")
+        print(f"| Real Amplitude           | {Real_Amplitude_data['rms']:.6f} | {Real_Amplitude_data['r2']:.6f} | {Real_Amplitude_data['mae']:.6f} | {Real_Amplitude_data['medae']:.6f} |")
         print(100*"=")
 
 
@@ -130,7 +135,7 @@ def MelhoriasCNN():
     print(f"Melhoria CNN vs OF - Fase STD:      {melhoria_fase_std:.1f}%")
 
 
-ImprimeMetricas_Amplitude()
-ImprimeMetricas_Fase()
+# ImprimeMetricas_Amplitude()
+# ImprimeMetricas_Fase()
 
 MelhoriasCNN()
