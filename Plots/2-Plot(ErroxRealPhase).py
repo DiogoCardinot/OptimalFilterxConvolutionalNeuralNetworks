@@ -11,6 +11,8 @@ ocupacoes = [0]
 CNN= 3
 
 plt.rcParams['savefig.directory'] = os.path.dirname(path)
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 
 def PlotError():
@@ -217,8 +219,8 @@ def PlotHistrogramas():
         ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2)
         ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
-        ax[idx].set_xlabel(f'Erro de estimação da fase (ns)', fontsize=fontSize)
-        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
+        ax[idx].set_xlabel(f'Phase estimation error (ns)', fontsize=fontSize)
+        ax[idx].set_ylabel('Number of events', fontsize=fontSize)
         ax[idx].grid(True, alpha=0.3)
         ax[idx].tick_params(axis='both', which='major', labelsize=14)
         formatter = ScalarFormatter(useMathText=False)
@@ -520,9 +522,8 @@ def PlotDispersions1():
 
 # PlotError()
 # PlotDispersion()
-# PlotBoxPlots()
 # PlotHistrograma()
-# PlotHistrogramas()
+PlotHistrogramas()
 # PlotErros()
 # PlotDispersions()
 PlotDispersions1()

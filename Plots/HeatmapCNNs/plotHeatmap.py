@@ -6,16 +6,20 @@ from matplotlib.colors import LinearSegmentedColormap
 occupations = [10,50,80,100]
 fontSize = 30
 
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 base_path = os.path.dirname(os.path.dirname(path))
 plt.rcParams['savefig.directory'] = os.path.dirname(path)
 
+number_cnns = 7
 
 def load_data_for_occupation(occupation):
     """Carrega dados para uma ocupação específica"""
     data_dict = {}
-    n_cnns = 8
+    n_cnns = number_cnns
     for i in range(1, n_cnns+1):
         if i==1 or i==2 or i==4 or i==6 or i==7:
             results_ocupacao = 'results_occupation'
@@ -34,9 +38,9 @@ def load_data_for_occupation(occupation):
 
 def create_heatmap_data(data_dict):
     """Cria matriz para o heatmap: 7 CNNs x 4 métricas"""
-    cnn_names = [f'CNN-{i}' for i in range(1, 9)]
+    cnn_names = [f'CNN-{i}' for i in range(1, number_cnns+1)]
     metrics = ['rms', 'r2', 'mae', 'medae']
-    n_cnns = 8
+    n_cnns = number_cnns
     heatmap_data = np.zeros((n_cnns, 4))
     
     for i, cnn in enumerate(cnn_names):

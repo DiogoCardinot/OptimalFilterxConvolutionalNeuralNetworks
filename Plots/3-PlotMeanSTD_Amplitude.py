@@ -7,7 +7,8 @@ root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
 n_janelamento = 7
-
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 def SaveDataMeanSTD_CNN(metric):
     occupation_new = [0,10,20,30,40,50,60,70,80,90,100]
@@ -96,9 +97,9 @@ def Plot_CNNxOF(metric):
     if metric=='mean':
         y_label = 'Mean values\n(ADC counts)'
     elif metric=='std':
-        y_label = 'Mean dispersion values\n(ADC counts)'
+        y_label = 'Mean dispersion\nvalues (ADC counts)'
         
-    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-8)
+    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-12)
     ax[0].set_ylabel(y_label, fontsize= fontSize-12)
     ax[0].legend(loc='best')
     ax[0].legend(loc='best')
@@ -141,9 +142,9 @@ def Plot_CNN(metric):
     if metric=='mean':
         y_label = 'Mean values\n(ADC counts)'
     elif metric=='std':
-        y_label = 'Mean dispersion values\n(ADC counts)'
+        y_label = 'Mean dispersion\nvalues (ADC counts)'
         
-    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-8)
+    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-12)
     ax[0].set_ylabel(y_label, fontsize= fontSize-12)
     ax[0].legend(loc='best')
     ax[0].legend(loc='best')
@@ -165,8 +166,8 @@ def Plot_CNN(metric):
     plt.show()
 
 
-# Plot_CNNxOF(metric='mean')
-# Plot_CNNxOF(metric='std')
+Plot_CNNxOF(metric='mean')
+Plot_CNNxOF(metric='std')
 
 Plot_CNN(metric="mean")
 Plot_CNN(metric="std")
