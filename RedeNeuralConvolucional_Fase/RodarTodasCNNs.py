@@ -2,8 +2,8 @@ import subprocess
 import sys
 import os
 import time
-import numpy as np
 from datetime import datetime
+import pickle
 
 scripts = [
     "CNN1_KFold.py",
@@ -70,11 +70,6 @@ total_elapsed = (tempo_final_geral - tempo_inicial_geral).total_seconds()
 tempo_medio   = total_elapsed / len(scripts)
 scripts_com_erro = [s for s, ok in zip(cnn_scripts, cnn_sucesso) if not ok]
 
-
-output_path=os.path.join(path, "TimeLogs")
-os.makedirs(output_path, exist_ok=True)
-output_file = os.path.join(output_path, 'time_logs.npz')
-
 def formatar_tempo(segundos):
     h = int(segundos // 3600)
     m = int((segundos % 3600) // 60)
@@ -121,7 +116,12 @@ logs = montar_logs(
     total_elapsed, tempo_medio, scripts_com_erro
 )
 
-np.savez_compressed(output_file, logs=np.array(logs, dtype=object))
+output_path=os.path.join(path, "TimeLogs")
+os.makedirs(output_path, exist_ok=True)
+output_file = os.path.join(output_path, 'time_logs.pkl')
+
+with open(output_file, 'wb') as f:
+    pickle.dump(logs, f)
 
 
 # ----------------------------- Resumo final -------------------------------------------
