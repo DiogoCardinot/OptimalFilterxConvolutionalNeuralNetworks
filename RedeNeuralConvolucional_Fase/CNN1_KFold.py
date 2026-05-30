@@ -50,7 +50,7 @@ K_FOLDS = 100
 VALIDATION_SPLIT = 0.1
 RANDOM_STATE = 42
 BATCH_SIZE = 4096  
-EPOCHS =  100
+EPOCHS =  15
 
 # ----------------------------- CNN configuration ------------------------------------------
 def criar_cnn_config_base():
