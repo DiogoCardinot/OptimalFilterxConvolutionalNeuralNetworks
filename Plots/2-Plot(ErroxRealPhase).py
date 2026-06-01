@@ -197,9 +197,11 @@ def PlotHistrogramas():
         if ocupacao == 10 or ocupacao==50:
             CNN = 5
             cnn_color = "#1A1A1A"
+            cnn_estimated_color = "pink"
         elif ocupacao==80 or ocupacao==100:
             CNN=3
             cnn_color = "#B0B0B0"
+            cnn_estimated_color = "brown"
 
         # OF
         of_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_OF', f'janelamento_{n_janelamento}',f'phase_of_occupation_{ocupacao}.npz')      
@@ -209,6 +211,10 @@ def PlotHistrogramas():
         cnn_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_CNN', f'janelamento_{n_janelamento}',f'CNN_{CNN}',f'phase_cnn_occupation_{ocupacao}.npz')      
         cnn_data = np.load(cnn_data_path)
         cnn_error = cnn_data['error']
+        # CNN Fase Estimada
+        cnn_data_path_estimated = os.path.join(dataset_path, f'RedeNeuralConvolucional_Fase', f'CNN_{CNN}', f'janelamento_{n_janelamento}', f'results_ocupacao_{ocupacao}.npz')      
+        cnn_data_estimated = np.load(cnn_data_path_estimated)
+        cnn_error_estimated = cnn_data_estimated['error']
         # Real Amplitude
         real_amplitude_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_RealAmplitude', f'janelamento_{n_janelamento}',f'phase_real_amplitude_occupation_{ocupacao}.npz')      
         real_amplitude_data = np.load(real_amplitude_data_path)
@@ -217,10 +223,11 @@ def PlotHistrogramas():
         bins = 150
         ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2)
         ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2)
+        ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
         ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
-        ax[idx].set_xlabel(f'Phase estimation error (ns)', fontsize=fontSize)
-        ax[idx].set_ylabel('Number of events', fontsize=fontSize)
+        ax[idx].set_xlabel(f'Erro de estimação da fase (ns)', fontsize=fontSize)
+        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
         ax[idx].grid(True, alpha=0.3)
         ax[idx].tick_params(axis='both', which='major', labelsize=14)
         formatter = ScalarFormatter(useMathText=False)
@@ -236,13 +243,24 @@ def PlotHistrogramas():
     labels.append('OF')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
     labels.append('Real Amplitude')
-    cnn_types = ['CNN-3', 'CNN-5']
+    cnn_types = [r'CNN-3', r'CNN-5']
     unique_cnns = list(set(cnn_types))
     for cnn_type in unique_cnns:
         if cnn_type == "CNN-5":
             color = "#1A1A1A"
         else: 
             color = "#B0B0B0"
+       
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
+    
+    cnn_estimated_types = ['CNN-3', 'CNN-5']
+    unique_estimated_cnns = list(set(cnn_estimated_types))
+    for cnn_type in unique_estimated_cnns:
+        if cnn_type == "CNN-5":
+            color = "pink"
+        else: 
+            color = "brown"
        
         handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
         labels.append(cnn_type)
@@ -458,7 +476,8 @@ def PlotDispersions1():
         data_cnn = np.load(data_cnn_path, allow_pickle=True)
         stats_por_intervalo_cnn = data_cnn['stats_por_intervalo'].item()
         stats_por_intervalo_cnn_amplitude = data_cnn['stats_por_intervalo_amplitude'].item()
-
+        # CNN Estimada
+        
         # Real Amplitude
         data_real_amplitude_path = os.path.join(path, "Dados", "RealAmplitude_ErrorxRealPhase", f'janelamento_{n_janelamento}', f'errorxreal_{ocupacao}.npz')
         data_real_amplitude = np.load(data_real_amplitude_path, allow_pickle=True)
@@ -523,7 +542,7 @@ def PlotDispersions1():
 # PlotError()
 # PlotDispersion()
 # PlotHistrograma()
-PlotHistrogramas()
+# PlotHistrogramas()
 # PlotErros()
 # PlotDispersions()
 PlotDispersions1()
