@@ -47,7 +47,7 @@ def PlotError():
 
         #     ax1.plot(range(len(labels_of)), medias_of, label='OF', marker='o', color='purple')
         #     ax1.plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color='black')
-        #     # ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
+        #     # ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='deepskyblue')
         #     ax1.set_xticks(range(len(labels_of)))
         #     ax1.set_xticklabels(labels_of, rotation=45, ha='right')
         #     ax1.set_xlabel(f'Real Phase(ns) - Occupancy {ocupacao}%')
@@ -66,7 +66,7 @@ def PlotError():
 
             ax1.plot(range(len(labels_of)), medias_of, label='OF', marker='o', color='purple')
             ax1.plot(range(len(labels_cnn)), medias_cnn, label=f'CNN {CNN}', marker='o', color='black')
-            ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='blue')
+            ax1.plot(range(len(labels_real_amplitude)), medias_real_amplitude, label='Real Amplitude', marker='o', color='deepskyblue')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
@@ -109,7 +109,7 @@ def PlotDispersion():
 
             ax1.plot(range(len(labels_of)), desvios_of, marker='o',  label='OF', color='purple')
             ax1.plot(range(len(labels_cnn)), desvios_cnn, marker='o',  label=f'CNN {CNN}', color='black')
-            ax1.plot(range(len(labels_real_amplitude)), desvios_real_amplitude, marker='o',  label='Real Amplitude', color='blue')
+            ax1.plot(range(len(labels_real_amplitude)), desvios_real_amplitude, marker='o',  label='Real Amplitude', color='deepskyblue')
             ax1.set_xticks(range(len(labels_of)))
             ax1.set_xticklabels(labels_of, rotation=45, ha='right')
             ax1.set_xlabel(f'Real Amplitude(ADC Count) - Occupancy {ocupacao}%')
@@ -172,7 +172,7 @@ def PlotHistrograma():
         bins = 150
         ax1.hist(of_error, bins = bins, alpha=0.7,histtype='step', color='purple', label='OF', linewidth=1)
         ax1.hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color='black', label=f'CNN {CNN}', linewidth=1)
-        ax1.hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color='blue', label='Real Amplitude', linewidth=1)
+        ax1.hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color='deepskyblue', label='Real Amplitude', linewidth=1)
 
         ax1.set_xlabel(f'Phase estimation error (ns) - Occupancy {ocupacao}%')
         ax1.set_ylabel('Number of Events')
@@ -197,11 +197,11 @@ def PlotHistrogramas():
         if ocupacao == 10 or ocupacao==50:
             CNN = 5
             cnn_color = "#1A1A1A"
-            cnn_estimated_color = "pink"
+            cnn_estimated_color = "deepskyblue"
         elif ocupacao==80 or ocupacao==100:
             CNN=3
             cnn_color = "#B0B0B0"
-            cnn_estimated_color = "brown"
+            cnn_estimated_color = "darkorange"
 
         # OF
         of_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_OF', f'janelamento_{n_janelamento}',f'phase_of_occupation_{ocupacao}.npz')      
@@ -258,9 +258,9 @@ def PlotHistrogramas():
     unique_estimated_cnns = list(set(cnn_estimated_types))
     for cnn_type in unique_estimated_cnns:
         if cnn_type == "CNN-5":
-            color = "pink"
+            color = "deepskyblue"
         else: 
-            color = "brown"
+            color = "darkorange"
        
         handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
         labels.append(cnn_type)
@@ -542,7 +542,7 @@ def PlotDispersions1():
 # PlotError()
 # PlotDispersion()
 # PlotHistrograma()
-# PlotHistrogramas()
+PlotHistrogramas()
 # PlotErros()
 # PlotDispersions()
-PlotDispersions1()
+# PlotDispersions1()
