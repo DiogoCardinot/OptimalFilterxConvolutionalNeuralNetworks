@@ -162,4 +162,4 @@ def MelhoriasCNN():
 # ImprimeMetricas_Amplitude()
 
 ImprimeMetricas_Fase()
-MelhoriasCNN()
+# MelhoriasCNN()

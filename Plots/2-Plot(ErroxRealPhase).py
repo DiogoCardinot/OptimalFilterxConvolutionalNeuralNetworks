@@ -2,6 +2,9 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
+
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -183,7 +186,7 @@ def PlotHistrograma():
         plt.show()
 
 
-def PlotHistrogramas():
+def PlotHistrogramas(zoom):
     base_path = os.path.dirname(os.path.dirname(path))
     dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks")
     ocupacoes = [10,50,80,100]
@@ -236,6 +239,51 @@ def PlotHistrogramas():
         formatter.set_useOffset(True)
         ax[idx].yaxis.set_major_formatter(formatter)
         ax[idx].set_xlim(-500,500)
+        if zoom:
+            # Adicionando janelas de zoom
+            inset_axes_ax = inset_axes(
+                ax[idx], width="100%", height="100%",
+                loc="upper right",
+                bbox_to_anchor=(0.69, 0.17, 0.3, 0.8),
+                bbox_transform=ax[idx].transAxes
+            )
+            inset_axes_ax.tick_params(axis='both', colors="#333333")
+            inset_axes_ax.xaxis.label.set_color('#333333')
+            inset_axes_ax.yaxis.label.set_color('#333333')
+
+            formatter = ScalarFormatter(useMathText=False)
+            formatter.set_scientific(True)
+            formatter.set_powerlimits((0, 0))
+            formatter.set_useOffset(True)
+            inset_axes_ax.yaxis.set_major_formatter(formatter)
+
+            inset_axes_ax.hist(cnn_error_estimated, bins=bins, alpha=0.7, histtype='step', color=cnn_estimated_color, linewidth=2)
+
+            if idx==0:
+                x_inf_limite = -0.5
+                x_sup_limite = 0.5
+                y_inf_limite = 0
+                y_sup_limite = 1.75*10**6
+            elif idx==1:
+                x_inf_limite = -5
+                x_sup_limite = 5
+                y_inf_limite = 0
+                y_sup_limite = 7*10**5
+            elif idx==2:
+                x_inf_limite = -5
+                x_sup_limite = 5
+                y_inf_limite = 0
+                y_sup_limite = 2.5*10**5
+            elif idx==3:
+                x_inf_limite = -6
+                x_sup_limite = 6
+                y_inf_limite = 0
+                y_sup_limite = 2.5*10**4
+
+
+            inset_axes_ax.set_xlim([x_inf_limite, x_sup_limite])
+            inset_axes_ax.set_ylim([y_inf_limite, y_sup_limite])
+
     handles = []
     labels = []
     
@@ -542,7 +590,7 @@ def PlotDispersions1():
 # PlotError()
 # PlotDispersion()
 # PlotHistrograma()
-PlotHistrogramas()
+# PlotHistrogramas(zoom=True)
 # PlotErros()
 # PlotDispersions()
 # PlotDispersions1()
