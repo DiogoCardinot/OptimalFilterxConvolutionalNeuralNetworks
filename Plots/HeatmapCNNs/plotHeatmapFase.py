@@ -79,7 +79,7 @@ def plot_heatmaps_individual_colorbar():
                              color=text_color, fontsize=fontSize-6,
                              fontweight='bold')
         
-        axes[idx].set_title(f'Occupancy {occupation}%', fontsize=fontSize, fontweight='bold', pad=20)
+        axes[idx].set_title(f'Ocupação {occupation}%', fontsize=fontSize, fontweight='bold', pad=20)
         
         # Adicionar grid
         axes[idx].set_xticks(np.arange(-0.5, n_metrics, 1), minor=True)
@@ -88,7 +88,7 @@ def plot_heatmaps_individual_colorbar():
 
         cbar = plt.colorbar(im, ax=axes[idx], shrink=1.0, pad=0.02)
         cbar.ax.tick_params(labelsize=fontSize)
-        cbar.set_label('Metric magnitude', fontsize=fontSize-2, rotation=270, labelpad=25)
+        cbar.set_label('Magnitude', fontsize=fontSize-2, rotation=270, labelpad=25)
     
     plt.tight_layout()
     plt.show()

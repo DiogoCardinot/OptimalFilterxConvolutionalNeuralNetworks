@@ -229,8 +229,8 @@ def PlotHistrogramas(zoom):
         ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
         ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
-        ax[idx].set_xlabel(f'Erro de estimação da fase (ns)', fontsize=fontSize)
-        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
+        ax[idx].set_xlabel(f'Erro de estimação da fase (ns)', fontsize=fontSize-2)
+        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize-2)
         ax[idx].grid(True, alpha=0.3)
         ax[idx].tick_params(axis='both', which='major', labelsize=14)
         formatter = ScalarFormatter(useMathText=False)
@@ -291,10 +291,10 @@ def PlotHistrogramas(zoom):
     labels.append('OF')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
     labels.append('Real Amplitude')
-    cnn_types = [r'CNN-3', r'CNN-5']
+    cnn_types = [r'CNN-3*', r'CNN-5*']
     unique_cnns = list(set(cnn_types))
     for cnn_type in unique_cnns:
-        if cnn_type == "CNN-5":
+        if cnn_type == "CNN-5*":
             color = "#1A1A1A"
         else: 
             color = "#B0B0B0"
@@ -317,9 +317,9 @@ def PlotHistrogramas(zoom):
         handles, labels,
         loc='upper center',
         ncol=len(handles),
-        bbox_to_anchor=(0.5, 0.9999),
+        bbox_to_anchor=(0.49, 0.9999),
         frameon=False,
-        fontsize=fontSize
+        fontsize=fontSize-1
     )
     # plt.tight_layout()
     plt.subplots_adjust(hspace=0.4)
@@ -590,7 +590,7 @@ def PlotDispersions1():
 # PlotError()
 # PlotDispersion()
 # PlotHistrograma()
-# PlotHistrogramas(zoom=True)
+PlotHistrogramas(zoom=True)
 # PlotErros()
 # PlotDispersions()
 # PlotDispersions1()

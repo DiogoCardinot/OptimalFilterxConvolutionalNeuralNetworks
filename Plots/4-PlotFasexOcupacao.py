@@ -22,6 +22,7 @@ def PlotFaseDispersionOcupacao():
     real_amplitude_dispersions = []
     cnn3_estimated_dispersions = []
     cnn5_estimated_dispersions = []
+    fontSize = 24
     for ocupacao in ocupacoes:
         # PATHS
         # TEM QUE PEGAR DA PASTA DO FILTRO OTIMO..;
@@ -64,15 +65,16 @@ def PlotFaseDispersionOcupacao():
     
 
     plt.plot(ocupacoes,of_dispersions, label="OF", marker='o', color = of_color)
-    plt.plot(ocupacoes,cnn3_dispersions, label=r'CNN3 $\left(\hat{\tau} = \frac{A \tau}{\hat{A}_{CNN3}}\right)$', marker='*',linestyle='dashed', color = cnn3_color, zorder=5)
-    plt.plot(ocupacoes,cnn5_dispersions, label=r'CNN5 $\left(\hat{\tau} = \frac{A \tau}{\hat{A}_{CNN5}}\right)$', marker='s', color = cnn5_color, linewidth=2)
+    plt.plot(ocupacoes,cnn3_dispersions, label=r'CNN-3*', marker='*',linestyle='dashed', color = cnn3_color, zorder=5)
+    plt.plot(ocupacoes,cnn5_dispersions, label=r'CNN-5*', marker='s', color = cnn5_color, linewidth=2)
     plt.plot(ocupacoes, real_amplitude_dispersions, label="Amplitude real", marker='o', color = real_amplitude_color)
-    plt.plot(ocupacoes, cnn3_estimated_dispersions, label="CNN3", marker='s', markersize=6, color=cnn3_estimated_color, linewidth=2, zorder=4)
-    plt.plot(ocupacoes, cnn5_estimated_dispersions, label="CNN5", marker='*', markersize=6, color=cnn5_estimated_color, linestyle='dashed', linewidth=1.5, zorder=5)
+    plt.plot(ocupacoes, cnn3_estimated_dispersions, label="CNN-3", marker='s', markersize=6, color=cnn3_estimated_color, linewidth=2, zorder=4)
+    plt.plot(ocupacoes, cnn5_estimated_dispersions, label="CNN-5", marker='*', markersize=6, color=cnn5_estimated_color, linestyle='dashed', linewidth=1.5, zorder=5)
     plt.legend(loc='best')
-    plt.xlabel('Ocupação')
-    plt.ylabel('Dispersão fase estimada (ns)')
-    plt.title(r'Dispersão $\times$ Ocupação')
+    plt.xlabel('Ocupação', fontsize=fontSize-2)
+    plt.ylabel('Dispersão fase estimada (ns)', fontsize=fontSize-2)
+    plt.title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
+    plt.tick_params(axis='both', which='major', labelsize=14)
     plt.tight_layout()
     plt.show()
 
