@@ -1,6 +1,8 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
+
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -22,7 +24,7 @@ def PlotFaseDispersionOcupacao():
     real_amplitude_dispersions = []
     cnn3_estimated_dispersions = []
     cnn5_estimated_dispersions = []
-    fontSize = 24
+    fontSize = 18
     for ocupacao in ocupacoes:
         # PATHS
         # TEM QUE PEGAR DA PASTA DO FILTRO OTIMO..;
@@ -63,18 +65,62 @@ def PlotFaseDispersionOcupacao():
     cnn3_estimated_color = 'darkorange'
     cnn5_estimated_color = 'deepskyblue'
     
+    fig, ax = plt.subplots(figsize=(7, 5))
 
-    plt.plot(ocupacoes,of_dispersions, label="OF", marker='o', color = of_color)
-    plt.plot(ocupacoes,cnn3_dispersions, label=r'CNN-3*', marker='*',linestyle='dashed', color = cnn3_color, zorder=5)
-    plt.plot(ocupacoes,cnn5_dispersions, label=r'CNN-5*', marker='s', color = cnn5_color, linewidth=2)
-    plt.plot(ocupacoes, real_amplitude_dispersions, label="Amplitude real", marker='o', color = real_amplitude_color)
-    plt.plot(ocupacoes, cnn3_estimated_dispersions, label="CNN-3", marker='s', markersize=6, color=cnn3_estimated_color, linewidth=2, zorder=4)
-    plt.plot(ocupacoes, cnn5_estimated_dispersions, label="CNN-5", marker='*', markersize=6, color=cnn5_estimated_color, linestyle='dashed', linewidth=1.5, zorder=5)
-    plt.legend(loc='best')
-    plt.xlabel('Ocupação', fontsize=fontSize-2)
-    plt.ylabel('Dispersão fase estimada (ns)', fontsize=fontSize-2)
-    plt.title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
-    plt.tick_params(axis='both', which='major', labelsize=14)
+    ax.plot(ocupacoes,of_dispersions, label="OF", marker='o', color = of_color)
+    ax.plot(ocupacoes,cnn3_dispersions, label=r'CNN-3*', marker='*',linestyle='dashed', color = cnn3_color, zorder=5)
+    ax.plot(ocupacoes,cnn5_dispersions, label=r'CNN-5*', marker='s', color = cnn5_color, linewidth=2)
+    ax.plot(ocupacoes, real_amplitude_dispersions, label="Amplitude real", marker='o', color = real_amplitude_color)
+    ax.plot(ocupacoes, cnn3_estimated_dispersions, label="CNN-3", marker='s', markersize=6, color=cnn3_estimated_color, linewidth=2, zorder=4)
+    ax.plot(ocupacoes, cnn5_estimated_dispersions, label="CNN-5", marker='*', markersize=6, color=cnn5_estimated_color, linestyle='dashed', linewidth=1.5, zorder=5)
+    ax.legend(loc='best')
+    ax.set_xlabel('Ocupação', fontsize=fontSize-2)
+    ax.set_ylabel('Dispersão fase estimada (ns)', fontsize=fontSize-2)
+    ax.set_title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
+    ax.tick_params(axis='both', which='major', labelsize=14)
+
+    # ZOOM 1 CNN
+    axins = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.75, 0.25, 0.15, 0.15),  # (x, y) posição do canto
+                   bbox_transform=ax.transAxes,   # coordenadas relativas ao gráfico
+                   loc='center')
+    
+    x1,x2= 79.985, 80.010
+    y1,y2 = 2.4035, 2.405
+    axins.set_xticks([x1,x2])
+    axins.set_yticks([y1,y2])
+
+    axins.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
+    axins.tick_params(axis='both', colors="#424242")
+
+    axins.plot(ocupacoes, cnn3_estimated_dispersions, marker='s', markersize=6, color=cnn3_estimated_color, linewidth=2, zorder=4)
+    axins.plot(ocupacoes, cnn5_estimated_dispersions, marker='*', markersize=6, color=cnn5_estimated_color, linestyle='dashed', linewidth=1.5, zorder=5)
+    axins.set_xlim(x1,x2)
+    axins.set_ylim(y1,y2)
+    # Aplica o tamanho DEPOIS de definir os ticks
+    plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
+    plt.setp(axins.get_yticklabels(), fontsize=8)
+    mark_inset(ax, axins, loc1=3, loc2=4, fc="none", ec="gray", linewidth=1.5)
+
+    # ZOOM 2 CNN*
+    axins1 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.1, 0.75, 0.15, 0.15), bbox_transform=ax.transAxes, loc='center')
+    x11,x21= 9.9,10.1
+    y11,y21=67.50,68.80
+    axins1.set_xticks([x11,x21])
+    axins1.set_yticks([y11,y21])
+
+    axins1.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True,    labeltop=True)
+    axins1.tick_params(axis='both', colors="#424242")
+
+    axins1.plot(ocupacoes,cnn3_dispersions, marker='*',linestyle='dashed', color = cnn3_color, zorder=5)
+    axins1.plot(ocupacoes,cnn5_dispersions, marker='s', color = cnn5_color, linewidth=2)
+    axins1.plot(ocupacoes, real_amplitude_dispersions, marker='o', color = real_amplitude_color)
+    axins1.set_xlim(x11,x21)
+    axins1.set_ylim(y11,y21)
+    # Aplica o tamanho DEPOIS de definir os ticks
+    plt.setp(axins1.get_xticklabels(which='both'), fontsize=8)
+    plt.setp(axins1.get_yticklabels(), fontsize=8)
+    mark_inset(ax, axins1, loc1=3, loc2=4, fc="none", ec="gray", linewidth=1.5)
+
     plt.tight_layout()
     plt.show()
 
