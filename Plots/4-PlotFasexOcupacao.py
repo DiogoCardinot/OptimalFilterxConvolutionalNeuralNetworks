@@ -74,8 +74,8 @@ def PlotFaseDispersionOcupacao():
     ax.plot(ocupacoes, cnn3_estimated_dispersions, label="CNN-3", marker='s', markersize=6, color=cnn3_estimated_color, linewidth=2, zorder=4)
     ax.plot(ocupacoes, cnn5_estimated_dispersions, label="CNN-5", marker='*', markersize=6, color=cnn5_estimated_color, linestyle='dashed', linewidth=1.5, zorder=5)
     ax.legend(loc='best')
-    ax.set_xlabel('Ocupação', fontsize=fontSize-2)
-    ax.set_ylabel('Dispersão fase estimada (ns)', fontsize=fontSize-2)
+    ax.set_xlabel('Ocupação (%)', fontsize=fontSize-2)
+    ax.set_ylabel('Dispersão da fase estimada (ns)', fontsize=fontSize-2)
     ax.set_title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
     ax.tick_params(axis='both', which='major', labelsize=14)
 
