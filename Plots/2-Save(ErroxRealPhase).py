@@ -47,24 +47,24 @@ def ErrorOF():
         erros_por_intervalo_amplitude = {}
         
         for i in range(len(bins) - 1):
-            chave = f"{bins[i]:.2f} - {bins[i+1]:.2f}"
+            chave = f"{bins[i]:.2f} \u2013 {bins[i+1]:.2f}"
             erros_por_intervalo[chave] = []
 
         for i in range(len(bins_amplitude) - 1):
-            chave_amplitude = f"{bins_amplitude[i]:.2f} - {bins_amplitude[i+1]:.2f}"
+            chave_amplitude = f"{bins_amplitude[i]:.2f} \u2013 {bins_amplitude[i+1]:.2f}"
             erros_por_intervalo_amplitude[chave_amplitude] = []
 
         for phase, erro in zip(real_phase, error_of):
             for i in range(len(bins) - 1):
                 if bins[i] <= phase < bins[i+1]:
-                    chave = f"{bins[i]:.2f} - {bins[i+1]:.2f}"
+                    chave = f"{bins[i]:.2f} \u2013 {bins[i+1]:.2f}"
                     erros_por_intervalo[chave].append(erro)
                     break
         
         for amplitude, erro in zip(real_amplitude, error_of):
             for i in range(len(bins_amplitude)-1):
                 if bins_amplitude[i] <=amplitude<bins_amplitude[i+1]:
-                    chave_amplitude = f"{bins_amplitude[i]:.2f} - {bins_amplitude[i+1]:.2f}"
+                    chave_amplitude = f"{bins_amplitude[i]:.2f} \u2013 {bins_amplitude[i+1]:.2f}"
                     erros_por_intervalo_amplitude[chave_amplitude].append(erro)
                     break
                     
@@ -141,25 +141,25 @@ def ErrorCNN():
         erros_por_intervalo_amplitude = {}
         
         for i in range(len(bins) - 1):
-            chave = f"{bins[i]:.2f} - {bins[i+1]:.2f}"
+            chave = f"{bins[i]:.2f} \u2013 {bins[i+1]:.2f}"
             erros_por_intervalo[chave] = []
         
 
         for i in range(len(bins_amplitude) - 1):
-            chave_amplitude = f"{bins_amplitude[i]:.2f} - {bins_amplitude[i+1]:.2f}"
+            chave_amplitude = f"{bins_amplitude[i]:.2f} \u2013 {bins_amplitude[i+1]:.2f}"
             erros_por_intervalo_amplitude[chave_amplitude] = []
         
         for phase, erro in zip(real_phase, error_cnn):
             for i in range(len(bins) - 1):
                 if bins[i] <= phase < bins[i+1]:
-                    chave = f"{bins[i]:.2f} - {bins[i+1]:.2f}"
+                    chave = f"{bins[i]:.2f} \u2013 {bins[i+1]:.2f}"
                     erros_por_intervalo[chave].append(erro)
                     break
             
         for amplitude, erro in zip(real_amplitude, error_cnn):
             for i in range(len(bins_amplitude) - 1):
                 if bins_amplitude[i] <= amplitude < bins_amplitude[i+1]:
-                    chave_amplitude = f"{bins_amplitude[i]:.2f} - {bins_amplitude[i+1]:.2f}"
+                    chave_amplitude = f"{bins_amplitude[i]:.2f} \u2013 {bins_amplitude[i+1]:.2f}"
                     erros_por_intervalo_amplitude[chave_amplitude].append(erro)
                     break
         
@@ -237,24 +237,24 @@ def ErrorRealAmplitude():
         erros_por_intervalo_amplitude = {}
         
         for i in range(len(bins) - 1):
-            chave = f"{bins[i]:.2f} - {bins[i+1]:.2f}"
+            chave = f"{bins[i]:.2f} \u2013 {bins[i+1]:.2f}"
             erros_por_intervalo[chave] = []
 
         for i in range(len(bins_amplitude) - 1):
-            chave_amplitude = f"{bins_amplitude[i]:.2f} - {bins_amplitude[i+1]:.2f}"
+            chave_amplitude = f"{bins_amplitude[i]:.2f} \u2013 {bins_amplitude[i+1]:.2f}"
             erros_por_intervalo_amplitude[chave_amplitude] = []
         
         for phase, erro in zip(real_phase, error_real_amplitude):
             for i in range(len(bins) - 1):
                 if bins[i] <= phase < bins[i+1]:
-                    chave = f"{bins[i]:.2f} - {bins[i+1]:.2f}"
+                    chave = f"{bins[i]:.2f} \u2013 {bins[i+1]:.2f}"
                     erros_por_intervalo[chave].append(erro)
                     break
             
         for amplitude, erro in zip(real_amplitude, error_real_amplitude):
             for i in range(len(bins_amplitude) - 1):
                 if bins_amplitude[i] <= amplitude < bins_amplitude[i+1]:
-                    chave_amplitude = f"{bins_amplitude[i]:.2f} - {bins_amplitude[i+1]:.2f}"
+                    chave_amplitude = f"{bins_amplitude[i]:.2f} \u2013 {bins_amplitude[i+1]:.2f}"
                     erros_por_intervalo_amplitude[chave_amplitude].append(erro)
                     break
         
@@ -293,6 +293,6 @@ def ErrorRealAmplitude():
             print(f"Arquivo salvo como alternativa: {alt_file}")
     print(50*"=")
 
-ErrorOF()
+# ErrorOF()
 ErrorCNN()
-ErrorRealAmplitude()
+# ErrorRealAmplitude()

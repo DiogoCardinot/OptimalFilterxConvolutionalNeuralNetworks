@@ -159,7 +159,7 @@ def PlotHistrogramas():
         # ax[idx].legend(loc='best')
         ax[idx].grid(True, alpha=0.3)
         ax[idx].tick_params(axis='both', which='major', labelsize=14)
-        formatter = ScalarFormatter(useMathText=False)
+        formatter = ScalarFormatter(useMathText=True)
         formatter.set_scientific(True)
         formatter.set_powerlimits((0, 0))
         formatter.set_useOffset(True)

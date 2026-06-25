@@ -233,7 +233,7 @@ def PlotHistrogramas(zoom):
         ax[idx].set_ylabel('Número de eventos', fontsize=fontSize-2)
         ax[idx].grid(True, alpha=0.3)
         ax[idx].tick_params(axis='both', which='major', labelsize=14)
-        formatter = ScalarFormatter(useMathText=False)
+        formatter = ScalarFormatter(useMathText=True)
         formatter.set_scientific(True)
         formatter.set_powerlimits((0, 0))
         formatter.set_useOffset(True)
@@ -493,7 +493,7 @@ def PlotDispersions():
     plt.show()
 
 def filtrar_ate_750(labels, desvios, limite=750):
-    indices = [i for i, label in enumerate(labels) if float(label.split(' - ')[1]) <= limite]
+    indices = [i for i, label in enumerate(labels) if float(label.split(' \u2013 ')[1]) <= limite]
     return [labels[i] for i in indices], [desvios[i] for i in indices]
 
 
@@ -590,7 +590,7 @@ def PlotDispersions1():
 # PlotError()
 # PlotDispersion()
 # PlotHistrograma()
-PlotHistrogramas(zoom=True)
+# PlotHistrogramas(zoom=True)
 # PlotErros()
 # PlotDispersions()
-# PlotDispersions1()
+PlotDispersions1()

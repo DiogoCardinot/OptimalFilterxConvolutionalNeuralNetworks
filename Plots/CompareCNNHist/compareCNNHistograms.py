@@ -49,7 +49,7 @@ def PlotHistrogramasAmpitude():
         ax[idx].set_ylabel('Number of events', fontsize=fontSize)
         # ax[idx].legend(loc='best')
         ax[idx].grid(True, alpha=0.3)
-        formatter = ScalarFormatter(useMathText=False)
+        formatter = ScalarFormatter(useMathText=True)
         formatter.set_scientific(True)
         formatter.set_powerlimits((0, 0))
         formatter.set_useOffset(True)
@@ -133,7 +133,7 @@ def PlotHistrogramasPhase():
         ax[idx].set_xlabel(f'Phase estimation error (ns)', fontsize=fontSize)
         ax[idx].set_ylabel('Number of events', fontsize=fontSize)
         ax[idx].grid(True, alpha=0.3)
-        formatter = ScalarFormatter(useMathText=False)
+        formatter = ScalarFormatter(useMathText=True)
         formatter.set_scientific(True)
         formatter.set_powerlimits((0, 0))
         formatter.set_useOffset(True)
@@ -341,7 +341,7 @@ def PlotDispersions():
 
 
 def filtrar_ate_750(labels, desvios, limite=750):
-    indices = [i for i, label in enumerate(labels) if float(label.split(' - ')[1]) <= limite]
+    indices = [i for i, label in enumerate(labels) if float(label.split(' \u2013 ')[1]) <= limite]
     return [labels[i] for i in indices], [desvios[i] for i in indices]
 
 
