@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
+import matplotlib.patheffects as pe
 
 
 
@@ -633,10 +634,16 @@ def PlotHistrogramas1(zoom, box):
         real_amplitude_error = real_amplitude_data['error']
 
         bins = 150
+        # if idx==0 or idx==1:
+        #     line = 3.5
+        # else:
+        #     line = 2
         ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2)
-        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3)
+        ax[idx].hist(cnn_error, bins = bins, alpha=1.0,histtype='step', color=cnn_color, linewidth=2)
         # ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
-        ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
+        ax[idx].hist(real_amplitude_error, bins=bins, alpha=0.7, histtype='step', 
+             color=real_amplitude_color, linewidth=3.5, linestyle='dashed',
+             )
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
         ax[idx].set_xlabel(f'Erro de estimação de fase (ns)', fontsize=fontSize-2)
         ax[idx].set_ylabel('Número de eventos', fontsize=fontSize-2)
@@ -719,8 +726,8 @@ def PlotHistrogramas1(zoom, box):
             axins.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
             axins.tick_params(axis='both', colors="#424242")
 
-            axins.hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
-            axins.hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3)
+            axins.hist(cnn_error, bins = bins, alpha=1.0,histtype='step', color=cnn_color, linewidth=3)
+            axins.hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=3.5, linestyle='dashed')
             axins.set_xlim(x1,x2)
             axins.set_ylim(y1,y2)
             plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
