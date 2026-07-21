@@ -158,8 +158,24 @@ def MelhoriasCNN():
     print(f"Melhoria CNN vs OF - Fase STD:      {melhoria_fase_std_cnn_estimated:.5f}%")
 
 
+def MeanStdAmplitude():
+    of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
+    for ocupacao in ocupacoes:
+        OF_data_path = os.path.join(of_data_parcial, f"results_occupation_{ocupacao}.npz")
+        OF_data = np.load(OF_data_path)
+        _, CNN_data_amplitude, _, _, cnn_type = DefinePath_CNN(ocupacao)
+        print(f"{30*'-'} AMPLITUDE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
+        print("| Metrica       | Mean      | Std       |")
+        print("|" + "-"*15 + "|" + "-"*10 + "|")
+        print(f"| OF            | {OF_data['std_error']:.6f} | {OF_data['std_std_error']:.6f} |")
+        print(f"| {cnn_type}           | {CNN_data_amplitude['std_error']:.6f} | {CNN_data_amplitude['std_std_error']:.6f} |")
+        print(100*"=")
+
+
 
 # ImprimeMetricas_Amplitude()
 
 # ImprimeMetricas_Fase()
-MelhoriasCNN()
+# MelhoriasCNN()
+
+MeanStdAmplitude()

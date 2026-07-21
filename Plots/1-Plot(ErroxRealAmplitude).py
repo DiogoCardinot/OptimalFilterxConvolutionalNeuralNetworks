@@ -158,7 +158,7 @@ def PlotHistrogramas():
         ax[idx].set_ylabel('Number of events', fontsize=fontSize)
         # ax[idx].legend(loc='best')
         ax[idx].grid(True, alpha=0.3)
-        ax[idx].tick_params(axis='both', which='major', labelsize=14)
+        ax[idx].tick_params(axis='both', which='major', labelsize=20)
         formatter = ScalarFormatter(useMathText=True)
         formatter.set_scientific(True)
         formatter.set_powerlimits((0, 0))

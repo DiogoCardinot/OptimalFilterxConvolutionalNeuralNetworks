@@ -2,7 +2,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
 
 
 
@@ -225,14 +225,14 @@ def PlotHistrogramas(zoom):
 
         bins = 150
         ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2)
-        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2)
-        ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
+        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3)
+        # ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
         ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
-        ax[idx].set_xlabel(f'Erro de estimação da fase (ns)', fontsize=fontSize-2)
+        ax[idx].set_xlabel(f'Erro de estimação de fase (ns)', fontsize=fontSize-2)
         ax[idx].set_ylabel('Número de eventos', fontsize=fontSize-2)
         ax[idx].grid(True, alpha=0.3)
-        ax[idx].tick_params(axis='both', which='major', labelsize=14)
+        ax[idx].tick_params(axis='both', which='major', labelsize=20)
         formatter = ScalarFormatter(useMathText=True)
         formatter.set_scientific(True)
         formatter.set_powerlimits((0, 0))
@@ -291,10 +291,10 @@ def PlotHistrogramas(zoom):
     labels.append('OF')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
     labels.append('Real Amplitude')
-    cnn_types = [r'CNN-3*', r'CNN-5*']
+    cnn_types = [r'CNN-3', r'CNN-5']
     unique_cnns = list(set(cnn_types))
     for cnn_type in unique_cnns:
-        if cnn_type == "CNN-5*":
+        if cnn_type == "CNN-5":
             color = "#1A1A1A"
         else: 
             color = "#B0B0B0"
@@ -302,16 +302,16 @@ def PlotHistrogramas(zoom):
         handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
         labels.append(cnn_type)
     
-    cnn_estimated_types = ['CNN-3', 'CNN-5']
-    unique_estimated_cnns = list(set(cnn_estimated_types))
-    for cnn_type in unique_estimated_cnns:
-        if cnn_type == "CNN-5":
-            color = "deepskyblue"
-        else: 
-            color = "darkorange"
+    # cnn_estimated_types = ['CNN-3', 'CNN-5']
+    # unique_estimated_cnns = list(set(cnn_estimated_types))
+    # for cnn_type in unique_estimated_cnns:
+    #     if cnn_type == "CNN-5":
+    #         color = "deepskyblue"
+    #     else: 
+    #         color = "darkorange"
        
-        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
-        labels.append(cnn_type)
+    #     handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+    #     labels.append(cnn_type)
 
     fig.legend(
         handles, labels,
@@ -590,7 +590,182 @@ def PlotDispersions1():
 # PlotError()
 # PlotDispersion()
 # PlotHistrograma()
-# PlotHistrogramas(zoom=True)
+# PlotHistrogramas(zoom=False)
 # PlotErros()
 # PlotDispersions()
-PlotDispersions1()
+# PlotDispersions1()
+
+def PlotHistrogramas1(zoom, box):
+    base_path = os.path.dirname(os.path.dirname(path))
+    dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks")
+    ocupacoes = [10,50,80,100]
+    total_inches_image = 6.32
+    fontSize = 24
+    fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
+    ax = ax.flatten()
+    of_color = '#9900ff'
+    real_amplitude_color = "#FA3232"
+    for idx, ocupacao in enumerate(ocupacoes):
+        if ocupacao == 10 or ocupacao==50:
+            CNN = 5
+            cnn_color = "#1A1A1A"
+            cnn_estimated_color = "deepskyblue"
+        elif ocupacao==80 or ocupacao==100:
+            CNN=3
+            cnn_color = "#B0B0B0"
+            cnn_estimated_color = "darkorange"
+
+        # OF
+        of_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_OF', f'janelamento_{n_janelamento}',f'phase_of_occupation_{ocupacao}.npz')      
+        of_data = np.load(of_data_path)
+        of_error = of_data['error']
+        #CNN
+        cnn_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_CNN', f'janelamento_{n_janelamento}',f'CNN_{CNN}',f'phase_cnn_occupation_{ocupacao}.npz')      
+        cnn_data = np.load(cnn_data_path)
+        cnn_error = cnn_data['error']
+        # CNN Fase Estimada
+        cnn_data_path_estimated = os.path.join(dataset_path, f'RedeNeuralConvolucional_Fase', f'CNN_{CNN}', f'janelamento_{n_janelamento}', f'results_ocupacao_{ocupacao}.npz')      
+        cnn_data_estimated = np.load(cnn_data_path_estimated)
+        cnn_error_estimated = cnn_data_estimated['error']
+        # Real Amplitude
+        real_amplitude_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_RealAmplitude', f'janelamento_{n_janelamento}',f'phase_real_amplitude_occupation_{ocupacao}.npz')      
+        real_amplitude_data = np.load(real_amplitude_data_path)
+        real_amplitude_error = real_amplitude_data['error']
+
+        bins = 150
+        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2)
+        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3)
+        # ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
+        ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
+        ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
+        ax[idx].set_xlabel(f'Erro de estimação de fase (ns)', fontsize=fontSize-2)
+        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize-2)
+        ax[idx].grid(True, alpha=0.3)
+        ax[idx].tick_params(axis='both', which='major', labelsize=20)
+        formatter = ScalarFormatter(useMathText=True)
+        formatter.set_scientific(True)
+        formatter.set_powerlimits((0, 0))
+        formatter.set_useOffset(True)
+        ax[idx].yaxis.set_major_formatter(formatter)
+        ax[idx].set_xlim(-500,500)
+        if zoom:
+            # Adicionando janelas de zoom
+            inset_axes_ax = inset_axes(
+                ax[idx], width="100%", height="100%",
+                loc="upper right",
+                bbox_to_anchor=(0.69, 0.17, 0.3, 0.8),
+                bbox_transform=ax[idx].transAxes
+            )
+            inset_axes_ax.tick_params(axis='both', colors="#333333")
+            inset_axes_ax.xaxis.label.set_color('#333333')
+            inset_axes_ax.yaxis.label.set_color('#333333')
+
+            formatter = ScalarFormatter(useMathText=False)
+            formatter.set_scientific(True)
+            formatter.set_powerlimits((0, 0))
+            formatter.set_useOffset(True)
+            inset_axes_ax.yaxis.set_major_formatter(formatter)
+
+            inset_axes_ax.hist(cnn_error_estimated, bins=bins, alpha=0.7, histtype='step', color=cnn_estimated_color, linewidth=2)
+
+            if idx==0:
+                x_inf_limite = -0.5
+                x_sup_limite = 0.5
+                y_inf_limite = 0
+                y_sup_limite = 1.75*10**6
+            elif idx==1:
+                x_inf_limite = -5
+                x_sup_limite = 5
+                y_inf_limite = 0
+                y_sup_limite = 7*10**5
+            elif idx==2:
+                x_inf_limite = -5
+                x_sup_limite = 5
+                y_inf_limite = 0
+                y_sup_limite = 2.5*10**5
+            elif idx==3:
+                x_inf_limite = -6
+                x_sup_limite = 6
+                y_inf_limite = 0
+                y_sup_limite = 2.5*10**4
+
+
+            inset_axes_ax.set_xlim([x_inf_limite, x_sup_limite])
+            inset_axes_ax.set_ylim([y_inf_limite, y_sup_limite])
+        
+        if box and idx!=3:
+            x_0 = 0.6  #posicao inicial em x
+            y_0 = 0.6 #posicao inicial em y
+            width = 0.3
+            heigth = 0.3
+            if idx ==0:
+                x1,x2= -5, 16
+                y1,y2 = 9.5*(10**5), 9.525*(10**5)
+            elif idx==1:
+                x1,x2= -4.5, 18
+                y1,y2 = 5.49*10**5, 5.515*10**5
+            elif idx==2:
+                x1,x2= -22,22
+                y1,y2 = 5.17*10**5, 5.5*10**5
+
+            axins = inset_axes(ax[idx], width="100%", height="100%", bbox_to_anchor=(x_0, y_0, width, heigth),  # (x, y) posição do canto
+                   bbox_transform=ax[idx].transAxes,
+                   loc='center')
+    
+            axins.set_xticks([x1,x2])
+            axins.set_yticks([y1,y2])
+            axins.yaxis.tick_right()
+
+            axins.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
+            axins.tick_params(axis='both', colors="#424242")
+
+            axins.hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
+            axins.hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3)
+            axins.set_xlim(x1,x2)
+            axins.set_ylim(y1,y2)
+            plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
+            plt.setp(axins.get_yticklabels(), fontsize=8)
+            mark_inset(ax[idx], axins, loc1=2, loc2=3, fc="none", ec="gray", linewidth=1.5)
+
+    handles = []
+    labels = []
+    
+    handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
+    labels.append('OF')
+    handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
+    labels.append('Real Amplitude')
+    cnn_types = [r'CNN-3', r'CNN-5']
+    unique_cnns = list(set(cnn_types))
+    for cnn_type in unique_cnns:
+        if cnn_type == "CNN-5":
+            color = "#1A1A1A"
+        else: 
+            color = "#B0B0B0"
+       
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
+    
+    # cnn_estimated_types = ['CNN-3', 'CNN-5']
+    # unique_estimated_cnns = list(set(cnn_estimated_types))
+    # for cnn_type in unique_estimated_cnns:
+    #     if cnn_type == "CNN-5":
+    #         color = "deepskyblue"
+    #     else: 
+    #         color = "darkorange"
+       
+    #     handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+    #     labels.append(cnn_type)
+
+    fig.legend(
+        handles, labels,
+        loc='upper center',
+        ncol=len(handles),
+        bbox_to_anchor=(0.49, 0.9999),
+        frameon=False,
+        fontsize=fontSize-1
+    )
+    # plt.tight_layout()
+    plt.subplots_adjust(hspace=0.4)
+    plt.show()
+
+PlotHistrogramas1(zoom= False, box= True)
