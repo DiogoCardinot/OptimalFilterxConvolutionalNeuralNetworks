@@ -551,12 +551,12 @@ def PlotDispersions1():
             ax[idx].plot(range(len(labels_cnn)), desvios_cnn, marker='o',   color=cnn_color)
             ax[idx].plot(range(len(labels_real_amplitude)), desvios_real_amplitude, linestyle=':', marker='*', color=real_amplitude_color)
             ax[idx].set_xticks(range(len(labels_of)))
-            ax[idx].set_xticklabels(labels_of, rotation=25, ha='right',fontsize=fontSize-12)
+            ax[idx].set_xticklabels(labels_of, rotation=17, ha='right',fontsize=fontSize-9)
             ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
             ax[idx].tick_params(axis='y', which='major', labelsize=14)
 
-            ax[idx].set_xlabel(f'Real Amplitude (ADC Counts)', fontsize = fontSize-8)
-            ax[idx].set_ylabel('Mean Dispersion Values\nPhase Estimation (ns)', fontsize = fontSize-8)
+            ax[idx].set_xlabel(f'Amplitude real (ADC Counts)', fontsize = fontSize-7)
+            ax[idx].set_ylabel('Dispersão média\nEstimação de fase (ns)', fontsize = fontSize-7)
             ax[idx].grid(True, alpha=0.3)
     handles = []
     labels = []
@@ -564,7 +564,7 @@ def PlotDispersions1():
     handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
     labels.append('OF')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle=':', marker='*',))
-    labels.append('Real Amplitude')
+    labels.append('Amplitude real')
     cnn_types = ['CNN-3', 'CNN-5']
     unique_cnns = list(set(cnn_types))
     for cnn_type in unique_cnns:
@@ -594,7 +594,7 @@ def PlotDispersions1():
 # PlotHistrogramas(zoom=False)
 # PlotErros()
 # PlotDispersions()
-# PlotDispersions1()
+PlotDispersions1()
 
 def PlotHistrogramas1(zoom, box):
     base_path = os.path.dirname(os.path.dirname(path))
@@ -775,4 +775,4 @@ def PlotHistrogramas1(zoom, box):
     plt.subplots_adjust(hspace=0.4)
     plt.show()
 
-PlotHistrogramas1(zoom= False, box= True)
+# PlotHistrogramas1(zoom= False, box= True)
