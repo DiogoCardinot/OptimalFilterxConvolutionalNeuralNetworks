@@ -293,6 +293,6 @@ def ErrorRealAmplitude():
             print(f"Arquivo salvo como alternativa: {alt_file}")
     print(50*"=")
 
-# ErrorOF()
+#ErrorOF()
 ErrorCNN()
-# ErrorRealAmplitude()
+#ErrorRealAmplitude()
