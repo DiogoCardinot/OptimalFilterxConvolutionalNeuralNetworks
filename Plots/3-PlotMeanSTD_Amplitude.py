@@ -2,6 +2,8 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
+import mplhep as hep
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -9,6 +11,8 @@ path = os.path.dirname(root_path)
 n_janelamento = 7
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
+hep.style.use("ATLAS")
+
 
 def SaveDataMeanSTD_CNN(metric):
     occupation_new = [0,10,20,30,40,50,60,70,80,90,100]
@@ -68,7 +72,7 @@ def GetMeanOF(OF_Data):
     stds  = [OF_Data[o][1] for o in occupations]
     return occupations, means, stds
 
-def Plot_CNNxOF(metric):
+def Plot_CNNxOF(metric, zoom):
     CNN_Data = SaveDataMeanSTD_CNN(metric)
     OF_Data = SaveDataMeanSTD_OF(metric)
    
@@ -95,20 +99,51 @@ def Plot_CNNxOF(metric):
     #     ax[0].plot([xi - 0.2, xi + 0.2], [yi + err, yi + err], color=of_color, linewidth=2)
     
     if metric=='mean':
-        y_label = 'Mean values\n(ADC counts)'
+        # y_label = 'Mean values\n(ADC counts)'
+        y_label = r'$\bar{\mu}$ (ADC counts)'
+
     elif metric=='std':
-        y_label = 'Mean dispersion\nvalues (ADC counts)'
-        
-    ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-12)
-    ax[0].set_ylabel(y_label, fontsize= fontSize-12)
+        # y_label = 'Mean dispersion\nvalues (ADC counts)'
+        y_label = r'$\bar{\sigma}$ (ADC counts)'
+    
+    ax[0].set_xlabel("Ocupação (%)", fontsize= fontSize)
+    ax[0].set_ylabel(y_label, fontsize= fontSize)
     ax[0].legend(loc='best')
     ax[0].legend(loc='best')
 
     ax[1].errorbar(occupations_CNN3, means_CNN3, yerr=stds_CNN3, fmt='s', capsize=3, color='#B0B0B0', label='CNN-3', zorder=0)
     ax[1].errorbar(x,y, yerr=yerr, fmt='s', capsize=3, color=of_color, label='OF', zorder=10)
-    ax[1].set_xlabel("Occupancy (%)", fontsize= fontSize-12)
-    ax[1].set_ylabel(y_label, fontsize= fontSize-12)
+    ax[1].set_xlabel("Ocupação (%)", fontsize= fontSize)
+    ax[1].set_ylabel(y_label, fontsize= fontSize)
     ax[1].legend(loc='best')
+    if zoom:
+        #CNN mean
+        inset_axes_ax = inset_axes(
+                        ax[0], width="40%", height="40%",
+                        loc="upper right",
+                        bbox_to_anchor=(0.15, 0.15, 0.15, 0.15),
+                        bbox_transform=ax[0].transAxes
+        )
+        inset_axes_ax.tick_params(axis='both', colors="#1A1A1A")
+        inset_axes_ax.xaxis.label.set_color('#1A1A1A')
+        inset_axes_ax.yaxis.label.set_color('#1A1A1A')
+
+        formatter = ScalarFormatter(useMathText=False)
+        formatter.set_scientific(True)
+        formatter.set_powerlimits((0, 0))
+        formatter.set_useOffset(True)
+        inset_axes_ax.yaxis.set_major_formatter(formatter)
+
+        inset_axes_ax.errorbar(occupations_CNN5, means_CNN5, yerr=stds_CNN5, fmt='s', capsize=3, color="#1A1A1A", label='CNN-5', zorder=1)
+
+        x_inf_limite_cnn_mean = -0.1*10**(-3)+10
+        x_sup_limite_cnn_mean = 0.1*10**(-3)+10
+        y_inf_limite_cnn_mean = 0
+        y_sup_limite_cnn_mean = 0.55
+
+        inset_axes_ax.set_xlim([x_inf_limite_cnn_mean, x_sup_limite_cnn_mean])
+        inset_axes_ax.set_ylim([y_inf_limite_cnn_mean, y_sup_limite_cnn_mean])
+         
 
     plt.show()
 
@@ -140,9 +175,11 @@ def Plot_CNN(metric):
 
 
     if metric=='mean':
-        y_label = 'Mean values\n(ADC counts)'
+        y_label = r'$\bar{\mu}~(ADC counts)$'
+        # y_label = 'Mean values\n(ADC counts)'
     elif metric=='std':
-        y_label = 'Mean dispersion\nvalues (ADC counts)'
+        y_label = r'$\bar{\sigma}~(ADC counts)$'
+        # y_label = 'Mean dispersion\nvalues (ADC counts)'
         
     ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize-12)
     ax[0].set_ylabel(y_label, fontsize= fontSize-12)
@@ -166,8 +203,8 @@ def Plot_CNN(metric):
     plt.show()
 
 
-Plot_CNNxOF(metric='mean')
-Plot_CNNxOF(metric='std')
+Plot_CNNxOF(metric='mean', zoom=True)
+Plot_CNNxOF(metric='std', zoom=True)
 
-Plot_CNN(metric="mean")
-Plot_CNN(metric="std")
+# Plot_CNN(metric="mean")
+# Plot_CNN(metric="std")

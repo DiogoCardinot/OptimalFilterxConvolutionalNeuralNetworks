@@ -2,6 +2,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
+import mplhep as hep
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -14,6 +15,8 @@ CNN=8
 plt.rcParams['savefig.directory'] = os.path.dirname(path)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
+
+hep.style.use("ATLAS")
 
 def PlotErrors():
     for ocupacao in ocupacoes:
@@ -151,11 +154,12 @@ def PlotHistrogramas():
         cnn_error = cnn_data['error']
         
         bins = 150
-        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2)
-        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2)
+        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
+        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
-        ax[idx].set_xlabel(f'Amplitude estimation error (ADC Counts)', fontsize=fontSize)
-        ax[idx].set_ylabel('Number of events', fontsize=fontSize)
+        ax[idx].set_xlabel(f'Erro de estimação de amplitude (ADC Counts)', fontsize=fontSize)
+        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
+        ax[idx].legend(loc='best', fontsize=fontSize-8)
         # ax[idx].legend(loc='best')
         ax[idx].grid(True, alpha=0.3)
         ax[idx].tick_params(axis='both', which='major', labelsize=20)
@@ -193,7 +197,7 @@ def PlotHistrogramas():
         handles, labels,
         loc='upper center',
         ncol=len(handles),
-        bbox_to_anchor=(0.5, 0.9999),
+        bbox_to_anchor=(0.5, 1.05),
         frameon=False,
         fontsize=fontSize
     )
@@ -201,7 +205,7 @@ def PlotHistrogramas():
     plt.subplots_adjust(hspace=0.4)
     plt.show()
 
-# PlotErrors()
+PlotErrors()
 # PlotDispersion()
 # PlotBoxPlots()
-PlotHistrogramas()
+# PlotHistrogramas()
