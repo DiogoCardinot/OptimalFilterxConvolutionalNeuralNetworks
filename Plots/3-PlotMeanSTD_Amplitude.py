@@ -13,6 +13,8 @@ plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 hep.style.use("ATLAS")
 
+plt.rcParams['savefig.directory'] = os.path.dirname(path)
+
 def SaveDataMeanSTD_CNN(metric):
     occupation_new = [0,10,20,30,40,50,60,70,80,90,100]
     CNN_paths = [3,5,8]
@@ -114,8 +116,8 @@ def Plot_CNNxOF(metric, zoom):
             axins1.set_xlim(x_inf_limite_cnn_mean, x_sup_limite_cnn_mean)
             axins1.set_ylim(y_inf_limite_cnn_mean, y_sup_limite_cnn_mean)
 
-            plt.setp(axins1.get_xticklabels(which='both'), fontsize=8)
-            plt.setp(axins1.get_yticklabels(), fontsize=8)
+            plt.setp(axins1.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins1.get_yticklabels(), fontsize=11)
             mark_inset(ax[0], axins1, loc1=3, loc2=4, fc="none", ec="black", linewidth=1.5)
 
             #OF mean values
@@ -138,8 +140,8 @@ def Plot_CNNxOF(metric, zoom):
             axins2.set_xlim(x_inf_limite_of_mean, x_sup_limite_of_mean)
             axins2.set_ylim(y_inf_limite_of_mean, y_sup_limite_of_mean)
 
-            plt.setp(axins2.get_xticklabels(which='both'), fontsize=8)
-            plt.setp(axins2.get_yticklabels(), fontsize=8)
+            plt.setp(axins2.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins2.get_yticklabels(), fontsize=11)
             mark_inset(ax[0], axins2, loc1=1, loc2=2, fc="none", ec="purple", linewidth=1.5)
 
             #Plot de baixo
@@ -163,8 +165,8 @@ def Plot_CNNxOF(metric, zoom):
             axins11.set_xlim(x_inf_limite_cnn_mean, x_sup_limite_cnn_mean)
             axins11.set_ylim(y_inf_limite_cnn_mean, y_sup_limite_cnn_mean)
 
-            plt.setp(axins11.get_xticklabels(which='both'), fontsize=8)
-            plt.setp(axins11.get_yticklabels(), fontsize=8)
+            plt.setp(axins11.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins11.get_yticklabels(), fontsize=11)
             mark_inset(ax[1], axins11, loc1=3, loc2=4, fc="none", ec="gray", linewidth=1.5)
 
             #OF mean values
@@ -187,8 +189,8 @@ def Plot_CNNxOF(metric, zoom):
             axins21.set_xlim(x_inf_limite_of_mean, x_sup_limite_of_mean)
             axins21.set_ylim(y_inf_limite_of_mean, y_sup_limite_of_mean)
 
-            plt.setp(axins21.get_xticklabels(which='both'), fontsize=8)
-            plt.setp(axins21.get_yticklabels(), fontsize=8)
+            plt.setp(axins21.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins21.get_yticklabels(), fontsize=11)
             mark_inset(ax[1], axins21, loc1=1, loc2=2, fc="none", ec="purple", linewidth=1.5)
             
     elif metric=='std':
@@ -216,8 +218,8 @@ def Plot_CNNxOF(metric, zoom):
             axins1.set_xlim(x_inf_limite_cnn_mean, x_sup_limite_cnn_mean)
             axins1.set_ylim(y_inf_limite_cnn_mean, y_sup_limite_cnn_mean)
 
-            plt.setp(axins1.get_xticklabels(which='both'), fontsize=8)
-            plt.setp(axins1.get_yticklabels(), fontsize=8)
+            plt.setp(axins1.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins1.get_yticklabels(), fontsize=11)
             mark_inset(ax[0], axins1, loc1=1, loc2=2, fc="none", ec="black", linewidth=1.5)
 
             #OF mean values
@@ -240,8 +242,8 @@ def Plot_CNNxOF(metric, zoom):
             axins2.set_xlim(x_inf_limite_of_mean, x_sup_limite_of_mean)
             axins2.set_ylim(y_inf_limite_of_mean, y_sup_limite_of_mean)
 
-            plt.setp(axins2.get_xticklabels(which='both'), fontsize=8)
-            plt.setp(axins2.get_yticklabels(), fontsize=8)
+            plt.setp(axins2.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins2.get_yticklabels(), fontsize=11)
             mark_inset(ax[0], axins2, loc1=3, loc2=4, fc="none", ec="purple", linewidth=1.5)
 
             #Plot de baixo
@@ -265,8 +267,8 @@ def Plot_CNNxOF(metric, zoom):
             axins11.set_xlim(x_inf_limite_cnn_mean, x_sup_limite_cnn_mean)
             axins11.set_ylim(y_inf_limite_cnn_mean, y_sup_limite_cnn_mean)
 
-            plt.setp(axins11.get_xticklabels(which='both'), fontsize=8)
-            plt.setp(axins11.get_yticklabels(), fontsize=8)
+            plt.setp(axins11.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins11.get_yticklabels(), fontsize=11)
             mark_inset(ax[1], axins11, loc1=1, loc2=2, fc="none", ec="gray", linewidth=1.5)
 
             #OF mean values
@@ -289,8 +291,8 @@ def Plot_CNNxOF(metric, zoom):
             axins21.set_xlim(x_inf_limite_of_mean, x_sup_limite_of_mean)
             axins21.set_ylim(y_inf_limite_of_mean, y_sup_limite_of_mean)
 
-            plt.setp(axins21.get_xticklabels(which='both'), fontsize=8)
-            plt.setp(axins21.get_yticklabels(), fontsize=8)
+            plt.setp(axins21.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins21.get_yticklabels(), fontsize=11)
             mark_inset(ax[1], axins21, loc1=3, loc2=4, fc="none", ec="purple", linewidth=1.5)
 
     #Plot de cima
@@ -299,7 +301,8 @@ def Plot_CNNxOF(metric, zoom):
     ax[0].set_xlabel("Ocupação (%)", fontsize= fontSize)
     ax[0].set_ylabel(y_label, fontsize= fontSize)
     ax[0].legend(loc='best')
-    ax[0].legend(loc='best')
+    ax[0].tick_params(axis='both', which='major', labelsize=20)
+
     # for i, (xi, yi, err) in enumerate(zip(x, y, yerr)):
     #     ax[0].plot([xi, xi], [yi - err, yi + err], linestyle='None', color=of_color, linewidth=2)
     #     ax[0].plot([xi - 0.2, xi + 0.2], [yi - err, yi - err], color=of_color, linewidth=2)
@@ -311,12 +314,12 @@ def Plot_CNNxOF(metric, zoom):
     ax[1].set_xlabel("Ocupação (%)", fontsize= fontSize)
     ax[1].set_ylabel(y_label, fontsize= fontSize)
     ax[1].legend(loc='best')  
-    
+    ax[1].tick_params(axis='both', which='major', labelsize=20)
 
     #plt.tight_layout()
     plt.show()
 
-def Plot_CNN(metric):
+def Plot_CNN(metric, zoom):
     CNN_Data = SaveDataMeanSTD_CNN(metric)
 
     occupations_CNN3, means_CNN3, stds_CNN3 = GetMeanCNN(CNN_Data, 3)
@@ -339,70 +342,68 @@ def Plot_CNN(metric):
     elif metric=='std':
         y_label = r'$\bar{\sigma}~(ADC counts)$'
         # y_label = 'Mean dispersion\nvalues (ADC counts)'
+        if zoom:
+            #Plot de cima
+            #CNN mean
+            # bbox_to_anchor = (distancia da esquerda, distancia de baixo, largura, altura)
+            axins11 = inset_axes(ax[0], width="100%", height="100%", bbox_to_anchor=(0.5, 0.15, 0.05, 0.15), bbox_transform=ax[0].transAxes, loc='center')
+            x_inf_limite_cnn_mean = -0.1*10**(-4)+5*10
+            x_sup_limite_cnn_mean = 0.1*10**(-4)+5*10
+            y_inf_limite_cnn_mean = 12.9
+            y_sup_limite_cnn_mean = 13.5
 
-        #Plot de cima
-        #CNN mean
-        # bbox_to_anchor = (distancia da esquerda, distancia de baixo, largura, altura)
-        axins11 = inset_axes(ax[0], width="100%", height="100%", bbox_to_anchor=(0.5, 0.15, 0.05, 0.15), bbox_transform=ax[0].transAxes, loc='center')
-        x_inf_limite_cnn_mean = -0.1*10**(-4)+5*10
-        x_sup_limite_cnn_mean = 0.1*10**(-4)+5*10
-        y_inf_limite_cnn_mean = 12.9
-        y_sup_limite_cnn_mean = 13.5
+            axins11.set_xticks([x_inf_limite_cnn_mean, x_sup_limite_cnn_mean])
+            axins11.set_yticks([y_inf_limite_cnn_mean, y_sup_limite_cnn_mean])
+            axins11.ticklabel_format(axis='both', style='plain', useOffset=False)
+            
+            axins11.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False,    labeltop=False)
+            axins11.tick_params(axis='both', colors="#1A1A1A")
 
-        axins11.set_xticks([x_inf_limite_cnn_mean, x_sup_limite_cnn_mean])
-        axins11.set_yticks([y_inf_limite_cnn_mean, y_sup_limite_cnn_mean])
-        axins11.ticklabel_format(axis='both', style='plain', useOffset=False)
-        
-        axins11.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False,    labeltop=False)
-        axins11.tick_params(axis='both', colors="#1A1A1A")
+            axins11.errorbar(occupations_CNN5, means_CNN5, yerr=stds_CNN5, fmt='s', capsize=3, color='#1A1A1A', label='CNN-3', zorder=0)
+            axins11.errorbar(x, y, yerr=yerr,
+                                        fmt='*', color=cnn8_color, label='CNN-8',
+                                        zorder=10,
+                                        capsize=3,       # ← caps horizontais de volta
+                                        
+                                        )    
+            
+            axins11.set_xlim(x_inf_limite_cnn_mean, x_sup_limite_cnn_mean)
+            axins11.set_ylim(y_inf_limite_cnn_mean, y_sup_limite_cnn_mean)
 
-        axins11.errorbar(occupations_CNN5, means_CNN5, yerr=stds_CNN5, fmt='s', capsize=3, color='#1A1A1A', label='CNN-3', zorder=0)
-        axins11.errorbar(x, y, yerr=yerr,
-                                      fmt='*', color=cnn8_color, label='CNN-8',
-                                      zorder=10,
-                                      capsize=3,       # ← caps horizontais de volta
-                                      
-                                      )    
-        
-        axins11.set_xlim(x_inf_limite_cnn_mean, x_sup_limite_cnn_mean)
-        axins11.set_ylim(y_inf_limite_cnn_mean, y_sup_limite_cnn_mean)
+            plt.setp(axins11.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins11.get_yticklabels(), fontsize=11)
+            mark_inset(ax[0], axins11, loc1=1, loc2=2, fc="none", ec="black", linewidth=1.5)
 
-        plt.setp(axins11.get_xticklabels(which='both'), fontsize=8)
-        plt.setp(axins11.get_yticklabels(), fontsize=8)
-        mark_inset(ax[0], axins11, loc1=1, loc2=2, fc="none", ec="black", linewidth=1.5)
+            #Plot de baixo
+            #CNN mean
+            # bbox_to_anchor = (distancia da esquerda, distancia de baixo, largura, altura)
+            axins11 = inset_axes(ax[1], width="100%", height="100%", bbox_to_anchor=(0.5, 0.15, 0.05, 0.15), bbox_transform=ax[1].transAxes, loc='center')
+            x_inf_limite_cnn_mean = -0.1*10**(-4)+5*10
+            x_sup_limite_cnn_mean = 0.1*10**(-4)+5*10
+            y_inf_limite_cnn_mean = 12.9
+            y_sup_limite_cnn_mean = 13.62
 
+            axins11.set_xticks([x_inf_limite_cnn_mean, x_sup_limite_cnn_mean])
+            axins11.set_yticks([y_inf_limite_cnn_mean, y_sup_limite_cnn_mean])
+            axins11.ticklabel_format(axis='both', style='plain', useOffset=False)
+            
+            axins11.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False,    labeltop=False)
+            axins11.tick_params(axis='both', colors="#1A1A1A")
 
+            axins11.errorbar(occupations_CNN3, means_CNN3, yerr=stds_CNN3, fmt='s', capsize=3, color='#B0B0B0', label='CNN-3', zorder=0)
+            axins11.errorbar(x, y, yerr=yerr,
+                                        fmt='*', color=cnn8_color, label='CNN-8',
+                                        zorder=10,
+                                        capsize=3,       # ← caps horizontais de volta
+                                        
+                                        )    
+            
+            axins11.set_xlim(x_inf_limite_cnn_mean, x_sup_limite_cnn_mean)
+            axins11.set_ylim(y_inf_limite_cnn_mean, y_sup_limite_cnn_mean)
 
-        #Plot de baixo
-        #CNN mean
-        # bbox_to_anchor = (distancia da esquerda, distancia de baixo, largura, altura)
-        axins11 = inset_axes(ax[1], width="100%", height="100%", bbox_to_anchor=(0.5, 0.15, 0.05, 0.15), bbox_transform=ax[1].transAxes, loc='center')
-        x_inf_limite_cnn_mean = -0.1*10**(-4)+5*10
-        x_sup_limite_cnn_mean = 0.1*10**(-4)+5*10
-        y_inf_limite_cnn_mean = 12.9
-        y_sup_limite_cnn_mean = 13.62
-
-        axins11.set_xticks([x_inf_limite_cnn_mean, x_sup_limite_cnn_mean])
-        axins11.set_yticks([y_inf_limite_cnn_mean, y_sup_limite_cnn_mean])
-        axins11.ticklabel_format(axis='both', style='plain', useOffset=False)
-        
-        axins11.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False,    labeltop=False)
-        axins11.tick_params(axis='both', colors="#1A1A1A")
-
-        axins11.errorbar(occupations_CNN3, means_CNN3, yerr=stds_CNN3, fmt='s', capsize=3, color='#B0B0B0', label='CNN-3', zorder=0)
-        axins11.errorbar(x, y, yerr=yerr,
-                                      fmt='*', color=cnn8_color, label='CNN-8',
-                                      zorder=10,
-                                      capsize=3,       # ← caps horizontais de volta
-                                      
-                                      )    
-        
-        axins11.set_xlim(x_inf_limite_cnn_mean, x_sup_limite_cnn_mean)
-        axins11.set_ylim(y_inf_limite_cnn_mean, y_sup_limite_cnn_mean)
-
-        plt.setp(axins11.get_xticklabels(which='both'), fontsize=8)
-        plt.setp(axins11.get_yticklabels(), fontsize=8)
-        mark_inset(ax[1], axins11, loc1=1, loc2=2, fc="none", ec="gray", linewidth=1.5)
+            plt.setp(axins11.get_xticklabels(which='both'), fontsize=11)
+            plt.setp(axins11.get_yticklabels(), fontsize=11)
+            mark_inset(ax[1], axins11, loc1=1, loc2=2, fc="none", ec="gray", linewidth=1.5)
 
     
     ax[0].set_xlabel("Occupancy (%)", fontsize= fontSize)
@@ -435,8 +436,8 @@ def Plot_CNN(metric):
     plt.show()
 
 
-#Plot_CNNxOF(metric='mean', zoom=True)
-#Plot_CNNxOF(metric='std', zoom=True)
+Plot_CNNxOF(metric='mean', zoom=True)
+Plot_CNNxOF(metric='std', zoom=True)
 
-#Plot_CNN(metric="mean")
-Plot_CNN(metric="std")
+#Plot_CNN(metric="mean", zoom=True)
+# Plot_CNN(metric="std", zoom=True)

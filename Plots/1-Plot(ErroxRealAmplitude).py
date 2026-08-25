@@ -154,8 +154,8 @@ def PlotHistrogramas():
         cnn_error = cnn_data['error']
         
         bins = 150
-        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
-        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
+        ax[idx].hist(of_error, bins = bins,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
+        ax[idx].hist(cnn_error, bins = bins,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
         ax[idx].set_xlabel(f'Erro de estimação de amplitude (ADC Counts)', fontsize=fontSize)
         ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
@@ -205,7 +205,7 @@ def PlotHistrogramas():
     plt.subplots_adjust(hspace=0.4)
     plt.show()
 
-PlotErrors()
+# PlotErrors()
 # PlotDispersion()
 # PlotBoxPlots()
-# PlotHistrogramas()
+PlotHistrogramas()

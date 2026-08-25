@@ -2,18 +2,22 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
+import mplhep as hep
 
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
+plt.rcParams['savefig.directory'] = os.path.dirname(path)
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+
+hep.style.use("ATLAS")
+
 n_janelamento = 7
 ocupacoes = [0]
 CNN= 3
 
-plt.rcParams['savefig.directory'] = os.path.dirname(path)
-plt.rcParams['pdf.fonttype'] = 42
-plt.rcParams['ps.fonttype'] = 42
 
 def PlotHistrogramasAmpitude():
     base_path = os.path.dirname(os.path.dirname(path))
@@ -23,6 +27,7 @@ def PlotHistrogramasAmpitude():
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
     cnn8_color ="#006130"
+    of_color = '#9900ff'
 
     for idx, ocupacao in enumerate(ocupacoes):
         if ocupacao == 10 or ocupacao==50:
@@ -40,15 +45,21 @@ def PlotHistrogramasAmpitude():
         cnn_data_path = os.path.join(base_path,f'RedeNeuralConvolucional', f'CNN_{CNN}',f'results_ocupacao_{ocupacao}.npz')      
         cnn_data = np.load(cnn_data_path)
         cnn_error = cnn_data['error']
+        #OF
+        of_data_path = os.path.join(base_path,f'FiltroOtimo',f'AmplitudeEstimada_OF', f'janelamento_{n_janelamento}',f'results_occupation_{ocupacao}.npz')      
+        of_data = np.load(of_data_path)
+        of_error = of_data['error']
         
         bins = 150
-        ax[idx].hist(cnn8_error, bins = bins, alpha=0.7,histtype='step', color=cnn8_color, linewidth=2, linestyle='dotted')
-        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2)
+        ax[idx].hist(cnn8_error, bins = bins,histtype='step', color=cnn8_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$')
+        ax[idx].hist(cnn_error, bins = bins,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
+        ax[idx].hist(of_error, bins = bins,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
-        ax[idx].set_xlabel(f'Amplitude estimation error (ADC Counts)', fontsize=fontSize)
-        ax[idx].set_ylabel('Number of events', fontsize=fontSize)
-        # ax[idx].legend(loc='best')
+        ax[idx].set_xlabel(f'Erro de estimação de amplitude (ADC Counts)', fontsize=fontSize)
+        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
+        ax[idx].legend(loc='upper right', fontsize=fontSize-8)
         ax[idx].grid(True, alpha=0.3)
+        ax[idx].tick_params(axis='both', which='major', labelsize=20)
         formatter = ScalarFormatter(useMathText=True)
         formatter.set_scientific(True)
         formatter.set_powerlimits((0, 0))
@@ -70,9 +81,9 @@ def PlotHistrogramasAmpitude():
     handles = []
     labels = []
     
-    handles.append(plt.Line2D([0], [0], color=cnn8_color, linewidth=2, linestyle='dotted'))
-    labels.append('CNN-8')
     cnn_types = ['CNN-3', 'CNN-5']
+    handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
+    labels.append('OF')
     unique_cnns = list(set(cnn_types))
     for cnn_type in unique_cnns:
         if cnn_type == "CNN-5":
@@ -83,13 +94,16 @@ def PlotHistrogramasAmpitude():
         handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
         labels.append(cnn_type)
 
+    handles.append(plt.Line2D([0], [0], color=cnn8_color, linewidth=2))
+    labels.append('CNN-8')
+
     fig.legend(
         handles, labels,
         loc='upper center',
         ncol=len(handles),
-        bbox_to_anchor=(0.5, 0.9999),
+        bbox_to_anchor=(0.49, 1.05),
         frameon=False,
-        fontsize=fontSize
+        fontsize=fontSize-1
     )
     # plt.tight_layout()
     plt.subplots_adjust(hspace=0.4)
@@ -435,8 +449,8 @@ def PlotDispersions1():
     plt.subplots_adjust(hspace=0.5)
     plt.show()
 
-# PlotHistrogramasAmpitude()
+PlotHistrogramasAmpitude()
 # PlotHistrogramasPhase()
 # PlotErros()
 # PlotDispersions()
-PlotDispersions1()
+# PlotDispersions1()
