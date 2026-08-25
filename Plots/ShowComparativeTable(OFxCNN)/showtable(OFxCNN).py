@@ -28,15 +28,19 @@ def DefinePath_CNN(ocupacao):
 
 def ImprimeMetricas_Amplitude():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
+    cnn8_data_parcial = os.path.join(base_path, "RedeNeuralConvolucional", "CNN_8")
     for ocupacao in ocupacoes:
         OF_data_path = os.path.join(of_data_parcial, f"results_occupation_{ocupacao}.npz")
+        cnn8_data_path = os.path.join(cnn8_data_parcial, f'results_ocupacao_{ocupacao}.npz')
         OF_data = np.load(OF_data_path)
+        cnn8_data = np.load(cnn8_data_path)
         _, CNN_data_amplitude, _, _, cnn_type = DefinePath_CNN(ocupacao)
         print(f"{30*'-'} AMPLITUDE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
         print("| Metrica       | RMS      | R^2       | MAE      | MedAE    |")
         print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|")
         print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} |")
         print(f"| {cnn_type}           | {CNN_data_amplitude['rms']:.6f} | {CNN_data_amplitude['r2']:.6f} | {CNN_data_amplitude['mae']:.6f} | {CNN_data_amplitude['medae']:.6f} |")
+        print(f"| CNN-8           | {cnn8_data['rms']:.6f} | {cnn8_data['r2']:.6f} | {cnn8_data['mae']:.6f} | {cnn8_data['medae']:.6f} |")
         print(100*"=")
 
 
@@ -160,18 +164,21 @@ def MelhoriasCNN():
 
 def MeanStdAmplitude():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
+    cnn8_data_parcial = os.path.join(base_path, "RedeNeuralConvolucional", "CNN_8")
+
     for ocupacao in ocupacoes:
         OF_data_path = os.path.join(of_data_parcial, f"results_occupation_{ocupacao}.npz")
+        cnn8_data_path = os.path.join(cnn8_data_parcial, f'results_ocupacao_{ocupacao}.npz')
         OF_data = np.load(OF_data_path)
+        cnn8_data = np.load(cnn8_data_path)
         _, CNN_data_amplitude, _, _, cnn_type = DefinePath_CNN(ocupacao)
         print(f"{30*'-'} AMPLITUDE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
         print("| Metrica       | Mean      | Std       |")
         print("|" + "-"*15 + "|" + "-"*10 + "|")
         print(f"| OF            | {OF_data['std_error']:.6f} | {OF_data['std_std_error']:.6f} |")
         print(f"| {cnn_type}           | {CNN_data_amplitude['std_error']:.6f} | {CNN_data_amplitude['std_std_error']:.6f} |")
+        print(f"| CNN-8           | {cnn8_data['std_error']:.6f} | {cnn8_data['std_std_error']:.6f} |")
         print(100*"=")
-
-
 
 # ImprimeMetricas_Amplitude()
 
