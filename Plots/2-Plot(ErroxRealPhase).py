@@ -591,10 +591,10 @@ def PlotDispersions1():
 # PlotError()
 # PlotDispersion()
 # PlotHistrograma()
-# PlotHistrogramas(zoom=False)
+PlotHistrogramas(zoom=True)
 # PlotErros()
 # PlotDispersions()
-PlotDispersions1()
+# PlotDispersions1()
 
 def PlotHistrogramas1(zoom, box):
     base_path = os.path.dirname(os.path.dirname(path))
