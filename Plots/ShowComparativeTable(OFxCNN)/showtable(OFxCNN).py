@@ -1,6 +1,6 @@
 import os
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -9,11 +9,11 @@ base_path = os.path.dirname(os.path.dirname(path))
 ocupacoes = [10,50,80,100]
 n_janelamento = 7
 
-def DefinePath_CNN(ocupacao):
-    if ocupacao == 10 or ocupacao == 50:
+def DefinePath_CNN(ocupacao, CNN=None):
+    if CNN==None and (ocupacao == 10 or ocupacao == 50):
         CNN = 5
         
-    elif ocupacao==80 or ocupacao == 100:
+    elif CNN==None and (ocupacao==80 or ocupacao == 100):
         CNN=3
     
     CNN_data_path_amplitude = os.path.join(base_path, f'RedeNeuralConvolucional',f'CNN_{CNN}', f"results_ocupacao_{ocupacao}.npz")
@@ -185,4 +185,127 @@ def MeanStdAmplitude():
 # ImprimeMetricas_Fase()
 # MelhoriasCNN()
 
-MeanStdAmplitude()
+# MeanStdAmplitude()
+
+import mplhep as hep
+from collections import defaultdict
+
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
+hep.style.use("ATLAS")
+
+
+def PlotTableComparativeAmplitude(type=None):
+    ocupacoes = [10, 20, 30, 40, 50, 60, 70, 80, 100]
+
+    if type == "Amplitude":
+        chaves = ['OF', 'CNN3', 'CNN5']
+    elif type == "Fase":
+        chaves = ['OF', 'CNN3', 'CNN5', 'Real_Amp', 'CNN3_Tau', 'CNN5_Tau']
+    else:
+        raise ValueError("Tipo inválido. Escolha 'Amplitude' ou 'Fase'.")
+
+    rms = {k: [] for k in chaves}
+    r2 = {k: [] for k in chaves}
+    mae = {k: [] for k in chaves}
+    medae = {k: [] for k in chaves}
+
+    if type == "Amplitude":
+        estilos = {
+                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': 'OF'},
+                'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': 'CNN-3'},
+                'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': 'CNN-5'},
+                'CNN8':        {'cor': '#006130', 'marker': '^', 'label': 'CNN-8'},
+                
+            }
+    elif type == "Fase":
+        estilos = {
+                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': r'$\hat{A}_{OF}$'},
+                'CNN3':        {'cor': '#B0B0B0', 'marker': 's', 'label': r'$\hat{A}_{CNN3}$'},
+                'CNN5':        {'cor': '#1A1A1A', 'marker': '*', 'label': r'$\hat{A}_{CNN5}$'},
+                # 'CNN8':        {'cor': '#006130', 'marker': '*', 'label': r'$\hat{A}_{CNN8}$'},
+                'Real_Amp':    {'cor': '#FA3232', 'marker': 'o', 'label': r'$A_{RA}$'},
+                'CNN3_Tau':     {'cor': 'darkorange', 'marker': 's', 'label': r'$\tau_{CNN3}$'},
+                'CNN5_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN5}$'},
+                # 'CNN8_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN8}$'}
+            }
+
+
+    for ocupacao in ocupacoes:
+        if type == "Amplitude":
+            cnn8_data_parcial = os.path.join(base_path, "RedeNeuralConvolucional", "CNN_8")
+            cnn8_data_path = os.path.join(cnn8_data_parcial, f'results_ocupacao_{ocupacao}.npz')
+            CNN8_data = np.load(cnn8_data_path)
+
+            of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
+            OF_data = np.load(os.path.join(of_data_parcial, f"results_occupation_{ocupacao}.npz"))
+
+            _, CNN3_data, _, _, _ = DefinePath_CNN(ocupacao, 3)
+            _, CNN5_data, _, _, _ = DefinePath_CNN(ocupacao, 5)
+
+            dados_iteracao = {
+                'OF': OF_data,
+                'CNN3': CNN3_data,
+                'CNN5': CNN5_data,
+                'CNN8': CNN8_data,
+            }
+        elif type == "Fase":
+            of_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_OF", f'janelamento_{n_janelamento}')
+            real_amplitude_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
+    
+            OF_data_path = os.path.join(of_data_parcial, f"phase_of_occupation_{ocupacao}.npz")
+            OF_data = np.load(OF_data_path)
+            Real_Amplitude_data_path = os.path.join(real_amplitude_data_parcial, f"phase_real_amplitude_occupation_{ocupacao}.npz")
+            Real_Amplitude_data = np.load(Real_Amplitude_data_path)
+
+            _, _, CNN3_data_fase, CNN3_estimated_data_fase, cnn3_type = DefinePath_CNN(ocupacao, 3)
+            _, _, CNN5_data_fase, CNN5_estimated_data_fase, cnn5_type = DefinePath_CNN(ocupacao, 5)
+            _, _, CNN8_data_fase, CNN8_estimated_data_fase, cnn8_type = DefinePath_CNN(ocupacao, 8)
+
+            dados_iteracao = {
+                'OF': OF_data,
+                'CNN3':CNN3_data_fase,     
+                'CNN5': CNN5_data_fase,
+                'Real_Amp': Real_Amplitude_data,
+                'CNN3_Tau':  CNN3_estimated_data_fase,
+                'CNN5_Tau': CNN5_estimated_data_fase,
+            }
+
+        for k in chaves:
+            rms[k].append(dados_iteracao[k]['rms'])
+            r2[k].append(dados_iteracao[k]['r2'])
+            mae[k].append(dados_iteracao[k]['mae'])
+            medae[k].append(dados_iteracao[k]['medae'])
+
+    fig, axs = plt.subplots(2, 2, figsize=(15, 10))
+    axs = axs.flatten()
+
+    def plotar_metrica(ax, metrica_dict, titulo, ylabel):
+        for k in chaves:
+            ax.plot(ocupacoes, metrica_dict[k], 
+                    label=estilos[k]['label'], color=estilos[k]['cor'], 
+                    marker=estilos[k]['marker'], markersize=8)
+
+        ax.set_title(titulo, fontsize=12, fontweight='bold')
+        ax.set_xlabel("Ocupação (%)")
+        ax.set_ylabel(ylabel)
+        ax.set_xticks(ocupacoes)
+        ax.grid(True, linestyle='--', alpha=0.6)
+
+    plotar_metrica(axs[0], rms, "RMS (Root Mean Square)", "ADC counts")
+    plotar_metrica(axs[1], r2, "R² (Coeficiente de Determinação)", "Score")
+    plotar_metrica(axs[2], mae, "MAE (Mean Absolute Error)", "ADC counts")
+    plotar_metrica(axs[3], medae, "MedAE (Median Absolute Error)", "ADC counts")
+
+    if type == "Fase":
+        axs[1].set_ylim(0, 1.0)
+
+
+    axs[0].legend()
+
+    fig.suptitle(f"Análise de Desempenho de Reconstrução da {type}", fontsize=16, fontweight='bold', y=0.96)
+    plt.tight_layout(rect=[0, 0, 1, 0.94])
+    plt.show()
+        
+        
+PlotTableComparativeAmplitude(type='Fase')
