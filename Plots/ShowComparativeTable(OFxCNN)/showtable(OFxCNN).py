@@ -1,6 +1,8 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
+
 
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
@@ -196,7 +198,8 @@ hep.style.use("ATLAS")
 
 
 def PlotTableComparativeAmplitude(type=None):
-    ocupacoes = [10, 20, 30, 40, 50, 60, 70, 80, 100]
+    fontSize= 24
+    ocupacoes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
     if type == "Amplitude":
         chaves = ['OF', 'CNN3', 'CNN5']
@@ -220,13 +223,13 @@ def PlotTableComparativeAmplitude(type=None):
             }
     elif type == "Fase":
         estilos = {
-                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': r'$\hat{A}_{OF}$'},
-                'CNN3':        {'cor': '#B0B0B0', 'marker': 's', 'label': r'$\hat{A}_{CNN3}$'},
-                'CNN5':        {'cor': '#1A1A1A', 'marker': '*', 'label': r'$\hat{A}_{CNN5}$'},
+                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': r'$\hat{A}_{OF}$', 'linestyle': 'solid', 'zorder':1},
+                'CNN3':        {'cor': '#B0B0B0', 'marker': 's', 'label': r'$\hat{A}_{CNN3}$', 'linestyle': 'solid', 'zorder':3},
+                'CNN5':        {'cor': '#1A1A1A', 'marker': '*', 'label': r'$\hat{A}_{CNN5}$', 'linestyle': 'dashed', 'zorder':4},
                 # 'CNN8':        {'cor': '#006130', 'marker': '*', 'label': r'$\hat{A}_{CNN8}$'},
-                'Real_Amp':    {'cor': '#FA3232', 'marker': 'o', 'label': r'$A_{RA}$'},
-                'CNN3_Tau':     {'cor': 'darkorange', 'marker': 's', 'label': r'$\tau_{CNN3}$'},
-                'CNN5_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN5}$'},
+                'Real_Amp':    {'cor': '#FA3232', 'marker': 'o', 'label': r'$A_{RA}$', 'linestyle': 'solid', 'zorder':2},
+                'CNN3_Tau':     {'cor': 'darkorange', 'marker': 's', 'label': r'$\tau_{CNN3}$', 'linestyle': 'solid', 'zorder':1},
+                'CNN5_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN5}$', 'linestyle': 'dashed', 'zorder':2},
                 # 'CNN8_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN8}$'}
             }
 
@@ -277,34 +280,58 @@ def PlotTableComparativeAmplitude(type=None):
             mae[k].append(dados_iteracao[k]['mae'])
             medae[k].append(dados_iteracao[k]['medae'])
 
-    fig, axs = plt.subplots(2, 2, figsize=(15, 10))
+    # fig, axs = plt.subplots(2, 2, figsize=(15, 9))
+    fig, axs = plt.subplots(2, 2, figsize=(14, 13))
     axs = axs.flatten()
 
     def plotar_metrica(ax, metrica_dict, titulo, ylabel):
         for k in chaves:
-            ax.plot(ocupacoes, metrica_dict[k], 
-                    label=estilos[k]['label'], color=estilos[k]['cor'], 
-                    marker=estilos[k]['marker'], markersize=8)
+            ax.plot(ocupacoes, metrica_dict[k], color=estilos[k]['cor'], 
+                    marker=estilos[k]['marker'], linestyle=estilos[k]['linestyle'], zorder=estilos[k]['zorder'], markersize=8)
 
         ax.set_title(titulo, fontsize=12, fontweight='bold')
-        ax.set_xlabel("Ocupação (%)")
-        ax.set_ylabel(ylabel)
+        ax.set_xlabel("Ocupação (%)", fontsize=fontSize-2)
+        ax.tick_params(axis='both', which='major', labelsize=20)
+        ax.set_ylabel(ylabel, fontsize=fontSize-2)
         ax.set_xticks(ocupacoes)
         ax.grid(True, linestyle='--', alpha=0.6)
+        # formatter = ScalarFormatter(useMathText=True)
+        # formatter.set_scientific(True)
+        # formatter.set_powerlimits((0, 0))
+        # formatter.set_useOffset(True)
+        # ax.yaxis.set_major_formatter(formatter)
 
-    plotar_metrica(axs[0], rms, "RMS (Root Mean Square)", "ADC counts")
-    plotar_metrica(axs[1], r2, "R² (Coeficiente de Determinação)", "Score")
-    plotar_metrica(axs[2], mae, "MAE (Mean Absolute Error)", "ADC counts")
-    plotar_metrica(axs[3], medae, "MedAE (Median Absolute Error)", "ADC counts")
+    handles = []
+    labels = []
+    for k in chaves:
+        handles.append(plt.Line2D([0], [0], color=estilos[k]['cor'], marker=estilos[k]['marker'], 
+                                  linestyle=estilos[k]['linestyle'], linewidth=2, markersize=10))
+        labels.append(estilos[k]['label'])
 
+    if type=="Amplitude":
+        unidade = 'ADC Counts'
+    elif type=='Fase':
+        unidade = 'ns'
+
+    plotar_metrica(axs[0], rms, "RMS (Raiz do Erro Quadrático Médio)", f'{unidade}')
+    plotar_metrica(axs[1], r2, "R² (Coeficiente de Determinação)", f'\u2013')
+    plotar_metrica(axs[2], mae, "MAE (Erro Absoluto Médio)", f'{unidade}')
+    plotar_metrica(axs[3], medae, "MedAE (Erro Absoluto Mediano)", f'{unidade}')
+
+    fig.legend(
+        handles, labels,
+        loc='upper center',
+        ncol=len(handles),
+        bbox_to_anchor=(0.49, 1.05),
+        frameon=False,
+        fontsize=fontSize-1
+    )
     if type == "Fase":
         axs[1].set_ylim(0, 1.0)
 
-
-    axs[0].legend()
-
-    fig.suptitle(f"Análise de Desempenho de Reconstrução da {type}", fontsize=16, fontweight='bold', y=0.96)
-    plt.tight_layout(rect=[0, 0, 1, 0.94])
+    # fig.suptitle(f"Análise de Desempenho de Reconstrução da {type}", fontsize=16, fontweight='bold', y=0.96)
+    # plt.tight_layout()
+    plt.subplots_adjust(hspace=0.4)
     plt.show()
         
         
