@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 
-
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 base_path = os.path.dirname(os.path.dirname(path))
@@ -64,7 +63,6 @@ def ImprimeMetricas_Fase():
         print(f"| Real Amplitude           | {Real_Amplitude_data['rms']:.6f} | {Real_Amplitude_data['r2']:.6f} | {Real_Amplitude_data['mae']:.6f} | {Real_Amplitude_data['medae']:.6f} |")
         print(rf'| {cnn_type}        | {CNN_estimated_data_fase['rms']:.6f} | {CNN_estimated_data_fase['r2']:.6f} | {CNN_estimated_data_fase['mae']:.6f} | {CNN_estimated_data_fase['medae']:.6f} |')
         print(100*"=")
-
 
 def MelhoriasCNN():
     of_data_parcial_amplitude = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
@@ -162,7 +160,6 @@ def MelhoriasCNN():
     print(f"---------------------------- Fase estimada CNN --------------------------")
     print(f"Melhoria CNN vs OF - Fase RMS:      {melhoria_fase_rms_cnn_estimated:.5f}%")
     print(f"Melhoria CNN vs OF - Fase STD:      {melhoria_fase_std_cnn_estimated:.5f}%")
-
 
 def MeanStdAmplitude():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
@@ -281,7 +278,7 @@ def PlotTableComparativeAmplitude(type=None):
             medae[k].append(dados_iteracao[k]['medae'])
 
     # fig, axs = plt.subplots(2, 2, figsize=(15, 9))
-    fig, axs = plt.subplots(2, 2, figsize=(14, 13))
+    fig, axs = plt.subplots(2, 2, figsize=(15, 10))
     axs = axs.flatten()
 
     def plotar_metrica(ax, metrica_dict, titulo, ylabel):
@@ -289,9 +286,9 @@ def PlotTableComparativeAmplitude(type=None):
             ax.plot(ocupacoes, metrica_dict[k], color=estilos[k]['cor'], 
                     marker=estilos[k]['marker'], linestyle=estilos[k]['linestyle'], zorder=estilos[k]['zorder'], markersize=8)
 
-        ax.set_title(titulo, fontsize=12, fontweight='bold')
+        ax.set_title(titulo, fontsize=fontSize-1, fontweight='bold')
         ax.set_xlabel("Ocupação (%)", fontsize=fontSize-2)
-        ax.tick_params(axis='both', which='major', labelsize=20)
+        ax.tick_params(axis='both', which='major', labelsize=25)
         ax.set_ylabel(ylabel, fontsize=fontSize-2)
         ax.set_xticks(ocupacoes)
         ax.grid(True, linestyle='--', alpha=0.6)
@@ -322,7 +319,7 @@ def PlotTableComparativeAmplitude(type=None):
         handles, labels,
         loc='upper center',
         ncol=len(handles),
-        bbox_to_anchor=(0.49, 1.05),
+        bbox_to_anchor=(0.5, 1.05),
         frameon=False,
         fontsize=fontSize-1
     )
