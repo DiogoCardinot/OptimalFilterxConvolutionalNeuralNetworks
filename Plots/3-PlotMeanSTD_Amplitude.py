@@ -729,7 +729,7 @@ def Plot_CNN(metric, zoom, box):
     plt.show()
 
 
-#Plot_CNNxOF(metric='mean', zoom=True)
+Plot_CNNxOF(metric='mean', zoom=True)
 #Plot_CNNxOF(metric='std', zoom=True)
 
 # Plot_CNN(metric="mean", zoom=True, box=True)

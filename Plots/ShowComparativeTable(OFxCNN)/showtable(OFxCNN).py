@@ -212,10 +212,10 @@ def PlotTableComparativeAmplitude(type=None):
 
     if type == "Amplitude":
         estilos = {
-                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': 'OF'},
-                'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': 'CNN-3'},
-                'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': 'CNN-5'},
-                'CNN8':        {'cor': '#006130', 'marker': '^', 'label': 'CNN-8'},
+                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': 'OF', 'linestyle': 'solid', 'zorder':1},
+                'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': 'CNN-3', 'linestyle': 'dashed', 'zorder':4},
+                'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': 'CNN-5', 'linestyle': 'solid', 'zorder':3},
+                # 'CNN8':        {'cor': '#006130', 'marker': '^', 'label': 'CNN-8', 'linestyle': 'solid', 'zorder':2},
                 
             }
     elif type == "Fase":
@@ -332,4 +332,5 @@ def PlotTableComparativeAmplitude(type=None):
     plt.show()
         
         
-PlotTableComparativeAmplitude(type='Fase')
+PlotTableComparativeAmplitude(type='Amplitude')
+# PlotTableComparativeAmplitude(type='Fase')
