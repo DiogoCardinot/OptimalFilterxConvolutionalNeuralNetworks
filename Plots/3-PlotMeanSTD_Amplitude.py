@@ -456,14 +456,14 @@ def Plot_CNN(metric, zoom, box):
             inset_axes_ax = inset_axes(
                 ax[0], width="100%", height="100%",
                 loc="upper right",
-                bbox_to_anchor=(0.69, 0.17, 0.3, 0.8),
+                bbox_to_anchor=(0.685, 0.13, 0.3, 0.8),
                 bbox_transform=ax[0].transAxes
             )
             inset_axes_ax.tick_params(axis='both', colors="#333333")
             inset_axes_ax.xaxis.label.set_color('#333333')
             inset_axes_ax.yaxis.label.set_color('#333333')
 
-            formatter = ScalarFormatter(useMathText=False)
+            formatter = ScalarFormatter(useMathText=True)
             formatter.set_scientific(True)
             formatter.set_powerlimits((0, 0))
             formatter.set_useOffset(True)
@@ -488,14 +488,14 @@ def Plot_CNN(metric, zoom, box):
             inset_axes_ax1 = inset_axes(
                 ax[1], width="100%", height="100%",
                 loc="upper right",
-                bbox_to_anchor=(0.69, 0.17, 0.3, 0.8),
+                bbox_to_anchor=(0.685, 0.13, 0.3, 0.8),
                 bbox_transform=ax[1].transAxes
             )
             inset_axes_ax1.tick_params(axis='both', colors="#333333")
             inset_axes_ax1.xaxis.label.set_color('#333333')
             inset_axes_ax1.yaxis.label.set_color('#333333')
 
-            formatter = ScalarFormatter(useMathText=False)
+            formatter = ScalarFormatter(useMathText=True)
             formatter.set_scientific(True)
             formatter.set_powerlimits((0, 0))
             formatter.set_useOffset(True)
@@ -635,14 +635,14 @@ def Plot_CNN(metric, zoom, box):
             inset_axes_ax = inset_axes(
                 ax[0], width="100%", height="100%",
                 loc="upper right",
-                bbox_to_anchor=(0.69, 0.17, 0.3, 0.8),
+                bbox_to_anchor=(0.685, 0.13, 0.3, 0.8),
                 bbox_transform=ax[0].transAxes
             )
             inset_axes_ax.tick_params(axis='both', colors="#333333")
             inset_axes_ax.xaxis.label.set_color('#333333')
             inset_axes_ax.yaxis.label.set_color('#333333')
 
-            formatter = ScalarFormatter(useMathText=False)
+            formatter = ScalarFormatter(useMathText=True)
             formatter.set_scientific(True)
             formatter.set_powerlimits((0, 0))
             formatter.set_useOffset(True)
@@ -667,14 +667,14 @@ def Plot_CNN(metric, zoom, box):
             inset_axes_ax1 = inset_axes(
                 ax[1], width="100%", height="100%",
                 loc="upper right",
-                bbox_to_anchor=(0.69, 0.17, 0.3, 0.8),
+                bbox_to_anchor=(0.685, 0.13, 0.3, 0.8),
                 bbox_transform=ax[1].transAxes
             )
             inset_axes_ax1.tick_params(axis='both', colors="#333333")
             inset_axes_ax1.xaxis.label.set_color('#333333')
             inset_axes_ax1.yaxis.label.set_color('#333333')
 
-            formatter = ScalarFormatter(useMathText=False)
+            formatter = ScalarFormatter(useMathText=True)
             formatter.set_scientific(True)
             formatter.set_powerlimits((0, 0))
             formatter.set_useOffset(True)
@@ -707,11 +707,14 @@ def Plot_CNN(metric, zoom, box):
                                       )    
     ax[0].legend(loc='upper left')
     ax[0].set_xlim(0,155)
+    ax[0].set_xticks([0,10,20,30,40,50,60,70,80,90,100])
     for bar in bars8_0:
         bar.set_linestyle('dashed')
 
     ax[1].errorbar(occupations_OF, means_OF, yerr=stds_OF, fmt='s', capsize=3, color=of_color, label='OF', zorder=1)
     ax[1].errorbar(occupations_CNN3, means_CNN3, yerr=stds_CNN3, fmt='s', capsize=3, color='#B0B0B0', label='CNN-3', zorder=0)
+    ax[1].set_xticks([0,10,20,30,40,50,60,70,80,90,100])
+
     _, caps8_0, bars8_0 = ax[1].errorbar(x, y, yerr=yerr,
                                       fmt='*', color=cnn8_color, label='CNN-8',
                                       zorder=10,
@@ -729,8 +732,8 @@ def Plot_CNN(metric, zoom, box):
     plt.show()
 
 
-Plot_CNNxOF(metric='mean', zoom=True)
-#Plot_CNNxOF(metric='std', zoom=True)
+# Plot_CNNxOF(metric='mean', zoom=True)
+# Plot_CNNxOF(metric='std', zoom=True)
 
-# Plot_CNN(metric="mean", zoom=True, box=True)
-# Plot_CNN(metric="std", zoom=True, box=True)
+Plot_CNN(metric="mean", zoom=True, box=True)
+Plot_CNN(metric="std", zoom=True, box=True)
