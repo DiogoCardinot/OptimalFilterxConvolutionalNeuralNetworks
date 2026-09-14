@@ -191,7 +191,7 @@ from collections import defaultdict
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-# hep.style.use("ATLAS")
+hep.style.use("ATLAS")
 
 
 def PlotTableComparativeAmplitude(type=None):
@@ -319,7 +319,7 @@ def PlotTableComparativeAmplitude(type=None):
         handles, labels,
         loc='upper center',
         ncol=len(handles),
-        bbox_to_anchor=(0.5, 0.999),
+        bbox_to_anchor=(0.5, 1.05),
         frameon=False,
         fontsize=fontSize-1
     )
@@ -332,5 +332,5 @@ def PlotTableComparativeAmplitude(type=None):
     plt.show()
         
         
-# PlotTableComparativeAmplitude(type='Amplitude')
-PlotTableComparativeAmplitude(type='Fase')
+PlotTableComparativeAmplitude(type='Amplitude')
+# PlotTableComparativeAmplitude(type='Fase')

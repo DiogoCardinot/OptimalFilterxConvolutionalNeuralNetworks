@@ -24,9 +24,9 @@ cnn3_color = "#B0B0B0"
 cnn5_color = "#1A1A1A"
 cnn8_color = "#006130"
 
-def LoadData():
+def LoadData(metric):
     """Função auxiliar para carregar os dados e evitar repetição"""
-    of_disp, cnn3_disp, cnn5_disp, cnn8_disp = [], [], [], []
+    of_metric, cnn3_metric, cnn5_metric, cnn8_metric = [], [], [], []
     of_err, cnn3_err, cnn5_err, cnn8_err = [], [], [], []
 
     for ocupacao in ocupacoes:
@@ -39,98 +39,137 @@ def LoadData():
         cnn3_load = np.load(cnn3_path)
         cnn5_load = np.load(cnn5_path)
         cnn8_load = np.load(cnn8_path)
-        
-        # Dispersões
-        of_disp.append(of_load['std_error'])
-        cnn3_disp.append(cnn3_load['std_error'])
-        cnn5_disp.append(cnn5_load['std_error'])
-        cnn8_disp.append(cnn8_load['std_error'])
+        if metric== "mean":
+            of_metric.append(of_load['mean_error'])
+            cnn3_metric.append(cnn3_load['mean_error'])
+            cnn5_metric.append(cnn5_load['mean_error'])
+            cnn8_metric.append(cnn8_load['mean_error'])
 
-        # Erros (std_std_error)
-        of_err.append(of_load['std_std_error'])
-        cnn3_err.append(cnn3_load['std_std_error'])
-        cnn5_err.append(cnn5_load['std_std_error'])
-        cnn8_err.append(cnn8_load['std_std_error'])
-        
-    return (of_disp, cnn3_disp, cnn5_disp, cnn8_disp), (of_err, cnn3_err, cnn5_err, cnn8_err)
+            of_err.append(of_load['std_mean_error'])
+            cnn3_err.append(cnn3_load['std_mean_error'])
+            cnn5_err.append(cnn5_load['std_mean_error'])
+            cnn8_err.append(cnn8_load['std_mean_error'])
+        elif metric =='std':
+            of_metric.append(of_load['std_error'])
+            cnn3_metric.append(cnn3_load['std_error'])
+            cnn5_metric.append(cnn5_load['std_error'])
+            cnn8_metric.append(cnn8_load['std_error'])
 
-def PlotAmplitudeDispersionOcupacao_Zoom():
-    (of_disp, cnn3_disp, cnn5_disp, cnn8_disp), (of_err, cnn3_err, cnn5_err, cnn8_err) = LoadData()
+            of_err.append(of_load['std_std_error'])
+            cnn3_err.append(cnn3_load['std_std_error'])
+            cnn5_err.append(cnn5_load['std_std_error'])
+            cnn8_err.append(cnn8_load['std_std_error'])
+
+        
+    return (of_metric, cnn3_metric, cnn5_metric, cnn8_metric), (of_err, cnn3_err, cnn5_err, cnn8_err)
+
+def PlotAmplitudeDispersionOcupacao_Zoom(metric):
+    (of_disp, cnn3_disp, cnn5_disp, cnn8_disp), (of_err, cnn3_err, cnn5_err, cnn8_err) = LoadData(metric)
     fontSize = 18
-    
-    fig, ax = plt.subplots(figsize=(7, 5))
 
-    # Trocado ax.plot por ax.errorbar
-    ax.errorbar(ocupacoes, of_disp, yerr=of_err, label="OF", marker='o', linestyle='-', color=of_color, capsize=1)
-    ax.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, label=r'CNN-3', marker='*', linestyle='dashed', color=cnn3_color, zorder=5, capsize=1)
-    ax.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, label=r'CNN-5', marker='s', linestyle='-', color=cnn5_color, linewidth=2, capsize=1)
+    fig, ax = plt.subplots(figsize=(7, 5))
+    if metric=='mean':
+        y_label = r'$\bar{\mu}$ (ADC counts)'
+        ax.set_ylim(-110,15)
+    elif metric=='std':
+        y_label = r'$\bar{\sigma}$ (ADC counts)'
+        ax.set_ylim(-5,60)
+        
+    ax.set_xlim(-2,102)
+    ax.set_xticks([0,10,20,30,40,50,60,70,80,90,100])
+    escala_erro = 10
+    of_err = np.array(of_err)
+    cnn3_err = np.array(cnn3_err)
+    cnn5_err = np.array(cnn5_err)
+
+    ax.errorbar(ocupacoes, of_disp, yerr=escala_erro*of_err, label="OF", marker='o', linestyle='-', color=of_color, markersize=6, capsize=3)
+    ax.errorbar(ocupacoes, cnn3_disp, yerr=escala_erro*cnn3_err, label=r'CNN-3', marker='*', linestyle='dashed', color=cnn3_color, zorder=5, markersize=6, capsize=3)
+    ax.errorbar(ocupacoes, cnn5_disp, yerr=escala_erro*cnn5_err, label=r'CNN-5', marker='s', linestyle='-', color=cnn5_color, linewidth=2, markersize=6, capsize=3)
 
     ax.legend(loc='best')
     ax.set_xlabel('Ocupação (%)', fontsize=fontSize-2)
-    ax.set_ylabel('Dispersão da amplitude\nestimada (ADC Counts)', fontsize=fontSize-2)
-    ax.set_title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
+    ax.set_ylabel(y_label, fontsize=fontSize-2)
+    # ax.set_title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
     ax.tick_params(axis='both', which='major', labelsize=14)
+    if metric == 'mean':
+        axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.6, 0.6, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
+        x11, x21 = 69.8, 80.20
+        y11, y21 = -0.24, 0.11
+        axins2.set_xticks([x11, x21])
+        axins2.set_yticks([y11, y21])
+        axins2.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False, labeltop=False)
+        axins2.tick_params(axis='both', colors="#424242")
+        
+        # Aplicando errorbar no zoom também
+        axins2.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5, capsize=2)
+        axins2.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2, capsize=2)
+        
+        axins2.set_xlim(x11, x21)
+        axins2.set_ylim(y11, y21)
+        plt.setp(axins2.get_xticklabels(which='both'), fontsize=8)
+        plt.setp(axins2.get_yticklabels(), fontsize=8)
+        mark_inset(ax, axins2, loc1=1, loc2=2, fc="none", ec="black", linewidth=1.5)
+    elif metric=='std':
+        # ZOOM 3 CNN
+        '''
+        axins = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.75, 0.25, 0.1, 0.1), bbox_transform=ax.transAxes, loc='center')
+        x1, x2 = 79.99, 80.010
+        y1, y2 = 20.6, 21.15
+        axins.set_xticks([x1, x2])
+        axins.set_yticks([y1, y2])
+        axins.errorbar(ocupacoes, cnn3_disp, yerr=escala_erro*cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5, markersize=6, capsize=3)
+        axins.errorbar(ocupacoes, cnn5_disp, yerr=escala_erro*cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2, markersize=6, capsize=3)
+        axins.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False, labeltop=False)
+        axins.tick_params(axis='both', colors="black")
+        axins.set_xlim(x1, x2)
+        axins.set_ylim(y1, y2)
+        plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
+        plt.setp(axins.get_yticklabels(), fontsize=8)
+        mark_inset(ax, axins, loc1=1, loc2=2, fc="none", ec="black", linewidth=1.5)
+        # '''
 
-    # ZOOM 3 CNN
-    # '''
-    axins = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.75, 0.25, 0.1, 0.1), bbox_transform=ax.transAxes, loc='center')
-    x1, x2 = 79.99, 80.010
-    y1, y2 = 20.6, 21.15
-    axins.set_xticks([x1, x2])
-    axins.set_yticks([y1, y2])
-    axins.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5)
-    axins.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2)
-    axins.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False, labeltop=False)
-    axins.tick_params(axis='both', colors="black")
-    axins.set_xlim(x1, x2)
-    axins.set_ylim(y1, y2)
-    plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
-    plt.setp(axins.get_yticklabels(), fontsize=8)
-    mark_inset(ax, axins, loc1=1, loc2=2, fc="none", ec="black", linewidth=1.5)
-    # '''
+        # ZOOM 1 CNN
+        '''
+        axins1 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.25, 0.3, 0.1, 0.1), bbox_transform=ax.transAxes, loc='center')
+        x11, x21 = 29.99, 30.010
+        y11, y21 = 7.28, 7.87
+        axins1.set_xticks([x11, x21])
+        axins1.set_yticks([y11, y21])
+        axins1.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
+        axins1.tick_params(axis='both', colors="#424242")
+        axins1.errorbar(ocupacoes, cnn3_disp, yerr=escala_erro*cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5)
+        axins1.errorbar(ocupacoes, cnn5_disp, yerr=escala_erro*cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2)
+        axins1.set_xlim(x11, x21)
+        axins1.set_ylim(y11, y21)
+        plt.setp(axins1.get_xticklabels(which='both'), fontsize=8)
+        plt.setp(axins1.get_yticklabels(), fontsize=8)
+        mark_inset(ax, axins1, loc1=3, loc2=4, fc="none", ec="black", linewidth=1.5)
+        # '''
 
-    # ZOOM 1 CNN
-    # '''
-    axins1 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.25, 0.3, 0.1, 0.1), bbox_transform=ax.transAxes, loc='center')
-    x11, x21 = 29.99, 30.010
-    y11, y21 = 7.28, 7.87
-    axins1.set_xticks([x11, x21])
-    axins1.set_yticks([y11, y21])
-    axins1.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
-    axins1.tick_params(axis='both', colors="#424242")
-    axins1.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5)
-    axins1.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2)
-    axins1.set_xlim(x11, x21)
-    axins1.set_ylim(y11, y21)
-    plt.setp(axins1.get_xticklabels(which='both'), fontsize=8)
-    plt.setp(axins1.get_yticklabels(), fontsize=8)
-    mark_inset(ax, axins1, loc1=3, loc2=4, fc="none", ec="black", linewidth=1.5)
-    # '''
-
-    # ZOOM 2 CNN
-    axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.5, 0.45, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
-    x11, x21 = 59.8, 70.20
-    y11, y21 = 15.9, 19
-    axins2.set_xticks([x11, x21])
-    axins2.set_yticks([y11, y21])
-    axins2.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
-    axins2.tick_params(axis='both', colors="#424242")
-    
-    # Aplicando errorbar no zoom também
-    axins2.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5, capsize=2)
-    axins2.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2, capsize=2)
-    
-    axins2.set_xlim(x11, x21)
-    axins2.set_ylim(y11, y21)
-    plt.setp(axins2.get_xticklabels(which='both'), fontsize=8)
-    plt.setp(axins2.get_yticklabels(), fontsize=8)
-    mark_inset(ax, axins2, loc1=3, loc2=4, fc="none", ec="black", linewidth=1.5)
+        # ZOOM 2 CNN
+        axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.6, 0.08, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
+        x11, x21 = 59.8, 70.20
+        y11, y21 = 15.9, 19
+        axins2.set_xticks([x11, x21])
+        axins2.set_yticks([y11, y21])
+        axins2.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False, labeltop=False)
+        axins2.tick_params(axis='both', colors="#424242")
+        
+        # Aplicando errorbar no zoom também
+        axins2.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5, capsize=2)
+        axins2.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2, capsize=2)
+        
+        axins2.set_xlim(x11, x21)
+        axins2.set_ylim(y11, y21)
+        plt.setp(axins2.get_xticklabels(which='both'), fontsize=8)
+        plt.setp(axins2.get_yticklabels(), fontsize=8)
+        mark_inset(ax, axins2, loc1=3, loc2=1, fc="none", ec="black", linewidth=1.5)
 
     plt.tight_layout()
     plt.show()
 
 
-PlotAmplitudeDispersionOcupacao_Zoom()
+PlotAmplitudeDispersionOcupacao_Zoom(metric="mean")
 
 def PlotAmplitudeDispersionOcupacao_Subplot():
     (of_disp, cnn3_disp, cnn5_disp, cnn8_disp), (of_err, cnn3_err, cnn5_err, cnn8_err) = LoadData()
