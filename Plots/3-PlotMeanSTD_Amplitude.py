@@ -73,6 +73,11 @@ def GetMeanOF(OF_Data):
     return occupations, means, stds
 
 def Plot_CNNxOF(metric, zoom):
+    if zoom:
+        taxa_multiplicacao =1
+    else:
+        taxa_multiplicacao =10
+
     CNN_Data = SaveDataMeanSTD_CNN(metric)
     OF_Data = SaveDataMeanSTD_OF(metric)
    
@@ -84,16 +89,19 @@ def Plot_CNNxOF(metric, zoom):
     fontSize = 24
     of_color = '#9900ff'
 
-    fig, ax = plt.subplots(2, 1, figsize=(total_inches_image, 4), constrained_layout=True)
+    fig, ax = plt.subplots(2, 1, figsize=(total_inches_image,6), constrained_layout=True)
     ax = ax.flatten()
 
     x = occupations_OF
     y = means_OF
     yerr = stds_OF
-    
+
     if metric=='mean':
         # y_label = 'Mean values\n(ADC counts)'
         y_label = r'$\bar{\mu}$ (ADC counts)'
+
+        ax[0].set_ylim(-110,15)
+        ax[1].set_ylim(-110,15)
         if zoom:
             #Plot de Cima
             #CNN mean
@@ -196,6 +204,9 @@ def Plot_CNNxOF(metric, zoom):
     elif metric=='std':
         # y_label = 'Mean dispersion\nvalues (ADC counts)'
         y_label = r'$\bar{\sigma}$ (ADC counts)'
+        ax[0].set_ylim(-5,60)
+        ax[1].set_ylim(-5,60)
+
         if zoom:
             #Plot de Cima
             #CNN mean
@@ -295,11 +306,16 @@ def Plot_CNNxOF(metric, zoom):
             plt.setp(axins21.get_yticklabels(), fontsize=11)
             mark_inset(ax[1], axins21, loc1=3, loc2=4, fc="none", ec="purple", linewidth=1.5)
 
+    yerr = np.array(yerr)
+    stds_CNN3 = np.array(stds_CNN3)
+    stds_CNN5 = np.array(stds_CNN5)
     #Plot de cima
-    ax[0].errorbar(occupations_CNN5, means_CNN5, yerr=stds_CNN5, fmt='s', capsize=3, color="#1A1A1A", label='CNN-5', zorder=1)
-    ax[0].errorbar(x,y, yerr=yerr, fmt='s', capsize=3, color=of_color, label='OF', zorder=10)
+    ax[0].errorbar(occupations_CNN5, means_CNN5, yerr=taxa_multiplicacao*stds_CNN5, fmt='s', markersize=6, capsize=3, color="#1A1A1A", label='CNN-5', zorder=1)
+    ax[0].errorbar(x,y, yerr=taxa_multiplicacao*yerr, fmt='s',markersize=6, capsize=3, color=of_color, label='OF', zorder=10)
     ax[0].set_xlabel("Ocupação (%)", fontsize= fontSize)
     ax[0].set_ylabel(y_label, fontsize= fontSize)
+    ax[0].set_xticks([0,10,20,30,40,50,60,70,80,90,100])
+    ax[0].set_xlim(-2,102)
     ax[0].legend(loc='best')
     ax[0].tick_params(axis='both', which='major', labelsize=20)
 
@@ -309,10 +325,12 @@ def Plot_CNNxOF(metric, zoom):
     #     ax[0].plot([xi - 0.2, xi + 0.2], [yi + err, yi + err], color=of_color, linewidth=2)
 
     #Plot de baixo
-    ax[1].errorbar(occupations_CNN3, means_CNN3, yerr=stds_CNN3, fmt='s', capsize=3, color='#B0B0B0', label='CNN-3', zorder=0)
-    ax[1].errorbar(x,y, yerr=yerr, fmt='s', capsize=3, color=of_color, label='OF', zorder=10)
+    ax[1].errorbar(occupations_CNN3, means_CNN3, yerr=taxa_multiplicacao*stds_CNN3, fmt='s', markersize=6, capsize=3, color='#B0B0B0', label='CNN-3', zorder=0)
+    ax[1].errorbar(x,y, yerr=taxa_multiplicacao*yerr, fmt='s', markersize=6, capsize=3, color=of_color, label='OF', zorder=10)
     ax[1].set_xlabel("Ocupação (%)", fontsize= fontSize)
     ax[1].set_ylabel(y_label, fontsize= fontSize)
+    ax[1].set_xticks([0,10,20,30,40,50,60,70,80,90,100])
+    ax[1].set_xlim(-2,102)
     ax[1].legend(loc='best')  
     ax[1].tick_params(axis='both', which='major', labelsize=20)
 
@@ -732,8 +750,8 @@ def Plot_CNN(metric, zoom, box):
     plt.show()
 
 
-# Plot_CNNxOF(metric='mean', zoom=True)
-# Plot_CNNxOF(metric='std', zoom=True)
+Plot_CNNxOF(metric='mean', zoom=False)
+Plot_CNNxOF(metric='std', zoom=False)
 
-Plot_CNN(metric="mean", zoom=True, box=True)
-Plot_CNN(metric="std", zoom=True, box=True)
+# Plot_CNN(metric="mean", zoom=True, box=True)
+# Plot_CNN(metric="std", zoom=True, box=True)

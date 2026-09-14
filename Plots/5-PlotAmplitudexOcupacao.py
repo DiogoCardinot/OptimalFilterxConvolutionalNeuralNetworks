@@ -130,7 +130,7 @@ def PlotAmplitudeDispersionOcupacao_Zoom():
     plt.show()
 
 
-# PlotAmplitudeDispersionOcupacao_Zoom()
+PlotAmplitudeDispersionOcupacao_Zoom()
 
 def PlotAmplitudeDispersionOcupacao_Subplot():
     (of_disp, cnn3_disp, cnn5_disp, cnn8_disp), (of_err, cnn3_err, cnn5_err, cnn8_err) = LoadData()
