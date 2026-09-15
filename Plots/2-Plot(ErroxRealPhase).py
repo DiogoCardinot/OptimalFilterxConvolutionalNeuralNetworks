@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
 import matplotlib.patheffects as pe
+import mplhep as hep
+
 
 
 
@@ -17,6 +19,8 @@ CNN= 3
 plt.rcParams['savefig.directory'] = os.path.dirname(path)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
+hep.style.use("ATLAS")
+
 
 
 def PlotError():
@@ -227,7 +231,7 @@ def PlotHistrogramas(zoom):
         bins = 150
         ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
         ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
-        # ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
+        ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
         ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
         ax[idx].set_xlabel(f'Erro de estimação de fase (ns)', fontsize=fontSize-2)
@@ -292,10 +296,10 @@ def PlotHistrogramas(zoom):
     labels.append('OF')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
     labels.append('Real Amplitude')
-    cnn_types = [r'CNN-3', r'CNN-5']
+    cnn_types = [r'CNN-3*', r'CNN-5*']
     unique_cnns = list(set(cnn_types))
     for cnn_type in unique_cnns:
-        if cnn_type == "CNN-5":
+        if cnn_type == "CNN-5*":
             color = "#1A1A1A"
         else: 
             color = "#B0B0B0"
@@ -303,16 +307,16 @@ def PlotHistrogramas(zoom):
         handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
         labels.append(cnn_type)
     
-    # cnn_estimated_types = ['CNN-3', 'CNN-5']
-    # unique_estimated_cnns = list(set(cnn_estimated_types))
-    # for cnn_type in unique_estimated_cnns:
-    #     if cnn_type == "CNN-5":
-    #         color = "deepskyblue"
-    #     else: 
-    #         color = "darkorange"
+    cnn_estimated_types = ['CNN-3', 'CNN-5']
+    unique_estimated_cnns = list(set(cnn_estimated_types))
+    for cnn_type in unique_estimated_cnns:
+        if cnn_type == "CNN-5":
+            color = "deepskyblue"
+        else: 
+            color = "darkorange"
        
-    #     handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
-    #     labels.append(cnn_type)
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
 
     fig.legend(
         handles, labels,
@@ -640,7 +644,7 @@ def PlotHistrogramas1(zoom, box):
         #     line = 2
         ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
         ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
-        # ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
+        ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
         ax[idx].hist(real_amplitude_error, bins=bins, alpha=0.7, histtype='step', 
              color=real_amplitude_color, linewidth=3.5, linestyle='dashed', label= fr'$\mu = {np.mean(real_amplitude_error):.2f}, \sigma = {np.std(real_amplitude_error):.2f}$' 
              )
@@ -661,14 +665,14 @@ def PlotHistrogramas1(zoom, box):
             inset_axes_ax = inset_axes(
                 ax[idx], width="100%", height="100%",
                 loc="upper right",
-                bbox_to_anchor=(0.69, 0.17, 0.3, 0.8),
+                bbox_to_anchor=(0.69, 0.17, 0.27, 0.77),
                 bbox_transform=ax[idx].transAxes
             )
             inset_axes_ax.tick_params(axis='both', colors="#333333")
             inset_axes_ax.xaxis.label.set_color('#333333')
             inset_axes_ax.yaxis.label.set_color('#333333')
 
-            formatter = ScalarFormatter(useMathText=False)
+            formatter = ScalarFormatter(useMathText=True)
             formatter.set_scientific(True)
             formatter.set_powerlimits((0, 0))
             formatter.set_useOffset(True)
@@ -702,8 +706,8 @@ def PlotHistrogramas1(zoom, box):
             inset_axes_ax.set_ylim([y_inf_limite, y_sup_limite])
         
         if box and idx!=3:
-            x_0 = 0.6  #posicao inicial em x
-            y_0 = 0.6 #posicao inicial em y
+            x_0 = 0.08  #posicao inicial em x
+            y_0 = 0.12 #posicao inicial em y
             width = 0.3
             heigth = 0.3
             if idx ==0:
@@ -725,6 +729,7 @@ def PlotHistrogramas1(zoom, box):
             axins.yaxis.tick_right()
 
             axins.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
+            axins.tick_params(axis='y', which='both', left=True, labelleft=True, right=False, labelright=False)
             axins.tick_params(axis='both', colors="#424242")
 
             axins.hist(cnn_error, bins = bins, alpha=1.0,histtype='step', color=cnn_color, linewidth=3)
@@ -733,7 +738,7 @@ def PlotHistrogramas1(zoom, box):
             axins.set_ylim(y1,y2)
             plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
             plt.setp(axins.get_yticklabels(), fontsize=8)
-            mark_inset(ax[idx], axins, loc1=2, loc2=3, fc="none", ec="gray", linewidth=1.5)
+            mark_inset(ax[idx], axins, loc1=1, loc2=4, fc="none", ec="black", linewidth=1.5)
 
     handles = []
     labels = []
@@ -742,10 +747,10 @@ def PlotHistrogramas1(zoom, box):
     labels.append('OF')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
     labels.append('Real Amplitude')
-    cnn_types = [r'CNN-3', r'CNN-5']
+    cnn_types = [r'CNN-3*', r'CNN-5*']
     unique_cnns = list(set(cnn_types))
     for cnn_type in unique_cnns:
-        if cnn_type == "CNN-5":
+        if cnn_type == "CNN-5*":
             color = "#1A1A1A"
         else: 
             color = "#B0B0B0"
@@ -753,27 +758,27 @@ def PlotHistrogramas1(zoom, box):
         handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
         labels.append(cnn_type)
     
-    # cnn_estimated_types = ['CNN-3', 'CNN-5']
-    # unique_estimated_cnns = list(set(cnn_estimated_types))
-    # for cnn_type in unique_estimated_cnns:
-    #     if cnn_type == "CNN-5":
-    #         color = "deepskyblue"
-    #     else: 
-    #         color = "darkorange"
+    cnn_estimated_types = ['CNN-3', 'CNN-5']
+    unique_estimated_cnns = list(set(cnn_estimated_types))
+    for cnn_type in unique_estimated_cnns:
+        if cnn_type == "CNN-5":
+            color = "deepskyblue"
+        else: 
+            color = "darkorange"
        
-    #     handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
-    #     labels.append(cnn_type)
+        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+        labels.append(cnn_type)
 
     fig.legend(
         handles, labels,
         loc='upper center',
         ncol=len(handles),
-        bbox_to_anchor=(0.49, 0.9999),
+        bbox_to_anchor=(0.5, 1.05),
         frameon=False,
-        fontsize=fontSize-1
+        fontsize=fontSize
     )
     # plt.tight_layout()
     plt.subplots_adjust(hspace=0.4)
     plt.show()
 
-PlotHistrogramas1(zoom= False, box= True)
+PlotHistrogramas1(zoom= True, box= True)
