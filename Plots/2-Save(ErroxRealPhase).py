@@ -4,7 +4,7 @@ import os
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
-ocupacoes = [0,10,20,30,40,50,60,70,80,90,100]
+ocupacoes = [10,20,30,40,50,60,70,80,90,100]
 n_janelamento = 7
 
 CNN = 8

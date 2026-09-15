@@ -24,6 +24,7 @@ for ocupacao in ocupacoes:
     print(f"Ocupacao - {ocupacao}")
     of_amplitude_filepath = os.path.join(of_data, f'results_occupation_{ocupacao}.npz')
     cnn_amplitude_filepath = os.path.join(cnn_data, f'results_ocupacao_{ocupacao}.npz')
+    cnn_amplitude_filepath = os.path.join(cnn_data, f'results_ocupacao_{ocupacao}.npz')
     a_tau_filepath = os.path.join(a_tau_data, f'results_occupation_{ocupacao}.npz')
 
     if not os.path.exists(a_tau_filepath):
@@ -62,6 +63,7 @@ for ocupacao in ocupacoes:
     cnn_amp_dict = {idx: val for idx, val in zip(cnn_indices, cnn_estimated_amplitude)}
     real_amplitude_dict = {idx: val for idx, val in zip(of_indices, real_amplitude)}
 
+    common_indices = sorted(set(a_tau_dict.keys()) & set(of_amp_dict.keys()) & set(cnn_amp_dict.keys()))
     common_indices = sorted(set(a_tau_dict.keys()) & set(of_amp_dict.keys()) & set(cnn_amp_dict.keys()))
     print(f'Indices comuns: \n{len(common_indices)}')
 
@@ -141,6 +143,7 @@ for ocupacao in ocupacoes:
     output_path = os.path.join(path, "FaseEstimada_OF", f'janelamento_{n_janelamento}')
     os.makedirs(output_path, exist_ok=True)
     output_file = os.path.join(output_path,f"phase_of_occupation_{ocupacao}.npz")
+    
     
     np.savez_compressed(
         output_file,
