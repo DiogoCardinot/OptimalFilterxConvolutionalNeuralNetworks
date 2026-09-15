@@ -194,12 +194,15 @@ plt.rcParams['ps.fonttype'] = 42
 hep.style.use("ATLAS")
 
 
-def PlotTableComparativeAmplitude(type=None):
+def PlotTableComparativeAmplitude(type=None, cnn8=None):
     fontSize= 24
     ocupacoes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
     if type == "Amplitude":
-        chaves = ['OF', 'CNN3', 'CNN5']
+        if cnn8:
+            chaves = ['OF', 'CNN3', 'CNN5', 'CNN8']
+        else:
+            chaves = ['OF', 'CNN3', 'CNN5']
     elif type == "Fase":
         chaves = ['OF', 'CNN3', 'CNN5', 'Real_Amp', 'CNN3_Tau', 'CNN5_Tau']
     else:
@@ -215,7 +218,7 @@ def PlotTableComparativeAmplitude(type=None):
                 'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': 'OF', 'linestyle': 'solid', 'zorder':1},
                 'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': 'CNN-3', 'linestyle': 'dashed', 'zorder':4},
                 'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': 'CNN-5', 'linestyle': 'solid', 'zorder':3},
-                # 'CNN8':        {'cor': '#006130', 'marker': '^', 'label': 'CNN-8', 'linestyle': 'solid', 'zorder':2},
+                'CNN8':        {'cor': '#006130', 'marker': '^', 'label': 'CNN-8', 'linestyle': 'dashed', 'zorder':5},
                 
             }
     elif type == "Fase":
@@ -332,5 +335,5 @@ def PlotTableComparativeAmplitude(type=None):
     plt.show()
         
         
-PlotTableComparativeAmplitude(type='Amplitude')
+PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
 # PlotTableComparativeAmplitude(type='Fase')
