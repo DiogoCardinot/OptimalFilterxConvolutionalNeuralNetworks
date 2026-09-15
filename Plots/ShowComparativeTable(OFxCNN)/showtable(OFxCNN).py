@@ -27,6 +27,10 @@ def DefinePath_CNN(ocupacao, CNN=None):
 
     return CNN_data_path_amplitude, CNN_data_amplitude, CNN_data_fase, CNN_estimated_data_fase, cnn_type
 
+'''
+    IMPRIME PARÂMETROS PARA PREENCHER A TABELA DE COMPARAÇÕES DE AMPLITUDE
+'''
+
 def ImprimeMetricas_Amplitude():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
     cnn8_data_parcial = os.path.join(base_path, "RedeNeuralConvolucional", "CNN_8")
@@ -44,6 +48,9 @@ def ImprimeMetricas_Amplitude():
         print(f"| CNN-8           | {cnn8_data['rms']:.6f} | {cnn8_data['r2']:.6f} | {cnn8_data['mae']:.6f} | {cnn8_data['medae']:.6f} |")
         print(100*"=")
 
+'''
+    IMPRIME PARÂMETROS PARA PREENCHER A TABELA DE COMPARAÇÕES DE FASE
+'''
 
 def ImprimeMetricas_Fase():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_OF", f'janelamento_{n_janelamento}')
@@ -63,6 +70,11 @@ def ImprimeMetricas_Fase():
         print(f"| Real Amplitude           | {Real_Amplitude_data['rms']:.6f} | {Real_Amplitude_data['r2']:.6f} | {Real_Amplitude_data['mae']:.6f} | {Real_Amplitude_data['medae']:.6f} |")
         print(rf'| {cnn_type}        | {CNN_estimated_data_fase['rms']:.6f} | {CNN_estimated_data_fase['r2']:.6f} | {CNN_estimated_data_fase['mae']:.6f} | {CNN_estimated_data_fase['medae']:.6f} |')
         print(100*"=")
+
+
+'''
+    IMPRIME AS MÉTRICAS COMPARANDO AS MELHORAS CONJUNTAS DE TODAS AS ARQUITETURAS DE REDE NEURAL COM O OF
+'''
 
 def MelhoriasCNN():
     of_data_parcial_amplitude = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
@@ -335,5 +347,175 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     plt.show()
         
         
-PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
+# PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
 # PlotTableComparativeAmplitude(type='Fase')
+
+
+'''
+    IMPRIME AS MÉTRICAS COMPARANDO AS MELHORAS INDIVIDUAIS DE CADA ARQUITETURA DE REDE NEURAL COM O OF, E DEPOIS COMPARANDO A MELHORA DA ARQUITETURA HÍBRIDA
+'''
+
+def MelhoriasCNNxOF(type=None):
+    of_data_parcial_amplitude = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
+    of_data_parcial_fase = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_OF", f'janelamento_{n_janelamento}')
+
+    sum_amplitude_rms_of = 0
+    sum_amplitude_rms_cnn = 0
+    sum_amplitude_std_of = 0
+    sum_amplitude_std_cnn = 0
+
+    sum_fase_rms_of = 0
+    sum_fase_rms_cnn = 0
+    sum_fase_std_of = 0
+    sum_fase_std_cnn = 0
+    sum_fase_rms_cnn_estimated = 0
+    sum_fase_std_cnn_estimated = 0
+    for ocupacao in ocupacoes:
+        OF_data_path_amplitude = os.path.join(of_data_parcial_amplitude, f"results_occupation_{ocupacao}.npz")
+        OF_data_amplitude = np.load(OF_data_path_amplitude)
+
+        OF_data_path_fase = os.path.join(of_data_parcial_fase, f"phase_of_occupation_{ocupacao}.npz")
+        OF_data_fase = np.load(OF_data_path_fase)
+
+        _, CNN3_data_amplitude, CNN3_data_fase, CNN3_estimated_data_fase, cnn3_type = DefinePath_CNN(ocupacao= None, CNN=3)
+        _, CNN5_data_amplitude, CNN5_data_fase, CNN5_estimated_data_fase, cnn5_type = DefinePath_CNN(ocupacao= None, CNN=5)
+        _, CNN8_data_amplitude, CNN8_data_fase, CNN8_estimated_data_fase, cnn8_type = DefinePath_CNN(ocupacao= None, CNN=8)
+        
+        # AMPLITUDE
+        # std_error : media do desvio padrao do erro de estimacao para os 100 folds
+        of_amplitude_rms = OF_data_amplitude['rms']
+        of_amplitude_std = OF_data_amplitude['std_error']
+        cnn3_amplitude_rms = CNN3_data_amplitude['rms']
+        cnn3_amplitude_std = CNN3_data_amplitude['std_error']
+
+        cnn5_amplitude_rms = CNN5_data_amplitude['rms']
+        cnn5_amplitude_std = CNN5_data_amplitude['std_error']
+
+        cnn8_amplitude_rms = CNN8_data_amplitude['rms']
+        cnn8_amplitude_std = CNN8_data_amplitude['std_error']
+        # FASE
+        # std : desvio padrao do erro de estimacao na reconstrucao da fase (nao utiliza os folds para a fase, apenas para A tau)
+        of_fase_rms = OF_data_fase['rms'] 
+        of_fase_std = OF_data_fase['std'] 
+
+        cnn3_fase_rms = CNN3_data_fase['rms']
+        cnn3_fase_std = CNN3_data_fase['std']
+        cnn5_fase_rms = CNN5_data_fase['rms']
+        cnn5_fase_std = CNN5_data_fase['std']
+        cnn8_fase_rms = CNN8_data_fase['rms']
+        cnn8_fase_std = CNN8_data_fase['std']
+
+        cnn3_estimated_fase_rms = CNN3_estimated_data_fase['rms']
+        cnn3_estimated_fase_std = CNN3_estimated_data_fase['std_error']
+
+        cnn5_estimated_fase_rms = CNN5_estimated_data_fase['rms']
+        cnn5_estimated_fase_std = CNN5_estimated_data_fase['std_error']
+
+        cnn8_estimated_fase_rms = CNN8_estimated_data_fase['rms']
+        cnn8_estimated_fase_std = CNN8_estimated_data_fase['std_error']
+
+
+        # AMPLITUDE
+        sum_amplitude_rms_of+=of_amplitude_rms
+        sum_amplitude_rms_cnn3+=cnn3_amplitude_rms
+        sum_amplitude_rms_cnn5+=cnn5_amplitude_rms
+        sum_amplitude_rms_cnn8+=cnn8_amplitude_rms
+
+        sum_amplitude_std_of+=of_amplitude_std
+        sum_amplitude_std_cnn3+=cnn3_amplitude_std
+        sum_amplitude_std_cnn5+=cnn5_amplitude_std
+        sum_amplitude_std_cnn8+=cnn8_amplitude_std
+        # FASE
+        sum_fase_rms_of+=of_fase_rms
+        sum_fase_rms_cnn3+=cnn3_fase_rms
+        sum_fase_rms_cnn5+=cnn5_fase_rms
+        sum_fase_rms_cnn8+=cnn8_fase_rms
+
+        sum_fase_rms_cnn3_estimated+=cnn3_estimated_fase_rms
+        sum_fase_rms_cnn5_estimated+=cnn3_estimated_fase_rms
+        sum_fase_rms_cnn8_estimated+=cnn8_estimated_fase_rms
+
+        sum_fase_std_of+=of_fase_std
+        sum_fase_std_cnn3+=cnn3_fase_std
+        sum_fase_std_cnn5+=cnn5_fase_std
+        sum_fase_std_cnn8+=cnn8_fase_std
+
+        sum_fase_std_cnn3_estimated+=cnn3_estimated_fase_std
+        sum_fase_std_cnn5_estimated+=cnn5_estimated_fase_std
+        sum_fase_std_cnn8_estimated+=cnn8_estimated_fase_std
+
+    
+    total_ocupacoes = len(ocupacoes)
+    # AMPLITUDE
+    mean_amplitude_rms_of= sum_amplitude_rms_of/total_ocupacoes
+    mean_amplitude_rms_cnn3=sum_amplitude_rms_cnn3/total_ocupacoes
+    mean_amplitude_rms_cnn5=sum_amplitude_rms_cnn5/total_ocupacoes
+    mean_amplitude_rms_cnn8=sum_amplitude_rms_cnn8/total_ocupacoes
+
+    mean_amplitude_std_of=sum_amplitude_std_of/total_ocupacoes
+    mean_amplitude_std_cnn3=sum_amplitude_std_cnn3/total_ocupacoes
+    mean_amplitude_std_cnn5=sum_amplitude_std_cnn5/total_ocupacoes
+    mean_amplitude_std_cnn8=sum_amplitude_std_cnn8/total_ocupacoes
+    # FASE
+    mean_fase_rms_of=sum_fase_rms_of/total_ocupacoes
+    mean_fase_rms_cnn3=sum_fase_rms_cnn3/total_ocupacoes
+    mean_fase_rms_cnn5=sum_fase_rms_cnn5/total_ocupacoes
+    mean_fase_rms_cnn8=sum_fase_rms_cnn8/total_ocupacoes
+    mean_fase_rms_cnn3_estimated=sum_fase_rms_cnn3_estimated/total_ocupacoes
+    mean_fase_rms_cnn5_estimated=sum_fase_rms_cnn5_estimated/total_ocupacoes
+    mean_fase_rms_cnn8_estimated=sum_fase_rms_cnn8_estimated/total_ocupacoes
+
+    mean_fase_std_of= sum_fase_std_of/total_ocupacoes
+    mean_fase_std_cnn3=sum_fase_std_cnn3/total_ocupacoes
+    mean_fase_std_cnn5=sum_fase_std_cnn5/total_ocupacoes
+    mean_fase_std_cnn8=sum_fase_std_cnn8/total_ocupacoes
+    mean_fase_std_cnn3_estimated=sum_fase_std_cnn3_estimated/total_ocupacoes
+    mean_fase_std_cnn5_estimated=sum_fase_std_cnn5_estimated/total_ocupacoes
+    mean_fase_std_cnn8_estimated=sum_fase_std_cnn8_estimated/total_ocupacoes
+
+
+    # AMPLITUDE
+    melhoria_amplitude_rms_cnn3 = ((mean_amplitude_rms_of-mean_amplitude_rms_cnn3)/mean_amplitude_rms_of)*100
+    melhoria_amplitude_rms_cnn5 = ((mean_amplitude_rms_of-mean_amplitude_rms_cnn5)/mean_amplitude_rms_of)*100
+    melhoria_amplitude_rms_cnn8 = ((mean_amplitude_rms_of-mean_amplitude_rms_cnn8)/mean_amplitude_rms_of)*100
+
+    melhoria_amplitude_std_cnn3 = ((mean_amplitude_std_of-mean_amplitude_std_cnn3)/mean_amplitude_std_of)*100
+    melhoria_amplitude_std_cnn5 = ((mean_amplitude_std_of-mean_amplitude_std_cnn5)/mean_amplitude_std_of)*100
+    melhoria_amplitude_std_cnn8 = ((mean_amplitude_std_of-mean_amplitude_std_cnn8)/mean_amplitude_std_of)*100
+
+    #FASE
+    melhoria_fase_rms_cnn3 = ((mean_fase_rms_of-mean_fase_rms_cnn3)/mean_fase_rms_of)*100
+    melhoria_fase_rms_cnn5 = ((mean_fase_rms_of-mean_fase_rms_cnn5)/mean_fase_rms_of)*100
+    melhoria_fase_rms_cnn8 = ((mean_fase_rms_of-mean_fase_rms_cnn8)/mean_fase_rms_of)*100
+    
+    melhoria_fase_std_cnn3 = ((mean_fase_std_of-mean_fase_std_cnn3)/mean_fase_std_of)*100
+    melhoria_fase_std_cnn5 = ((mean_fase_std_of-mean_fase_std_cnn5)/mean_fase_std_of)*100
+    melhoria_fase_std_cnn8 = ((mean_fase_std_of-mean_fase_std_cnn8)/mean_fase_std_of)*100
+
+    melhoria_fase_rms_cnn3_estimated = ((mean_fase_rms_of-mean_fase_rms_cnn3_estimated)/mean_fase_rms_of)*100
+    melhoria_fase_rms_cnn5_estimated = ((mean_fase_rms_of-mean_fase_rms_cnn5_estimated)/mean_fase_rms_of)*100
+    melhoria_fase_rms_cnn8_estimated = ((mean_fase_rms_of-mean_fase_rms_cnn8_estimated)/mean_fase_rms_of)*100
+    melhoria_fase_std_cnn3_estimated = ((mean_fase_std_of-mean_fase_std_cnn3_estimated)/mean_fase_std_of)*100
+    melhoria_fase_std_cnn5_estimated = ((mean_fase_std_of-mean_fase_std_cnn5_estimated)/mean_fase_std_of)*100
+    melhoria_fase_std_cnn8_estimated = ((mean_fase_std_of-mean_fase_std_cnn8_estimated)/mean_fase_std_of)*100
+
+    # print(r"Amplitude RMS: $\frac{\overline{RMS}_{OF,amp} - \overline{RMS}_{CNN,amp}}{\overline{RMS}_{OF,amp}} \cdot 100$")
+    # print(r"Amplitude STD: $\frac{\overline{\sigma}_{OF,amp} - \overline{\sigma}_{CNN,amp}}{\overline{\sigma}_{OF,amp}} \cdot 100$")
+    # print(r"Fase RMS:      $\frac{\overline{RMS}_{OF,fase} - \overline{RMS}_{CNN,fase}}{\overline{RMS}_{OF,fase}} \cdot 100$")
+    # print(r"Fase STD:      $\frac{\overline{\sigma}_{OF,fase} - \overline{\sigma}_{CNN,fase}}{\overline{\sigma}_{OF,fase}} \cdot 100$")
+    print("\n\n")
+    if type=="Amplitude":
+        print(r"Amplitude RMS: ( (RMS-OF-amp - RMS-CNN-amp) / RMS-OF-amp ) * 100")
+        print(r"Amplitude STD: ( (STD-OF-amp - STD-CNN-amp) / STD-OF-amp ) * 100")
+        print(f"Melhoria CNN vs OF - Amplitude RMS: {melhoria_amplitude_rms:.1f}%")
+        print(f"Melhoria CNN vs OF - Amplitude STD: {melhoria_amplitude_std:.1f}%")
+        
+    elif type=="Fase":
+        print(r"Fase RMS: ( (RMS-OF-fase - RMS-CNN-fase) / RMS-OF-fase ) * 100")
+        print(r"Fase STD: ( (STD-OF-fase - STD-CNN-fase) / STD-OF-fase ) * 100")
+    
+        print(f"---------------------------- Amplitude estimada CNN --------------------------")
+        print(f"Melhoria CNN vs OF - Fase RMS:      {melhoria_fase_rms:.5f}%")
+        print(f"Melhoria CNN vs OF - Fase STD:      {melhoria_fase_std:.5f}%")
+        print(f"---------------------------- Fase estimada CNN --------------------------")
+        print(f"Melhoria CNN vs OF - Fase RMS:      {melhoria_fase_rms_cnn_estimated:.5f}%")
