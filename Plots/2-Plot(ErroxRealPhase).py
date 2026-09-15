@@ -606,7 +606,7 @@ def PlotHistrogramas1(zoom, box):
     ocupacoes = [10,50,80,100]
     total_inches_image = 6.32
     fontSize = 24
-    fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
+    fig, (ax) = plt.subplots(2, 2, figsize=(20, 10))
     ax = ax.flatten()
     of_color = '#9900ff'
     real_amplitude_color = "#FA3232"
@@ -707,7 +707,7 @@ def PlotHistrogramas1(zoom, box):
         
         if box and idx!=3:
             x_0 = 0.08  #posicao inicial em x
-            y_0 = 0.12 #posicao inicial em y
+            y_0 = 0.15 #posicao inicial em y
             width = 0.3
             heigth = 0.3
             if idx ==0:
@@ -728,7 +728,7 @@ def PlotHistrogramas1(zoom, box):
             axins.set_yticks([y1,y2])
             axins.yaxis.tick_right()
 
-            axins.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
+            axins.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False, labeltop=False)
             axins.tick_params(axis='y', which='both', left=True, labelleft=True, right=False, labelright=False)
             axins.tick_params(axis='both', colors="#424242")
 
@@ -738,6 +738,7 @@ def PlotHistrogramas1(zoom, box):
             axins.set_ylim(y1,y2)
             plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
             plt.setp(axins.get_yticklabels(), fontsize=8)
+            axins.yaxis.get_offset_text().set_fontsize(8)
             mark_inset(ax[idx], axins, loc1=1, loc2=4, fc="none", ec="black", linewidth=1.5)
 
     handles = []
@@ -774,8 +775,10 @@ def PlotHistrogramas1(zoom, box):
         loc='upper center',
         ncol=len(handles),
         bbox_to_anchor=(0.5, 1.05),
+        columnspacing=1.0,         
+        handletextpad=0.4,
         frameon=False,
-        fontsize=fontSize
+        fontsize=fontSize-0
     )
     # plt.tight_layout()
     plt.subplots_adjust(hspace=0.4)

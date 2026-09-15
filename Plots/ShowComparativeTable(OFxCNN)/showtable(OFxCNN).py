@@ -215,10 +215,10 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
 
     if type == "Amplitude":
         estilos = {
-                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': 'OF', 'linestyle': 'solid', 'zorder':1},
-                'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': 'CNN-3', 'linestyle': 'dashed', 'zorder':4},
-                'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': 'CNN-5', 'linestyle': 'solid', 'zorder':3},
-                'CNN8':        {'cor': '#006130', 'marker': '^', 'label': 'CNN-8', 'linestyle': 'dashed', 'zorder':5},
+                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': 'OF', 'linestyle': 'solid', 'zorder':1, 'markersize':8},
+                'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': 'CNN-3', 'linestyle': 'dashed', 'zorder':4, 'markersize':8},
+                'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': 'CNN-5', 'linestyle': 'solid', 'zorder':3, 'markersize':8},
+                'CNN8':        {'cor': '#006130', 'marker': '^', 'label': 'CNN-8', 'linestyle': 'dashed', 'zorder':5, 'markersize':4},
                 
             }
     elif type == "Fase":
@@ -287,7 +287,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     def plotar_metrica(ax, metrica_dict, titulo, ylabel):
         for k in chaves:
             ax.plot(ocupacoes, metrica_dict[k], color=estilos[k]['cor'], 
-                    marker=estilos[k]['marker'], linestyle=estilos[k]['linestyle'], zorder=estilos[k]['zorder'], markersize=8)
+                    marker=estilos[k]['marker'], linestyle=estilos[k]['linestyle'], zorder=estilos[k]['zorder'], markersize=estilos[k]['markersize'])
 
         ax.set_title(titulo, fontsize=fontSize-1, fontweight='bold')
         ax.set_xlabel("Ocupação (%)", fontsize=fontSize-2)

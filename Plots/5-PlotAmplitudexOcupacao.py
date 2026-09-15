@@ -69,10 +69,10 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
 
     fig, ax = plt.subplots(figsize=(7, 5))
     if metric=='mean':
-        y_label = r'$\bar{\mu}$ (ADC counts)'
+        y_label = r'$\bar{\mu}$ (ADC Counts)'
         ax.set_ylim(-110,15)
     elif metric=='std':
-        y_label = r'$\bar{\sigma}$ (ADC counts)'
+        y_label = r'$\bar{\sigma}$ (ADC Counts)'
         ax.set_ylim(-5,60)
         
     ax.set_xlim(-2,102)
@@ -91,7 +91,8 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
     ax.errorbar(ocupacoes, of_disp, yerr=escala_erro*of_err, label="OF", marker='o', linestyle='-', color=of_color, markersize=6, capsize=3)
     ax.errorbar(ocupacoes, cnn3_disp, yerr=escala_erro*cnn3_err, label=r'CNN-3', marker='*', linestyle='dashed', color=cnn3_color, zorder=5, markersize=6, capsize=3)
     ax.errorbar(ocupacoes, cnn5_disp, yerr=escala_erro*cnn5_err, label=r'CNN-5', marker='s', linestyle='-', color=cnn5_color, markersize=6, capsize=3)
-    ax.errorbar(ocupacoes, cnn8_disp, yerr=escala_erro*cnn8_err, label=r'CNN-8', marker='^', linestyle='dashed', color=cnn8_color, markersize=6, capsize=3, zorder=5)
+    if cnn8:
+        ax.errorbar(ocupacoes, cnn8_disp, yerr=escala_erro*cnn8_err, label=r'CNN-8', marker='^', linestyle='dashed', color=cnn8_color, markersize=6, capsize=3, zorder=5)
 
     ax.legend(loc='best')
     ax.set_xlabel('Ocupação (%)', fontsize=fontSize-2)
@@ -99,13 +100,15 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
     # ax.set_title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
     ax.tick_params(axis='both', which='major', labelsize=14)
     if metric == 'mean':
-        axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.6, 0.6, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
+        
         if cnn8:
             x11, x21 = 79.8, 90.20
             y11, y21 = -0.72, -0.2
+            axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.74, 0.6, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
         else:
             x11, x21 = 69.8, 80.20
             y11, y21 = -0.24, 0.11
+            axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.65, 0.6, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
         axins2.set_xticks([x11, x21])
         axins2.set_yticks([y11, y21])
         axins2.tick_params(axis='x', which='both', bottom=True, labelbottom=True, top=False, labeltop=False)
@@ -114,7 +117,8 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
         # Aplicando errorbar no zoom também
         axins2.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5, capsize=2, linewidth=3)
         axins2.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=4, capsize=2)
-        axins2.errorbar(ocupacoes, cnn8_disp, yerr=cnn8_err, marker='^', linestyle='dashed', color=cnn8_color, linewidth=2, capsize=5, zorder=6)
+        if cnn8:
+            axins2.errorbar(ocupacoes, cnn8_disp, yerr=cnn8_err, marker='^', linestyle='dashed', color=cnn8_color, linewidth=2, capsize=5, zorder=6)
 
         
         axins2.set_xlim(x11, x21)
@@ -162,7 +166,7 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
         # ZOOM 2 CNN
         
         if cnn8:
-            axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.75, 0.08, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
+            axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.74, 0.08, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
             x11, x21 = 79.8, 90.20
             y11, y21 = 20.75, 22.9
         else:
@@ -177,19 +181,20 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
         # Aplicando errorbar no zoom também
         axins2.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5, capsize=2)
         axins2.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2, capsize=2)
-        axins2.errorbar(ocupacoes, cnn8_disp, yerr=cnn8_err, marker='^', linestyle='dashed', color=cnn8_color, linewidth=2, capsize=5, zorder=6)
+        if cnn8:
+            axins2.errorbar(ocupacoes, cnn8_disp, yerr=cnn8_err, marker='^', linestyle='dashed', color=cnn8_color, linewidth=2, capsize=5, zorder=6)
         
         axins2.set_xlim(x11, x21)
         axins2.set_ylim(y11, y21)
         plt.setp(axins2.get_xticklabels(which='both'), fontsize=8)
         plt.setp(axins2.get_yticklabels(), fontsize=8)
-        mark_inset(ax, axins2, loc1=3, loc2=1, fc="none", ec="black", linewidth=1.5)
+        mark_inset(ax, axins2, loc1=2, loc2=1, fc="none", ec="black", linewidth=1.5)
 
     plt.tight_layout()
     plt.show()
 
 
-PlotAmplitudeDispersionOcupacao_Zoom(metric="mean", cnn8=True)
+PlotAmplitudeDispersionOcupacao_Zoom(metric="mean", cnn8=False)
 
 def PlotAmplitudeDispersionOcupacao_Subplot():
     (of_disp, cnn3_disp, cnn5_disp, cnn8_disp), (of_err, cnn3_err, cnn5_err, cnn8_err) = LoadData()
