@@ -114,24 +114,28 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
 
         if zoom:
             # ZOOM 1 CNN
-            axins = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.75, 0.25, 0.15, 0.15),  # (x, y) posição do canto
-                        bbox_transform=ax.transAxes,   # coordenadas relativas ao gráfico
+            axins = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.71, 0.2, 0.15, 0.15),
+                        bbox_transform=ax.transAxes, 
                         loc='center')
             
             x1,x2= 79.985, 80.010
-            y1,y2 = 2.4035, 2.405
+            y1,y2 = 2.61*10**(-2), 3.10*10**(-2)
             axins.set_xticks([x1,x2])
             axins.set_yticks([y1,y2])
 
             axins.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
             axins.tick_params(axis='both', colors="#424242")
+            axins.plot(ocupacoes, cnn3_estimated_metric, marker='*', markersize=6, color=cnn3_estimated_color, linewidth=2, linestyle='dashed', zorder=2)
+            axins.plot(ocupacoes, cnn5_estimated_metric, marker='s', markersize=6, color=cnn5_estimated_color, linestyle='-', linewidth=2, zorder=1)
+            if cnn8:
+                axins.plot(ocupacoes, cnn8_estimated_metric, marker='^', markersize=4, color=cnn8_estimated_color, linestyle='-.', linewidth=2, zorder=6)
 
-            axins.plot(ocupacoes, cnn3_estimated_metric, marker='s', markersize=6, color=cnn3_estimated_color, linewidth=2, zorder=4)
-            axins.plot(ocupacoes, cnn5_estimated_metric, marker='*', markersize=6, color=cnn5_estimated_color, linestyle='dashed', linewidth=1.5, zorder=5)
             axins.set_xlim(x1,x2)
             axins.set_ylim(y1,y2)
             plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
             plt.setp(axins.get_yticklabels(), fontsize=8)
+            axins.yaxis.get_offset_text().set_fontsize(8)
+            axins.yaxis.get_offset_text().set_x(0.32)
             mark_inset(ax, axins, loc1=3, loc2=4, fc="none", ec="gray", linewidth=1.5)
 
             # ZOOM 2 CNN*
@@ -144,11 +148,11 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
             axins1.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True,    labeltop=True)
             axins1.tick_params(axis='both', colors="#424242")
 
-            axins1.plot(ocupacoes, real_amplitude_metric, marker='o', color = real_amplitude_color, zorder=2)
-            axins1.plot(ocupacoes,cnn3_metric, marker='*',linestyle='dashed', color = cnn3_color, zorder=4)
-            axins1.plot(ocupacoes,cnn5_metric, marker='s', color = cnn5_color, linewidth=2, zorder=1)
+            axins1.plot(ocupacoes, real_amplitude_metric, marker='o', color = real_amplitude_color, zorder=2, markersize=4)
+            axins1.plot(ocupacoes,cnn3_metric, marker='*',linestyle='dashed', color = cnn3_color, zorder=4, markersize=6)
+            axins1.plot(ocupacoes,cnn5_metric, marker='s', color = cnn5_color, zorder=1, markersize=6)
             if cnn8:
-                axins1.plot(ocupacoes,cnn8_metric, marker='s', color = cnn5_color, linewidth=2, zorder=6)
+                axins1.plot(ocupacoes,cnn8_metric, marker='^', linestyle='-.', color = cnn8_color, zorder=6, markersize=4)
             axins1.set_xlim(x11,x21)
             axins1.set_ylim(y11,y21)
             plt.setp(axins1.get_xticklabels(which='both'), fontsize=8)
@@ -175,7 +179,7 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
     if cnn8:
         ax.plot(ocupacoes, cnn8_estimated_metric, label=r'$\tau_{CNN8}$', marker='^', linestyle='-.', color=cnn8_estimated_color, zorder=6, markersize=4)
 
-    ax.legend(loc='best')
+    ax.legend(loc='center')
     ax.set_xlabel('Ocupação (%)', fontsize=fontSize-2)
     ax.set_ylabel(y_label, fontsize=fontSize-2)
     # ax.set_title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
@@ -185,4 +189,4 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
     plt.show()
 
 
-PlotFaseDispersionOcupacao(metric='std', cnn8=True, zoom=True)
+PlotFaseDispersionOcupacao(metric='std', cnn8=False, zoom=True)
