@@ -50,10 +50,13 @@ def PlotHistrogramasAmpitude():
         of_data = np.load(of_data_path)
         of_error = of_data['error']
         
+        min_global = min(np.min(of_error), np.min(cnn_error), np.min(cnn8_error) )
+        max_global = max(np.max(of_error), np.max(cnn_error), np.max(cnn8_error))
         bins = 150
-        ax[idx].hist(cnn8_error, bins = bins,histtype='step', color=cnn8_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$')
-        ax[idx].hist(cnn_error, bins = bins,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
-        ax[idx].hist(of_error, bins = bins,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
+        common_bins = np.linspace(min_global, max_global, bins)
+        ax[idx].hist(of_error, bins = common_bins,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
+        ax[idx].hist(cnn_error, bins = common_bins,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
+        ax[idx].hist(cnn8_error, bins = common_bins,histtype='step', color=cnn8_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$', zorder=8, linestyle='dashed')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
         ax[idx].set_xlabel(f'Erro de estimação de amplitude (ADC Counts)', fontsize=fontSize)
         ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
@@ -84,12 +87,12 @@ def PlotHistrogramasAmpitude():
     cnn_types = ['CNN-3', 'CNN-5']
     handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
     labels.append('OF')
-    unique_cnns = list(set(cnn_types))
+    unique_cnns = list(cnn_types)
     for cnn_type in unique_cnns:
-        if cnn_type == "CNN-5":
-            color = "#1A1A1A"
-        else: 
+        if cnn_type == "CNN-3":
             color = "#B0B0B0"
+        else: 
+            color = "#1A1A1A"
        
         handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
         labels.append(cnn_type)
@@ -161,7 +164,7 @@ def PlotHistrogramasPhase():
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
     labels.append('Real Amplitude')
     cnn_types = ['CNN-3', 'CNN-5']
-    unique_cnns = list(set(cnn_types))
+    unique_cnns = list(cnn_types)
     for cnn_type in unique_cnns:
         if cnn_type == "CNN-5":
             color = "#1A1A1A"

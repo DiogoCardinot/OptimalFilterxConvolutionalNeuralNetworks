@@ -600,7 +600,7 @@ def PlotDispersions1():
 # PlotDispersions()
 # PlotDispersions1()
 
-def PlotHistrogramas1(zoom, box):
+def PlotHistrogramas1(zoom, box, cnn=None):
     base_path = os.path.dirname(os.path.dirname(path))
     dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks")
     ocupacoes = [10,50,80,100]
@@ -642,9 +642,14 @@ def PlotHistrogramas1(zoom, box):
         #     line = 3.5
         # else:
         #     line = 2
-        ax[idx].hist(of_error, bins = bins, alpha=0.7,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
-        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
-        ax[idx].hist(cnn_error_estimated, bins = bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2)
+
+        min_global = min(np.min(of_error), np.min(cnn_error), np.min(cnn_error_estimated), np.min(real_amplitude_error))
+        max_global = max(np.max(of_error), np.max(cnn_error), np.max(cnn_error_estimated), np.max(real_amplitude_error))
+        common_bins = np.linspace(min_global, max_global, 150)
+        ax[idx].hist(of_error, bins = common_bins, alpha=0.7,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
+        ax[idx].hist(cnn_error, bins = common_bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
+        if cnn:
+            ax[idx].hist(cnn_error_estimated, bins = common_bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error_estimated):.2f}, \sigma = {np.std(cnn_error_estimated):.2f}$')
         ax[idx].hist(real_amplitude_error, bins=bins, alpha=0.7, histtype='step', 
              color=real_amplitude_color, linewidth=3.5, linestyle='dashed', label= fr'$\mu = {np.mean(real_amplitude_error):.2f}, \sigma = {np.std(real_amplitude_error):.2f}$' 
              )
@@ -678,7 +683,7 @@ def PlotHistrogramas1(zoom, box):
             formatter.set_useOffset(True)
             inset_axes_ax.yaxis.set_major_formatter(formatter)
 
-            inset_axes_ax.hist(cnn_error_estimated, bins=bins, alpha=0.7, histtype='step', color=cnn_estimated_color, linewidth=2)
+            inset_axes_ax.hist(cnn_error_estimated, bins=common_bins, alpha=0.7, histtype='step', color=cnn_estimated_color, linewidth=2)
 
             if idx==0:
                 x_inf_limite = -0.5
@@ -732,8 +737,8 @@ def PlotHistrogramas1(zoom, box):
             axins.tick_params(axis='y', which='both', left=True, labelleft=True, right=False, labelright=False)
             axins.tick_params(axis='both', colors="#424242")
 
-            axins.hist(cnn_error, bins = bins, alpha=1.0,histtype='step', color=cnn_color, linewidth=3)
-            axins.hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=3.5, linestyle='dashed')
+            axins.hist(cnn_error, bins = common_bins, alpha=1.0,histtype='step', color=cnn_color, linewidth=3)
+            axins.hist(real_amplitude_error, bins = common_bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=3.5, linestyle='dashed')
             axins.set_xlim(x1,x2)
             axins.set_ylim(y1,y2)
             plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
@@ -748,28 +753,39 @@ def PlotHistrogramas1(zoom, box):
     labels.append('OF')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
     labels.append('Real Amplitude')
-    cnn_types = [r'CNN-3*', r'CNN-5*']
-    unique_cnns = list(set(cnn_types))
-    for cnn_type in unique_cnns:
-        if cnn_type == "CNN-5*":
-            color = "#1A1A1A"
-        else: 
-            color = "#B0B0B0"
-       
-        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
-        labels.append(cnn_type)
-    
-    cnn_estimated_types = ['CNN-3', 'CNN-5']
-    unique_estimated_cnns = list(set(cnn_estimated_types))
-    for cnn_type in unique_estimated_cnns:
-        if cnn_type == "CNN-5":
-            color = "deepskyblue"
-        else: 
-            color = "darkorange"
-       
-        handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
-        labels.append(cnn_type)
-
+    if cnn:
+        cnn_types = [r'CNN-3*', r'CNN-5*']
+        unique_cnns = list(set(cnn_types))
+        for cnn_type in unique_cnns:
+            if cnn_type == "CNN-5*":
+                color = "#1A1A1A"
+            else: 
+                color = "#B0B0B0"
+        
+            handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+            labels.append(cnn_type)
+        
+        cnn_estimated_types = ['CNN-3', 'CNN-5']
+        unique_estimated_cnns = list(set(cnn_estimated_types))
+        for cnn_type in unique_estimated_cnns:
+            if cnn_type == "CNN-5":
+                color = "deepskyblue"
+            else: 
+                color = "darkorange"
+        
+            handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+            labels.append(cnn_type)
+    else:
+        cnn_types = [r'CNN-3', r'CNN-5']
+        unique_cnns = list(set(cnn_types))
+        for cnn_type in unique_cnns:
+            if cnn_type == "CNN-5":
+                color = "#1A1A1A"
+            else: 
+                color = "#B0B0B0"
+        
+            handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
+            labels.append(cnn_type)
     fig.legend(
         handles, labels,
         loc='upper center',
@@ -784,4 +800,4 @@ def PlotHistrogramas1(zoom, box):
     plt.subplots_adjust(hspace=0.4)
     plt.show()
 
-PlotHistrogramas1(zoom= True, box= True)
+PlotHistrogramas1(zoom= False, box= True)

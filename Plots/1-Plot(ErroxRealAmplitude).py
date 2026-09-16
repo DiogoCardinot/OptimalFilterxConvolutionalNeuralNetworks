@@ -152,10 +152,13 @@ def PlotHistrogramas():
         cnn_data_path = os.path.join(dataset_path,f'RedeNeuralConvolucional', f'CNN_{CNN}',f'results_ocupacao_{ocupacao}.npz')      
         cnn_data = np.load(cnn_data_path)
         cnn_error = cnn_data['error']
-        
+
+        min_global = min(np.min(of_error), np.min(cnn_error))
+        max_global = max(np.max(of_error), np.max(cnn_error))
         bins = 150
-        ax[idx].hist(of_error, bins = bins,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
-        ax[idx].hist(cnn_error, bins = bins,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
+        common_bins = np.linspace(min_global, max_global, bins)
+        ax[idx].hist(of_error, bins = common_bins,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
+        ax[idx].hist(cnn_error, bins = common_bins,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
         ax[idx].set_xlabel(f'Erro de estimação de amplitude (ADC Counts)', fontsize=fontSize)
         ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
