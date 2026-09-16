@@ -54,10 +54,6 @@ def LoadData(metric):
         cnn5_estimated_load = np.load(cnn5_estimated_path)
         cnn8_estimated_load = np.load(cnn8_estimated_path)
         
-        of_load = np.load(of_path)
-        cnn3_load = np.load(cnn3_path)
-        cnn5_load = np.load(cnn5_path)
-        cnn8_load = np.load(cnn8_path)
         if metric== "mean":
             of_metric.append(of_load['mean'])
             cnn3_metric.append(cnn3_load['mean'])
@@ -83,9 +79,9 @@ def LoadData(metric):
             cnn5_metric.append(cnn5_load['std'])
             cnn8_metric.append(cnn8_load['std'])
             real_amplitude_metric.append(real_amplitude_load['std'])
-            cnn3_estimated_metric.append(cnn3_estimated_load['std_mean_error'])
-            cnn5_estimated_metric.append(cnn5_estimated_load['std_mean_error'])
-            cnn8_estimated_metric.append(cnn8_estimated_load['std_mean_error'])
+            cnn3_estimated_metric.append(cnn3_estimated_load['std_error'])
+            cnn5_estimated_metric.append(cnn5_estimated_load['std_error'])
+            cnn8_estimated_metric.append(cnn8_estimated_load['std_error'])
             
             '''
                 OS MÉTODOS QUE DIVIDEM POR AMPLITUDE ESTIMADA NAO TEM DESVIO PADRAO POR FOLD
@@ -107,19 +103,17 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
 
     if metric=='mean':
         y_label = r'$\mu$ (ns)'
-        ax.set_ylim(-12,1)
-
-    elif metric=='std':
-        y_label = r'$\sigma$ (ns)'
-
+        ax.set_ylim(-12,4.5)
+        posicao_legenda = 'lower right'
+        ajuste_fino = (1.0, 0.05)
         if zoom:
             # ZOOM 1 CNN
-            axins = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.71, 0.2, 0.15, 0.15),
+            axins = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.33, 0.78, 0.15, 0.15),
                         bbox_transform=ax.transAxes, 
                         loc='center')
             
-            x1,x2= 79.985, 80.010
-            y1,y2 = 2.61*10**(-2), 3.10*10**(-2)
+            x1,x2= 39.985, 40.010
+            y1,y2 = -1.08*10**(-2), -0.72*10**(-2)
             axins.set_xticks([x1,x2])
             axins.set_yticks([y1,y2])
 
@@ -129,6 +123,36 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
             axins.plot(ocupacoes, cnn5_estimated_metric, marker='s', markersize=6, color=cnn5_estimated_color, linestyle='-', linewidth=2, zorder=1)
             if cnn8:
                 axins.plot(ocupacoes, cnn8_estimated_metric, marker='^', markersize=4, color=cnn8_estimated_color, linestyle='-.', linewidth=2, zorder=6)
+
+            axins.set_xlim(x1,x2)
+            axins.set_ylim(y1,y2)
+            plt.setp(axins.get_xticklabels(which='both'), fontsize=8)
+            plt.setp(axins.get_yticklabels(), fontsize=8)
+            axins.yaxis.get_offset_text().set_fontsize(8)
+            axins.yaxis.get_offset_text().set_x(0.35)
+            mark_inset(ax, axins, loc1=3, loc2=4, fc="none", ec="gray", linewidth=1.5)
+
+    elif metric=='std':
+        y_label = r'$\sigma$ (ns)'
+        posicao_legenda = 'center'
+        ajuste_fino = (0.5, 0.45)
+        if zoom:
+            # ZOOM 1 CNN
+            axins = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.71, 0.2, 0.15, 0.15),
+                        bbox_transform=ax.transAxes, 
+                        loc='center')
+            
+            x1,x2= 79.985, 80.010
+            y1,y2 = 2.4040, 2.4048
+            axins.set_xticks([x1,x2])
+            axins.set_yticks([y1,y2])
+
+            axins.tick_params(axis='x', which='both', bottom=False, labelbottom=False, top=True, labeltop=True)
+            axins.tick_params(axis='both', colors="#424242")
+            axins.plot(ocupacoes, cnn3_estimated_metric, marker='*', markersize=6, color=cnn3_estimated_color, linewidth=2, linestyle='dashed', zorder=2)
+            axins.plot(ocupacoes, cnn5_estimated_metric, marker='s', markersize=6, color=cnn5_estimated_color, linestyle='-', linewidth=2, zorder=1)
+            if cnn8:
+                axins.plot(ocupacoes,cnn8_estimated_metric, marker='^', linestyle='-.', color = cnn8_estimated_color, zorder=6, markersize=4)
 
             axins.set_xlim(x1,x2)
             axins.set_ylim(y1,y2)
@@ -179,9 +203,9 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
     if cnn8:
         ax.plot(ocupacoes, cnn8_estimated_metric, label=r'$\tau_{CNN8}$', marker='^', linestyle='-.', color=cnn8_estimated_color, zorder=6, markersize=4)
 
-    ax.legend(loc='center')
     ax.set_xlabel('Ocupação (%)', fontsize=fontSize-2)
     ax.set_ylabel(y_label, fontsize=fontSize-2)
+    ax.legend(loc=posicao_legenda, bbox_to_anchor=ajuste_fino)
     # ax.set_title(r'Dispersão $\times$ Ocupação', fontsize=fontSize-1)
     ax.tick_params(axis='both', which='major', labelsize=14)
    
