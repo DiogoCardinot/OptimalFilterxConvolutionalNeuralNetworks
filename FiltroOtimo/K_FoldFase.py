@@ -10,7 +10,7 @@ of_data = os.path.join(path, "AmplitudeEstimada_OF", f'janelamento_{n_janelament
 a_tau_data = os.path.join(path,"A_tau_OF", f'janelamento_{n_janelamento}')
 
 base_path = os.path.dirname(os.path.dirname(path))
-CNN = 8
+CNN = 5
 cnn_data = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks","RedeNeuralConvolucional", f"CNN_{CNN}")
 
 ocupacoes = [0,10,20,30,40,50,60,70,80,90,100]
@@ -107,6 +107,7 @@ for ocupacao in ocupacoes:
     real_amplitude_phase_error = real_amplitude_estimated_phase - real_phase_aligned
 
     rms_of = np.sqrt(np.mean(of_phase_error**2))
+    mean_of = np.mean(of_phase_error)
     std_of = np.std(of_phase_error)
     mae_of = np.mean(np.abs(of_phase_error))
     medae_of = np.median(np.abs(of_phase_error))
@@ -119,6 +120,7 @@ for ocupacao in ocupacoes:
 
 
     rms_cnn = np.sqrt(np.mean(cnn_phase_error**2))
+    mean_cnn = np.mean(cnn_phase_error)
     std_cnn = np.std(cnn_phase_error)
     mae_cnn = np.mean(np.abs(cnn_phase_error))
     medae_cnn = np.median(np.abs(cnn_phase_error))
@@ -130,6 +132,7 @@ for ocupacao in ocupacoes:
     corr_cnn = np.corrcoef(real_phase_aligned, cnn_estimated_phase)[0, 1] if len(real_phase_aligned) > 1 else 0
 
     rms_real_amplitude = np.sqrt(np.mean(real_amplitude_phase_error**2))
+    mean_real_amplitude = np.mean(real_amplitude_phase_error)
     std_real_amplitude = np.std(real_amplitude_phase_error)
     mae_real_amplitude = np.mean(np.abs(real_amplitude_phase_error))
     medae_real_amplitude = np.median(np.abs(real_amplitude_phase_error))
@@ -155,6 +158,7 @@ for ocupacao in ocupacoes:
         real_amplitude = real_amplitude_aligned,
         indices=common_indices,
         rms=rms_of,
+        mean=mean_of,
         std=std_of,
         mae=mae_of,
         medae=medae_of,
@@ -177,6 +181,7 @@ for ocupacao in ocupacoes:
         real_amplitude = real_amplitude_aligned,
         indices=common_indices,
         rms=rms_cnn,
+        mean=mean_cnn,
         std=std_cnn,
         mae=mae_cnn,
         medae=medae_cnn,
@@ -199,6 +204,7 @@ for ocupacao in ocupacoes:
         real_amplitude = real_amplitude_aligned,
         indices=common_indices,
         rms=rms_real_amplitude,
+        mean=mean_real_amplitude,
         std=std_real_amplitude,
         mae=mae_real_amplitude,
         medae=medae_real_amplitude,

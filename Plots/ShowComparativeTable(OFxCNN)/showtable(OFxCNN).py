@@ -235,14 +235,14 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
             }
     elif type == "Fase":
         estilos = {
-                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': r'$\hat{A}_{OF}$', 'linestyle': 'solid', 'zorder':1},
-                'CNN3':        {'cor': '#B0B0B0', 'marker': 's', 'label': r'$\hat{A}_{CNN3}$', 'linestyle': 'solid', 'zorder':3},
-                'CNN5':        {'cor': '#1A1A1A', 'marker': '*', 'label': r'$\hat{A}_{CNN5}$', 'linestyle': 'dashed', 'zorder':4},
-                # 'CNN8':        {'cor': '#0BBE65', 'marker': '*', 'label': r'$\hat{A}_{CNN8}$'},
-                'Real_Amp':    {'cor': '#FA3232', 'marker': 'o', 'label': r'$A_{RA}$', 'linestyle': 'solid', 'zorder':2},
-                'CNN3_Tau':     {'cor': 'darkorange', 'marker': 's', 'label': r'$\tau_{CNN3}$', 'linestyle': 'solid', 'zorder':1},
-                'CNN5_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN5}$', 'linestyle': 'dashed', 'zorder':2},
-                # 'CNN8_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN8}$'}
+                'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': r'$\hat{A}_{OF}$', 'linestyle': 'solid', 'zorder':1, 'markersize':8},
+                'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': r'$\hat{A}_{CNN3}$', 'linestyle': 'dashed', 'zorder':5, 'markersize':8},
+                'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': r'$\hat{A}_{CNN5}$', 'linestyle': 'solid', 'zorder':3, 'markersize':8},
+                # 'CNN8':        {'cor': '#0BBE65', 'marker': '*', 'label': r'$\hat{A}_{CNN8}$', 'markersize':4},
+                'Real_Amp':    {'cor': '#FA3232', 'marker': 'o', 'label': r'$A_{RA}$', 'linestyle': 'solid', 'zorder':4, 'markersize':6},
+                'CNN3_Tau':     {'cor': 'darkorange', 'marker': '*', 'label': r'$\tau_{CNN3}$', 'linestyle': 'dashed', 'zorder':2, 'markersize':8},
+                'CNN5_Tau':     {'cor': 'deepskyblue', 'marker': 's', 'label': r'$\tau_{CNN5}$', 'linestyle': '-', 'zorder':1, 'markersize':8},
+                # 'CNN8_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN8}$', 'markersize':4}
             }
 
 
@@ -303,7 +303,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
 
         ax.set_title(titulo, fontsize=fontSize-1, fontweight='bold')
         ax.set_xlabel("Ocupação (%)", fontsize=fontSize-2)
-        ax.tick_params(axis='both', which='major', labelsize=25)
+        ax.tick_params(axis='both', which='major', labelsize=20)
         ax.set_ylabel(ylabel, fontsize=fontSize-2)
         ax.set_xticks(ocupacoes)
         ax.grid(True, linestyle='--', alpha=0.6)
@@ -346,8 +346,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     plt.subplots_adjust(hspace=0.4)
     plt.show()
         
-        
-PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
+PlotTableComparativeAmplitude(type='Fase', cnn8=False)
 # PlotTableComparativeAmplitude(type='Fase')
 
 
