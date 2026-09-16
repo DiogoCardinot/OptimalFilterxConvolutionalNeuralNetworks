@@ -646,19 +646,18 @@ def PlotHistrogramas1(zoom, box, cnn=None):
         min_global = min(np.min(of_error), np.min(cnn_error), np.min(cnn_error_estimated), np.min(real_amplitude_error))
         max_global = max(np.max(of_error), np.max(cnn_error), np.max(cnn_error_estimated), np.max(real_amplitude_error))
         common_bins = np.linspace(min_global, max_global, 150)
-        ax[idx].hist(of_error, bins = common_bins, alpha=0.7,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
-        ax[idx].hist(cnn_error, bins = common_bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
+        ax[idx].hist(of_error, bins = common_bins,histtype='step', color=of_color, linewidth=3, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$', linestyle='dashed', zorder=5)
+        ax[idx].hist(real_amplitude_error, bins= common_bins, histtype='step',color=real_amplitude_color, linewidth=3, linestyle='dashed', label= fr'$\mu = {np.mean(real_amplitude_error):.2f}, \sigma = {np.std(real_amplitude_error):.2f}$', zorder=4 )
+        ax[idx].hist(cnn_error, bins = common_bins,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
         if cnn:
-            ax[idx].hist(cnn_error_estimated, bins = common_bins, alpha=0.7,histtype='step', color=cnn_estimated_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error_estimated):.2f}, \sigma = {np.std(cnn_error_estimated):.2f}$')
-        ax[idx].hist(real_amplitude_error, bins=bins, alpha=0.7, histtype='step', 
-             color=real_amplitude_color, linewidth=3.5, linestyle='dashed', label= fr'$\mu = {np.mean(real_amplitude_error):.2f}, \sigma = {np.std(real_amplitude_error):.2f}$' 
-             )
+            ax[idx].hist(cnn_error_estimated, bins = common_bins,histtype='step', color=cnn_estimated_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error_estimated):.2f}, \sigma = {np.std(cnn_error_estimated):.2f}$')
+        
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
-        ax[idx].set_xlabel(f'Erro de estimação de fase (ns)', fontsize=fontSize-2)
-        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize-2)
+        ax[idx].set_xlabel(f'Erro de estimação de fase (ns)', fontsize=fontSize)
+        ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
         ax[idx].grid(True, alpha=0.3)
         ax[idx].tick_params(axis='both', which='major', labelsize=20)
-        ax[idx].legend(loc='upper left', fontsize = fontSize-10)
+        ax[idx].legend(loc='upper left', fontsize = fontSize-8)
         formatter = ScalarFormatter(useMathText=True)
         formatter.set_scientific(True)
         formatter.set_powerlimits((0, 0))
@@ -800,4 +799,4 @@ def PlotHistrogramas1(zoom, box, cnn=None):
     plt.subplots_adjust(hspace=0.4)
     plt.show()
 
-PlotHistrogramas1(zoom= False, box= True)
+PlotHistrogramas1(zoom= False, box= False)

@@ -348,7 +348,7 @@ def Plot_CNN(metric, zoom, box):
     occupations_CNN8, means_CNN8, stds_CNN8 = GetMeanCNN(CNN_Data, 8)
     total_inches_image = 6.32
     fontSize = 24
-    cnn8_color ="#006130"
+    cnn8_color ="#0BBE65"
     of_color = '#9900ff'
     fig, ax = plt.subplots(2, 1, figsize=(total_inches_image, 4), constrained_layout=True)
     ax = ax.flatten()

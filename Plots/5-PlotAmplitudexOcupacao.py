@@ -22,7 +22,7 @@ hep.style.use("ATLAS")
 of_color = '#9900ff'
 cnn3_color = "#B0B0B0"
 cnn5_color = "#1A1A1A"
-cnn8_color = "#006130"
+cnn8_color ="#0BBE65"
 
 def LoadData(metric):
     """Função auxiliar para carregar os dados e evitar repetição"""
@@ -92,8 +92,8 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
     ax.errorbar(ocupacoes, cnn3_disp, yerr=escala_erro*cnn3_err, label=r'CNN-3', marker='*', linestyle='dashed', color=cnn3_color, zorder=5, markersize=6, capsize=3)
     ax.errorbar(ocupacoes, cnn5_disp, yerr=escala_erro*cnn5_err, label=r'CNN-5', marker='s', linestyle='-', color=cnn5_color, markersize=6, capsize=3)
     if cnn8:
-        ax.errorbar(ocupacoes, cnn8_disp, yerr=escala_erro*cnn8_err, label=r'CNN-8', marker='^', linestyle='dashed', color=cnn8_color, markersize=6, capsize=3, zorder=5)
-
+        plot_elements = ax.errorbar(ocupacoes, cnn8_disp, yerr=escala_erro*cnn8_err, label=r'CNN-8', marker='^', linestyle='dashed', color=cnn8_color, markersize=3, capsize=3, zorder=6)
+        plot_elements.lines[0].set_linestyle('-.')
     ax.legend(loc='best')
     ax.set_xlabel('Ocupação (%)', fontsize=fontSize-2)
     ax.set_ylabel(y_label, fontsize=fontSize-2)
@@ -105,6 +105,7 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
             x11, x21 = 79.8, 90.20
             y11, y21 = -0.72, -0.2
             axins2 = inset_axes(ax, width="100%", height="100%", bbox_to_anchor=(0.74, 0.6, 0.2, 0.2), bbox_transform=ax.transAxes, loc='center')
+            
         else:
             x11, x21 = 69.8, 80.20
             y11, y21 = -0.24, 0.11
@@ -118,9 +119,10 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
         axins2.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5, capsize=2, linewidth=3)
         axins2.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=4, capsize=2)
         if cnn8:
-            axins2.errorbar(ocupacoes, cnn8_disp, yerr=cnn8_err, marker='^', linestyle='dashed', color=cnn8_color, linewidth=2, capsize=5, zorder=6)
+            plot_elements = axins2.errorbar(ocupacoes, cnn8_disp, yerr=cnn8_err, marker='^', linestyle='dashed', color=cnn8_color, linewidth=2, capsize=5, zorder=6)
+            plot_elements.lines[0].set_linestyle('-.')
 
-        
+
         axins2.set_xlim(x11, x21)
         axins2.set_ylim(y11, y21)
         plt.setp(axins2.get_xticklabels(which='both'), fontsize=8)
@@ -182,7 +184,8 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
         axins2.errorbar(ocupacoes, cnn3_disp, yerr=cnn3_err, marker='*', linestyle='dashed', color=cnn3_color, zorder=5, capsize=2)
         axins2.errorbar(ocupacoes, cnn5_disp, yerr=cnn5_err, marker='s', linestyle='-', color=cnn5_color, linewidth=2, capsize=2)
         if cnn8:
-            axins2.errorbar(ocupacoes, cnn8_disp, yerr=cnn8_err, marker='^', linestyle='dashed', color=cnn8_color, linewidth=2, capsize=5, zorder=6)
+            plot_elements = axins2.errorbar(ocupacoes, cnn8_disp, yerr=cnn8_err, marker='^', color=cnn8_color, linewidth=2, capsize=5, zorder=6)
+            plot_elements.lines[0].set_linestyle('-.')
         
         axins2.set_xlim(x11, x21)
         axins2.set_ylim(y11, y21)
@@ -193,8 +196,7 @@ def PlotAmplitudeDispersionOcupacao_Zoom(metric, cnn8):
     plt.tight_layout()
     plt.show()
 
-
-PlotAmplitudeDispersionOcupacao_Zoom(metric="mean", cnn8=False)
+PlotAmplitudeDispersionOcupacao_Zoom(metric="mean", cnn8=True)
 
 def PlotAmplitudeDispersionOcupacao_Subplot():
     (of_disp, cnn3_disp, cnn5_disp, cnn8_disp), (of_err, cnn3_err, cnn5_err, cnn8_err) = LoadData()

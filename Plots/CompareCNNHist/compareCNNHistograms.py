@@ -26,7 +26,7 @@ def PlotHistrogramasAmpitude():
     fontSize = 24
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
-    cnn8_color ="#006130"
+    cnn8_color ="#0BBE65"
     of_color = '#9900ff'
 
     for idx, ocupacao in enumerate(ocupacoes):
@@ -56,7 +56,7 @@ def PlotHistrogramasAmpitude():
         common_bins = np.linspace(min_global, max_global, bins)
         ax[idx].hist(of_error, bins = common_bins,histtype='step', color=of_color, linewidth=2, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$')
         ax[idx].hist(cnn_error, bins = common_bins,histtype='step', color=cnn_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
-        ax[idx].hist(cnn8_error, bins = common_bins,histtype='step', color=cnn8_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$', zorder=8, linestyle='dashed')
+        ax[idx].hist(cnn8_error, bins = common_bins,histtype='step', color=cnn8_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$', zorder=8, linestyle='-.')
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
         ax[idx].set_xlabel(f'Erro de estimação de amplitude (ADC Counts)', fontsize=fontSize)
         ax[idx].set_ylabel('Número de eventos', fontsize=fontSize)
@@ -119,8 +119,9 @@ def PlotHistrogramasPhase():
     fontSize = 24
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
-    cnn8_color ="#006130"
+    cnn8_color ="#0BBE65"
     real_amplitude_color = "#FA3232"
+    of_color = '#9900ff'
     for idx, ocupacao in enumerate(ocupacoes):
         if ocupacao == 10 or ocupacao==50:
             CNN = 5
@@ -142,12 +143,20 @@ def PlotHistrogramasPhase():
         real_amplitude_data = np.load(real_amplitude_data_path)
         real_amplitude_error = real_amplitude_data['error']
 
+        of_data_path = os.path.join(base_path,f'FiltroOtimo',f'AmplitudeEstimada_OF', f'janelamento_{n_janelamento}',f'results_occupation_{ocupacao}.npz')      
+        of_data = np.load(of_data_path)
+        of_error = of_data['error']
+        min_global = min(np.min(of_error), np.min(cnn_error), np.min(cnn8_error) )
+        max_global = max(np.max(of_error), np.max(cnn_error), np.max(cnn8_error))
         bins = 150
-        ax[idx].hist(cnn8_error, bins = bins, alpha=0.7,histtype='step', color=cnn8_color, linewidth=2, linestyle='dotted')
-        ax[idx].hist(cnn_error, bins = bins, alpha=0.7,histtype='step', color=cnn_color, linewidth=2)
-        ax[idx].hist(real_amplitude_error, bins = bins, alpha=0.7,histtype='step', color=real_amplitude_color, linewidth=2, linestyle='dashed')
+        common_bins = np.linspace(min_global, max_global, bins)
+        ax[idx].hist(of_error, bins = common_bins,histtype='step', color=of_color, linewidth=3, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$', zorder=-5)
+        ax[idx].hist(real_amplitude_error, bins= common_bins, histtype='step',color=real_amplitude_color, linewidth=3, linestyle='dashed', label= fr'$\mu = {np.mean(real_amplitude_error):.2f}, \sigma = {np.std(real_amplitude_error):.2f}$', zorder=4 )
+        ax[idx].hist(cnn_error, bins = common_bins,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
+        ax[idx].hist(cnn8_error, bins = common_bins,histtype='step', color=cnn8_color, linewidth=3, linestyle='-.', label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$', zorder =5)
+
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+6, va='top')
-        ax[idx].set_xlabel(f'Phase estimation error (ns)', fontsize=fontSize)
+        ax[idx].set_xlabel(f' (ns)', fontsize=fontSize)
         ax[idx].set_ylabel('Number of events', fontsize=fontSize)
         ax[idx].grid(True, alpha=0.3)
         formatter = ScalarFormatter(useMathText=True)
@@ -192,7 +201,7 @@ def PlotErros():
     fontSize = 24
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
-    cnn8_color = "#006130"
+    cnn8_color ="#0BBE65"
     real_amplitude_color = "#FA3232"
     base_path = os.path.dirname(os.path.dirname(path))
     plots_path = os.path.join(base_path, "Plots")
@@ -276,7 +285,7 @@ def PlotDispersions():
     fontSize = 24
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
-    cnn8_color = "#006130"
+    cnn8_color ="#0BBE65"
     real_amplitude_color = "#FA3232"
     base_path = os.path.dirname(os.path.dirname(path))
     plots_path = os.path.join(base_path, "Plots")
@@ -368,7 +377,7 @@ def PlotDispersions1():
     fontSize = 24
     fig, (ax) = plt.subplots(2, 2, figsize=(15, 6))
     ax = ax.flatten()
-    cnn8_color = "#006130"
+    cnn8_color ="#0BBE65"
     real_amplitude_color = "#FA3232"
     base_path = os.path.dirname(os.path.dirname(path))
     plots_path = os.path.join(base_path, "Plots")
@@ -453,7 +462,7 @@ def PlotDispersions1():
     plt.show()
 
 PlotHistrogramasAmpitude()
-# PlotHistrogramasPhase()
+PlotHistrogramasPhase()
 # PlotErros()
 # PlotDispersions()
 # PlotDispersions1()
