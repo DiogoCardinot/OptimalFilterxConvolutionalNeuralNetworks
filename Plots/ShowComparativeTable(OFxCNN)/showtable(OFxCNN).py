@@ -355,21 +355,33 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     IMPRIME AS MÉTRICAS COMPARANDO AS MELHORAS INDIVIDUAIS DE CADA ARQUITETURA DE REDE NEURAL COM O OF, E DEPOIS COMPARANDO A MELHORA DA ARQUITETURA HÍBRIDA
 '''
 
-def MelhoriasCNNxOF(type=None):
+def MelhoriasCNNxOF(ocupacoes=None, type=None):
     of_data_parcial_amplitude = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
     of_data_parcial_fase = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_OF", f'janelamento_{n_janelamento}')
 
     sum_amplitude_rms_of = 0
-    sum_amplitude_rms_cnn = 0
+    sum_amplitude_rms_cnn3 = 0
+    sum_amplitude_rms_cnn5 = 0
+    sum_amplitude_rms_cnn8 = 0
     sum_amplitude_std_of = 0
-    sum_amplitude_std_cnn = 0
+    sum_amplitude_std_cnn3 = 0
+    sum_amplitude_std_cnn5 = 0
+    sum_amplitude_std_cnn8 = 0
 
     sum_fase_rms_of = 0
-    sum_fase_rms_cnn = 0
+    sum_fase_rms_cnn3 = 0
+    sum_fase_rms_cnn5 = 0
+    sum_fase_rms_cnn8 = 0
     sum_fase_std_of = 0
-    sum_fase_std_cnn = 0
-    sum_fase_rms_cnn_estimated = 0
-    sum_fase_std_cnn_estimated = 0
+    sum_fase_std_cnn3 = 0
+    sum_fase_std_cnn5 = 0
+    sum_fase_std_cnn8 = 0
+    sum_fase_rms_cnn3_estimated = 0
+    sum_fase_rms_cnn5_estimated = 0
+    sum_fase_rms_cnn8_estimated = 0
+    sum_fase_std_cnn3_estimated = 0
+    sum_fase_std_cnn5_estimated = 0
+    sum_fase_std_cnn8_estimated = 0
     for ocupacao in ocupacoes:
         OF_data_path_amplitude = os.path.join(of_data_parcial_amplitude, f"results_occupation_{ocupacao}.npz")
         OF_data_amplitude = np.load(OF_data_path_amplitude)
@@ -377,9 +389,9 @@ def MelhoriasCNNxOF(type=None):
         OF_data_path_fase = os.path.join(of_data_parcial_fase, f"phase_of_occupation_{ocupacao}.npz")
         OF_data_fase = np.load(OF_data_path_fase)
 
-        _, CNN3_data_amplitude, CNN3_data_fase, CNN3_estimated_data_fase, cnn3_type = DefinePath_CNN(ocupacao= None, CNN=3)
-        _, CNN5_data_amplitude, CNN5_data_fase, CNN5_estimated_data_fase, cnn5_type = DefinePath_CNN(ocupacao= None, CNN=5)
-        _, CNN8_data_amplitude, CNN8_data_fase, CNN8_estimated_data_fase, cnn8_type = DefinePath_CNN(ocupacao= None, CNN=8)
+        _, CNN3_data_amplitude, CNN3_data_fase, CNN3_estimated_data_fase, cnn3_type = DefinePath_CNN(ocupacao= ocupacao, CNN=3)
+        _, CNN5_data_amplitude, CNN5_data_fase, CNN5_estimated_data_fase, cnn5_type = DefinePath_CNN(ocupacao= ocupacao, CNN=5)
+        _, CNN8_data_amplitude, CNN8_data_fase, CNN8_estimated_data_fase, cnn8_type = DefinePath_CNN(ocupacao= ocupacao, CNN=8)
         
         # AMPLITUDE
         # std_error : media do desvio padrao do erro de estimacao para os 100 folds
@@ -432,7 +444,7 @@ def MelhoriasCNNxOF(type=None):
         sum_fase_rms_cnn8+=cnn8_fase_rms
 
         sum_fase_rms_cnn3_estimated+=cnn3_estimated_fase_rms
-        sum_fase_rms_cnn5_estimated+=cnn3_estimated_fase_rms
+        sum_fase_rms_cnn5_estimated+=cnn5_estimated_fase_rms
         sum_fase_rms_cnn8_estimated+=cnn8_estimated_fase_rms
 
         sum_fase_std_of+=of_fase_std
@@ -444,7 +456,6 @@ def MelhoriasCNNxOF(type=None):
         sum_fase_std_cnn5_estimated+=cnn5_estimated_fase_std
         sum_fase_std_cnn8_estimated+=cnn8_estimated_fase_std
 
-    
     total_ocupacoes = len(ocupacoes)
     # AMPLITUDE
     mean_amplitude_rms_of= sum_amplitude_rms_of/total_ocupacoes
@@ -507,15 +518,29 @@ def MelhoriasCNNxOF(type=None):
     if type=="Amplitude":
         print(r"Amplitude RMS: ( (RMS-OF-amp - RMS-CNN-amp) / RMS-OF-amp ) * 100")
         print(r"Amplitude STD: ( (STD-OF-amp - STD-CNN-amp) / STD-OF-amp ) * 100")
-        print(f"Melhoria CNN vs OF - Amplitude RMS: {melhoria_amplitude_rms:.1f}%")
-        print(f"Melhoria CNN vs OF - Amplitude STD: {melhoria_amplitude_std:.1f}%")
+        print(f"Melhoria CNN3 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn3:.1f}%")
+        print(f"Melhoria CNN5 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn5:.1f}%")
+        print(f"Melhoria CNN8 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn8:.1f}%")
+
+        print(f"Melhoria CNN3 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn3:.1f}%")
+        print(f"Melhoria CNN5 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn5:.1f}%")
+        print(f"Melhoria CNN8 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn8:.1f}%")
         
     elif type=="Fase":
         print(r"Fase RMS: ( (RMS-OF-fase - RMS-CNN-fase) / RMS-OF-fase ) * 100")
         print(r"Fase STD: ( (STD-OF-fase - STD-CNN-fase) / STD-OF-fase ) * 100")
     
         print(f"---------------------------- Amplitude estimada CNN --------------------------")
-        print(f"Melhoria CNN vs OF - Fase RMS:      {melhoria_fase_rms:.5f}%")
-        print(f"Melhoria CNN vs OF - Fase STD:      {melhoria_fase_std:.5f}%")
+        print(f"Melhoria CNN3 vs OF - Fase RMS:      {melhoria_fase_rms_cnn3:.5f}%")
+        print(f"Melhoria CNN5 vs OF - Fase RMS:      {melhoria_fase_rms_cnn5:.5f}%")
+        print(f"Melhoria CNN8 vs OF - Fase RMS:      {melhoria_fase_rms_cnn8:.5f}%")
+
+        print(f"Melhoria CNN3 vs OF - Fase STD:      {melhoria_fase_std_cnn3:.5f}%")
+        print(f"Melhoria CNN3 vs OF - Fase STD:      {melhoria_fase_std_cnn5:.5f}%")
+        print(f"Melhoria CNN3 vs OF - Fase STD:      {melhoria_fase_std_cnn8:.5f}%")
         print(f"---------------------------- Fase estimada CNN --------------------------")
-        print(f"Melhoria CNN vs OF - Fase RMS:      {melhoria_fase_rms_cnn_estimated:.5f}%")
+        print(f"Melhoria CNN3 vs OF - Fase RMS:      {melhoria_fase_rms_cnn3_estimated:.5f}%")
+        print(f"Melhoria CNN5 vs OF - Fase RMS:      {melhoria_fase_rms_cnn5_estimated:.5f}%")
+        print(f"Melhoria CNN8 vs OF - Fase RMS:      {melhoria_fase_rms_cnn8_estimated:.5f}%")
+
+MelhoriasCNNxOF(ocupacoes=ocupacoes, type="Amplitude")
