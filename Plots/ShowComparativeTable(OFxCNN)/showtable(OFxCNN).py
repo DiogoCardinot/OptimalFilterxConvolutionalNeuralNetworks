@@ -208,7 +208,7 @@ hep.style.use("ATLAS")
 
 def PlotTableComparativeAmplitude(type=None, cnn8=None):
     fontSize= 24
-    ocupacoes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    ocupacoes = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
     if type == "Amplitude":
         if cnn8:
@@ -291,11 +291,14 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
             r2[k].append(dados_iteracao[k]['r2'])
             mae[k].append(dados_iteracao[k]['mae'])
             medae[k].append(dados_iteracao[k]['medae'])
-
+       
     # fig, axs = plt.subplots(2, 2, figsize=(15, 9))
     fig, axs = plt.subplots(2, 2, figsize=(15, 10))
     axs = axs.flatten()
 
+    for i in range(len(r2['OF'])):
+        if np.isneginf(r2['OF'][i]):
+            r2['OF'][i] = np.array(0.)
     def plotar_metrica(ax, metrica_dict, titulo, ylabel):
         for k in chaves:
             ax.plot(ocupacoes, metrica_dict[k], color=estilos[k]['cor'], 
@@ -303,6 +306,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
 
         ax.set_title(titulo, fontsize=fontSize-1, fontweight='bold')
         ax.set_xlabel("Ocupação (%)", fontsize=fontSize-2)
+        ax.set_xlim(ocupacoes[0]-1, ocupacoes[-1]+1)
         ax.tick_params(axis='both', which='major', labelsize=20)
         ax.set_ylabel(ylabel, fontsize=fontSize-2)
         ax.set_xticks(ocupacoes)
@@ -335,6 +339,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
         loc='upper center',
         ncol=len(handles),
         bbox_to_anchor=(0.5, 1.05),
+        # bbox_to_anchor=(0.5, 0.9999),
         frameon=False,
         fontsize=fontSize-1
     )
@@ -346,7 +351,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     plt.subplots_adjust(hspace=0.4)
     plt.show()
         
-PlotTableComparativeAmplitude(type='Fase', cnn8=False)
+PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
 # PlotTableComparativeAmplitude(type='Fase')
 
 
