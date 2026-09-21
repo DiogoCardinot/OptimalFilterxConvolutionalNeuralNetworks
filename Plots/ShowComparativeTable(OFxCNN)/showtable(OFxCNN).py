@@ -351,8 +351,8 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     plt.subplots_adjust(hspace=0.4)
     plt.show()
         
-PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
-# PlotTableComparativeAmplitude(type='Fase')
+# PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
+PlotTableComparativeAmplitude(type='Fase', cnn8=False)
 
 
 '''
