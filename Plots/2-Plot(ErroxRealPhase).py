@@ -749,14 +749,14 @@ def PlotHistrogramas1(zoom, box, cnn=None):
     labels = []
     
     handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
-    labels.append('OF')
+    labels.append(r'$\hat{A}_{OF}$')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
-    labels.append('Amplitude real')
+    labels.append(r'$A_{AR}$')
     if cnn:
-        cnn_types = [r'CNN-3*', r'CNN-5*']
+        cnn_types = [r'$\hat{A}_{CNN-3}$', r'$\hat{A}_{CNN-5}$']
         unique_cnns = list(set(cnn_types))
         for cnn_type in unique_cnns:
-            if cnn_type == "CNN-3*":
+            if cnn_type == r"$\hat{A}_{CNN-3}$":
                 color = "#B0B0B0"
             else: 
                 color = "#1A1A1A"
@@ -764,10 +764,10 @@ def PlotHistrogramas1(zoom, box, cnn=None):
             handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
             labels.append(cnn_type)
         
-        cnn_estimated_types = ['CNN-3', 'CNN-5']
+        cnn_estimated_types = [r'$\tau_{CNN-3}$', r'$\tau_{CNN-5}$']
         unique_estimated_cnns = list(set(cnn_estimated_types))
         for cnn_type in unique_estimated_cnns:
-            if cnn_type == "CNN-3":
+            if cnn_type == r'$\tau_{CNN-3}$':
                 color = "darkorange"
             else: 
                 color = "deepskyblue"
@@ -791,13 +791,13 @@ def PlotHistrogramas1(zoom, box, cnn=None):
         loc='upper center',
         ncol=len(handles),
         bbox_to_anchor=(0.5, 1.05),
-        columnspacing=1.0,         
+        columnspacing=1.0,
         handletextpad=0.4,
         frameon=False,
-        fontsize=fontSize-0
+        fontsize=fontSize
     )
     # plt.tight_layout()
-    plt.subplots_adjust(hspace=0.4)
+    plt.subplots_adjust(hspace=0.4, top=0.92)
     plt.show()
 
 PlotHistrogramas1(zoom= False, box= False, cnn=True)
