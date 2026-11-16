@@ -751,26 +751,27 @@ def PlotHistrogramas1(zoom, box, cnn=None):
     handles.append(plt.Line2D([0], [0], color=of_color, linewidth=2))
     labels.append('OF')
     handles.append(plt.Line2D([0], [0], color=real_amplitude_color, linewidth=2, linestyle='dashed'))
-    labels.append('Real Amplitude')
+    labels.append('Amplitude real')
     if cnn:
         cnn_types = [r'CNN-3*', r'CNN-5*']
         unique_cnns = list(set(cnn_types))
         for cnn_type in unique_cnns:
-            if cnn_type == "CNN-5*":
-                color = "#1A1A1A"
-            else: 
+            if cnn_type == "CNN-3*":
                 color = "#B0B0B0"
-        
+            else: 
+                color = "#1A1A1A"
+
             handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
             labels.append(cnn_type)
         
         cnn_estimated_types = ['CNN-3', 'CNN-5']
         unique_estimated_cnns = list(set(cnn_estimated_types))
         for cnn_type in unique_estimated_cnns:
-            if cnn_type == "CNN-5":
-                color = "deepskyblue"
-            else: 
+            if cnn_type == "CNN-3":
                 color = "darkorange"
+            else: 
+                color = "deepskyblue"
+                
         
             handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
             labels.append(cnn_type)
@@ -799,4 +800,4 @@ def PlotHistrogramas1(zoom, box, cnn=None):
     plt.subplots_adjust(hspace=0.4)
     plt.show()
 
-PlotHistrogramas1(zoom= False, box= False)
+PlotHistrogramas1(zoom= False, box= False, cnn=True)

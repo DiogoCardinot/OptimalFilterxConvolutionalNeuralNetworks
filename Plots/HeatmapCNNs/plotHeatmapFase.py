@@ -177,5 +177,5 @@ def plot_heatmaps_individual_colorbar_cnns(cnns):
     plt.tight_layout()
     plt.show()
 
-cnns = [3,5,8]
+cnns = [1,2,3,4,5,6,7]
 plot_heatmaps_individual_colorbar_cnns(cnns)

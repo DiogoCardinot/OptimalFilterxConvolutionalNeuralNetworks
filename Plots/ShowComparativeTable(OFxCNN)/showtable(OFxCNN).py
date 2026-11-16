@@ -31,6 +31,7 @@ def DefinePath_CNN(ocupacao, CNN=None):
     IMPRIME PARÂMETROS PARA PREENCHER A TABELA DE COMPARAÇÕES DE AMPLITUDE
 '''
 
+
 def ImprimeMetricas_Amplitude():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
     cnn8_data_parcial = os.path.join(base_path, "RedeNeuralConvolucional", "CNN_8")
@@ -41,11 +42,11 @@ def ImprimeMetricas_Amplitude():
         cnn8_data = np.load(cnn8_data_path)
         _, CNN_data_amplitude, _, _, cnn_type = DefinePath_CNN(ocupacao)
         print(f"{30*'-'} AMPLITUDE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
-        print("| Metrica       | RMS      | R^2       | MAE      | MedAE    |")
-        print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|")
-        print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} |")
-        print(f"| {cnn_type}           | {CNN_data_amplitude['rms']:.6f} | {CNN_data_amplitude['r2']:.6f} | {CNN_data_amplitude['mae']:.6f} | {CNN_data_amplitude['medae']:.6f} |")
-        print(f"| CNN-8           | {cnn8_data['rms']:.6f} | {cnn8_data['r2']:.6f} | {cnn8_data['mae']:.6f} | {cnn8_data['medae']:.6f} |")
+        print("| Metrica       | RMS      | R^2       | MAE      | MedAE    | Mean      | Std       |")
+        print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|")
+        print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} |  {OF_data['std_error']:.6f} | {OF_data['std_std_error']:.6f} |")
+        print(f"| {cnn_type}           | {CNN_data_amplitude['rms']:.6f} | {CNN_data_amplitude['r2']:.6f} | {CNN_data_amplitude['mae']:.6f} | {CNN_data_amplitude['medae']:.6f} |  {CNN_data_amplitude['std_error']:.6f} | {CNN_data_amplitude['std_std_error']:.6f} ")
+        print(f"| CNN-8           | {cnn8_data['rms']:.6f} | {cnn8_data['r2']:.6f} | {cnn8_data['mae']:.6f} | {cnn8_data['medae']:.6f} | {cnn8_data['std_error']:.6f} | {cnn8_data['std_std_error']:.6f} |")
         print(100*"=")
 
 '''
@@ -60,15 +61,20 @@ def ImprimeMetricas_Fase():
         OF_data = np.load(OF_data_path)
         Real_Amplitude_data_path = os.path.join(real_amplitude_data_parcial, f"phase_real_amplitude_occupation_{ocupacao}.npz")
         Real_Amplitude_data = np.load(Real_Amplitude_data_path)
-
+        # data phase: divisao pela amplitude estimada pela CNN
         _, _, CNN_data_fase, CNN_estimated_data_fase, cnn_type = DefinePath_CNN(ocupacao)
+
+        error_phase_direta_cnn = CNN_estimated_data_fase['error']
+
+        cnn_phase_direta_std = np.std(error_phase_direta_cnn)
+
         print(f"{30*'-'} FASE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
-        print("| Metrica       | RMS      | R^2       | MAE      | MedAE    |")
-        print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|")
-        print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} |")
-        print(rf'| {cnn_type} (A estimada) | {CNN_data_fase["rms"]:.6f} | {CNN_data_fase["r2"]:.6f} | {CNN_data_fase["mae"]:.6f} | {CNN_data_fase["medae"]:.6f} |')
-        print(f"| Real Amplitude           | {Real_Amplitude_data['rms']:.6f} | {Real_Amplitude_data['r2']:.6f} | {Real_Amplitude_data['mae']:.6f} | {Real_Amplitude_data['medae']:.6f} |")
-        print(rf'| {cnn_type}        | {CNN_estimated_data_fase['rms']:.6f} | {CNN_estimated_data_fase['r2']:.6f} | {CNN_estimated_data_fase['mae']:.6f} | {CNN_estimated_data_fase['medae']:.6f} |')
+        print("| Metrica       | RMS      | R^2       | MAE      | MedAE    | Std     |")
+        print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|"+ "-"*10 + "|")
+        print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} | {OF_data['std']:.6f} |")
+        print(rf'| {cnn_type} (A estimada) | {CNN_data_fase["rms"]:.6f} | {CNN_data_fase["r2"]:.6f} | {CNN_data_fase["mae"]:.6f} | {CNN_data_fase["medae"]:.6f} |  {CNN_data_fase["std"]:.6f} |')
+        print(f"| Real Amplitude           | {Real_Amplitude_data['rms']:.6f} | {Real_Amplitude_data['r2']:.6f} | {Real_Amplitude_data['mae']:.6f} | {Real_Amplitude_data['medae']:.6f} | {Real_Amplitude_data['std']:.6f}")
+        print(rf'| {cnn_type}        | {CNN_estimated_data_fase['rms']:.6f} | {CNN_estimated_data_fase['r2']:.6f} | {CNN_estimated_data_fase['mae']:.6f} | {CNN_estimated_data_fase['medae']:.6f} |  {cnn_phase_direta_std:.6f}  |')
         print(100*"=")
 
 
@@ -173,27 +179,11 @@ def MelhoriasCNN():
     print(f"Melhoria CNN vs OF - Fase RMS:      {melhoria_fase_rms_cnn_estimated:.5f}%")
     print(f"Melhoria CNN vs OF - Fase STD:      {melhoria_fase_std_cnn_estimated:.5f}%")
 
-def MeanStdAmplitude():
-    of_data_parcial = os.path.join(base_path, "FiltroOtimo", "AmplitudeEstimada_OF", f'janelamento_{n_janelamento}')
-    cnn8_data_parcial = os.path.join(base_path, "RedeNeuralConvolucional", "CNN_8")
 
-    for ocupacao in ocupacoes:
-        OF_data_path = os.path.join(of_data_parcial, f"results_occupation_{ocupacao}.npz")
-        cnn8_data_path = os.path.join(cnn8_data_parcial, f'results_ocupacao_{ocupacao}.npz')
-        OF_data = np.load(OF_data_path)
-        cnn8_data = np.load(cnn8_data_path)
-        _, CNN_data_amplitude, _, _, cnn_type = DefinePath_CNN(ocupacao)
-        print(f"{30*'-'} AMPLITUDE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
-        print("| Metrica       | Mean      | Std       |")
-        print("|" + "-"*15 + "|" + "-"*10 + "|")
-        print(f"| OF            | {OF_data['std_error']:.6f} | {OF_data['std_std_error']:.6f} |")
-        print(f"| {cnn_type}           | {CNN_data_amplitude['std_error']:.6f} | {CNN_data_amplitude['std_std_error']:.6f} |")
-        print(f"| CNN-8           | {cnn8_data['std_error']:.6f} | {cnn8_data['std_std_error']:.6f} |")
-        print(100*"=")
 
 # ImprimeMetricas_Amplitude()
 
-# ImprimeMetricas_Fase()
+ImprimeMetricas_Fase()
 # MelhoriasCNN()
 
 # MeanStdAmplitude()
@@ -203,7 +193,7 @@ from collections import defaultdict
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-hep.style.use("ATLAS")
+# hep.style.use("ATLAS")
 
 
 def PlotTableComparativeAmplitude(type=None, cnn8=None):
@@ -338,8 +328,8 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
         handles, labels,
         loc='upper center',
         ncol=len(handles),
-        bbox_to_anchor=(0.5, 1.05),
-        # bbox_to_anchor=(0.5, 0.9999),
+        # bbox_to_anchor=(0.5, 1.05),
+        bbox_to_anchor=(0.5, 0.9999),
         frameon=False,
         fontsize=fontSize-1
     )
@@ -352,7 +342,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     plt.show()
         
 # PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
-PlotTableComparativeAmplitude(type='Fase', cnn8=False)
+# PlotTableComparativeAmplitude(type='Fase', cnn8=False)
 
 
 '''
