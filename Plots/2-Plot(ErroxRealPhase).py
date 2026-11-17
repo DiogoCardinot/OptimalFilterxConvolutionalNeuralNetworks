@@ -800,4 +800,4 @@ def PlotHistrogramas1(zoom, box, cnn=None):
     plt.subplots_adjust(hspace=0.4, top=0.92)
     plt.show()
 
-PlotHistrogramas1(zoom= False, box= False, cnn=True)
+# PlotHistrogramas1(zoom= False, box= False, cnn=True)

@@ -183,7 +183,7 @@ def MelhoriasCNN():
 
 # ImprimeMetricas_Amplitude()
 
-ImprimeMetricas_Fase()
+# ImprimeMetricas_Fase()
 # MelhoriasCNN()
 
 # MeanStdAmplitude()
@@ -193,7 +193,7 @@ from collections import defaultdict
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
-# hep.style.use("ATLAS")
+hep.style.use("ATLAS")
 
 
 def PlotTableComparativeAmplitude(type=None, cnn8=None):
@@ -206,7 +206,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
         else:
             chaves = ['OF', 'CNN3', 'CNN5']
     elif type == "Fase":
-        chaves = ['OF', 'CNN3', 'CNN5', 'Real_Amp', 'CNN3_Tau', 'CNN5_Tau']
+        chaves = ['OF', 'Real_Amp', 'CNN3', 'CNN5', 'CNN3_Tau', 'CNN5_Tau']
     else:
         raise ValueError("Tipo inválido. Escolha 'Amplitude' ou 'Fase'.")
 
@@ -226,12 +226,12 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     elif type == "Fase":
         estilos = {
                 'OF':          {'cor': '#9900ff', 'marker': 'o', 'label': r'$\hat{A}_{OF}$', 'linestyle': 'solid', 'zorder':1, 'markersize':8},
-                'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': r'$\hat{A}_{CNN3}$', 'linestyle': 'dashed', 'zorder':5, 'markersize':8},
-                'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': r'$\hat{A}_{CNN5}$', 'linestyle': 'solid', 'zorder':3, 'markersize':8},
+                'Real_Amp':    {'cor': '#FA3232', 'marker': 'o', 'label': r'$A_{AR}$', 'linestyle': 'solid', 'zorder':4, 'markersize':6},
+                'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': r'$\hat{A}_{CNN-3}$', 'linestyle': 'dashed', 'zorder':5, 'markersize':8},
+                'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': r'$\hat{A}_{CNN-5}$', 'linestyle': 'solid', 'zorder':3, 'markersize':8},
                 # 'CNN8':        {'cor': '#0BBE65', 'marker': '*', 'label': r'$\hat{A}_{CNN8}$', 'markersize':4},
-                'Real_Amp':    {'cor': '#FA3232', 'marker': 'o', 'label': r'$A_{RA}$', 'linestyle': 'solid', 'zorder':4, 'markersize':6},
-                'CNN3_Tau':     {'cor': 'darkorange', 'marker': '*', 'label': r'$\tau_{CNN3}$', 'linestyle': 'dashed', 'zorder':2, 'markersize':8},
-                'CNN5_Tau':     {'cor': 'deepskyblue', 'marker': 's', 'label': r'$\tau_{CNN5}$', 'linestyle': '-', 'zorder':1, 'markersize':8},
+                'CNN3_Tau':     {'cor': 'darkorange', 'marker': '*', 'label': r'$\tau_{CNN-3}$', 'linestyle': 'dashed', 'zorder':2, 'markersize':8},
+                'CNN5_Tau':     {'cor': 'deepskyblue', 'marker': 's', 'label': r'$\tau_{CNN-5}$', 'linestyle': '-', 'zorder':1, 'markersize':8},
                 # 'CNN8_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN8}$', 'markersize':4}
             }
 
@@ -269,9 +269,9 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
 
             dados_iteracao = {
                 'OF': OF_data,
+                'Real_Amp': Real_Amplitude_data,
                 'CNN3':CNN3_data_fase,     
                 'CNN5': CNN5_data_fase,
-                'Real_Amp': Real_Amplitude_data,
                 'CNN3_Tau':  CNN3_estimated_data_fase,
                 'CNN5_Tau': CNN5_estimated_data_fase,
             }
@@ -328,21 +328,23 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
         handles, labels,
         loc='upper center',
         ncol=len(handles),
-        # bbox_to_anchor=(0.5, 1.05),
-        bbox_to_anchor=(0.5, 0.9999),
+        bbox_to_anchor=(0.5, 1.05),
+        columnspacing=1.0,
+        handletextpad=0.4,
         frameon=False,
-        fontsize=fontSize-1
+        fontsize=fontSize
     )
+    
     if type == "Fase":
         axs[1].set_ylim(0, 1.0)
 
     # fig.suptitle(f"Análise de Desempenho de Reconstrução da {type}", fontsize=16, fontweight='bold', y=0.96)
     # plt.tight_layout()
-    plt.subplots_adjust(hspace=0.4)
+    plt.subplots_adjust(hspace=0.4, top=0.92)
     plt.show()
         
 # PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
-# PlotTableComparativeAmplitude(type='Fase', cnn8=False)
+PlotTableComparativeAmplitude(type='Fase', cnn8=False)
 
 
 '''

@@ -61,9 +61,13 @@ def LoadData(metric):
             cnn8_metric.append(cnn8_load['mean'])
             real_amplitude_metric.append(real_amplitude_load['mean'])
 
-            cnn3_estimated_metric.append(cnn3_estimated_load['mean_error'])
-            cnn5_estimated_metric.append(cnn5_estimated_load['mean_error'])
-            cnn8_estimated_metric.append(cnn8_estimated_load['mean_error'])
+            mean_error_cnn3 = np.mean(cnn3_estimated_load['error'])
+            mean_error_cnn5 = np.mean(cnn5_estimated_load['error'])
+            mean_error_cnn8 = np.mean(cnn8_estimated_load['error'])
+
+            cnn3_estimated_metric.append(mean_error_cnn3)
+            cnn5_estimated_metric.append(mean_error_cnn5)
+            cnn8_estimated_metric.append(mean_error_cnn8)
             
             '''
                 OS MÉTODOS QUE DIVIDEM POR AMPLITUDE ESTIMADA NAO TEM DESVIO PADRAO POR FOLD
@@ -79,9 +83,14 @@ def LoadData(metric):
             cnn5_metric.append(cnn5_load['std'])
             cnn8_metric.append(cnn8_load['std'])
             real_amplitude_metric.append(real_amplitude_load['std'])
-            cnn3_estimated_metric.append(cnn3_estimated_load['std_error'])
-            cnn5_estimated_metric.append(cnn5_estimated_load['std_error'])
-            cnn8_estimated_metric.append(cnn8_estimated_load['std_error'])
+
+            std_error_cnn3 = np.std(cnn3_estimated_load['error'])
+            std_error_cnn5 = np.std(cnn5_estimated_load['error'])
+            std_error_cnn8 = np.std(cnn8_estimated_load['error'])
+
+            cnn3_estimated_metric.append(std_error_cnn3)
+            cnn5_estimated_metric.append(std_error_cnn5)
+            cnn8_estimated_metric.append(std_error_cnn8)
             
             '''
                 OS MÉTODOS QUE DIVIDEM POR AMPLITUDE ESTIMADA NAO TEM DESVIO PADRAO POR FOLD
@@ -143,7 +152,7 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
                         loc='center')
             
             x1,x2= 79.985, 80.010
-            y1,y2 = 2.4040, 2.4048
+            y1,y2 = 2.4040, 2.405
             axins.set_xticks([x1,x2])
             axins.set_yticks([y1,y2])
 
@@ -191,9 +200,9 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
     cnn8_err = np.array(cnn8_err)
 
     ax.plot(ocupacoes, of_metric,  label=r'$\hat{A}_{OF}$', marker='o', linestyle='-', color=of_color, markersize=6)
-    ax.plot(ocupacoes, real_amplitude_metric,  label=r'$A_{RA}$', marker='o', linestyle='-', color=real_amplitude_color, markersize=6)
+    ax.plot(ocupacoes, real_amplitude_metric,  label=r'$A_{RA}$', marker='o', linestyle='-', color=real_amplitude_color, markersize=4, zorder=3)
     ax.plot(ocupacoes, cnn3_metric, label=r'$\hat{A}_{CNN3}$', marker='*', linestyle='dashed', color=cnn3_color, zorder=5, markersize=6)
-    ax.plot(ocupacoes, cnn5_metric, label=r'$\hat{A}_{CNN5}$', marker='s', linestyle='-', color=cnn5_color, markersize=6)
+    ax.plot(ocupacoes, cnn5_metric, label=r'$\hat{A}_{CNN5}$', marker='s', linestyle='-', color=cnn5_color, markersize=6, zorder=2)
     if cnn8:
         ax.plot(ocupacoes, cnn8_metric, label=r'$\hat{A}_{CNN8}$', marker='^', linestyle='-.', color=cnn8_color,zorder=6, markersize=4)
 
