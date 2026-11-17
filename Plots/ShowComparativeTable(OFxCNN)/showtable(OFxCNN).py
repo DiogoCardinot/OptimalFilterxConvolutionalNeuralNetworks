@@ -515,13 +515,13 @@ def MelhoriasCNNxOF(ocupacoes=None, type=None):
     if type=="Amplitude":
         print(r"Amplitude RMS: ( (RMS-OF-amp - RMS-CNN-amp) / RMS-OF-amp ) * 100")
         print(r"Amplitude STD: ( (STD-OF-amp - STD-CNN-amp) / STD-OF-amp ) * 100")
-        print(f"Melhoria CNN3 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn3:.1f}%")
-        print(f"Melhoria CNN5 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn5:.1f}%")
-        print(f"Melhoria CNN8 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn8:.1f}%")
+        print(f"Melhoria CNN3 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn3:.5f}%")
+        print(f"Melhoria CNN5 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn5:.5f}%")
+        print(f"Melhoria CNN8 vs OF - Amplitude RMS: {melhoria_amplitude_rms_cnn8:.5f}%")
 
-        print(f"Melhoria CNN3 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn3:.1f}%")
-        print(f"Melhoria CNN5 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn5:.1f}%")
-        print(f"Melhoria CNN8 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn8:.1f}%")
+        print(f"Melhoria CNN3 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn3:.5f}%")
+        print(f"Melhoria CNN5 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn5:.5f}%")
+        print(f"Melhoria CNN8 vs OF - Amplitude STD: {melhoria_amplitude_std_cnn8:.5f}%")
         
     elif type=="Fase":
         print(r"Fase RMS: ( (RMS-OF-fase - RMS-CNN-fase) / RMS-OF-fase ) * 100")
@@ -544,4 +544,4 @@ def MelhoriasCNNxOF(ocupacoes=None, type=None):
         print(f"Melhoria CNN5 vs OF - Fase std:      {melhoria_fase_std_cnn5_estimated:.5f}%")
         print(f"Melhoria CNN8 vs OF - Fase std:      {melhoria_fase_std_cnn8_estimated:.5f}%")
 
-MelhoriasCNNxOF(ocupacoes=ocupacoes, type="Fase")
+MelhoriasCNNxOF(ocupacoes=ocupacoes, type="Amplitude")

@@ -6,9 +6,6 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
 import matplotlib.patheffects as pe
 import mplhep as hep
 
-
-
-
 root_path = os.path.abspath(__file__)
 path = os.path.dirname(root_path)
 
@@ -20,8 +17,6 @@ plt.rcParams['savefig.directory'] = os.path.dirname(path)
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 hep.style.use("ATLAS")
-
-
 
 def PlotError():
     for ocupacao in ocupacoes:
@@ -600,7 +595,7 @@ def PlotDispersions1():
 # PlotDispersions()
 # PlotDispersions1()
 
-def PlotHistrogramas1(zoom, box, cnn=None):
+def PlotHistrogramas1(zoom, box, cnn=None, cnn8=None):
     base_path = os.path.dirname(os.path.dirname(path))
     dataset_path = os.path.join(base_path, "OptimalFilterxConvolutionalNeuralNetworks")
     ocupacoes = [10,50,80,100]
@@ -610,6 +605,8 @@ def PlotHistrogramas1(zoom, box, cnn=None):
     ax = ax.flatten()
     of_color = '#9900ff'
     real_amplitude_color = "#FA3232"
+    cnn8_color ="#0BBE65"
+    cnn8_estimated_color = "#10B981"
     for idx, ocupacao in enumerate(ocupacoes):
         if ocupacao == 10 or ocupacao==50:
             CNN = 5
@@ -628,10 +625,19 @@ def PlotHistrogramas1(zoom, box, cnn=None):
         cnn_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_CNN', f'janelamento_{n_janelamento}',f'CNN_{CNN}',f'phase_cnn_occupation_{ocupacao}.npz')      
         cnn_data = np.load(cnn_data_path)
         cnn_error = cnn_data['error']
+
+        cnn8_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_CNN', f'janelamento_{n_janelamento}',f'CNN_8',f'phase_cnn_occupation_{ocupacao}.npz')      
+        cnn8_data = np.load(cnn8_data_path)
+        cnn8_error = cnn8_data['error']
+
         # CNN Fase Estimada
         cnn_data_path_estimated = os.path.join(dataset_path, f'RedeNeuralConvolucional_Fase', f'CNN_{CNN}', f'janelamento_{n_janelamento}', f'results_ocupacao_{ocupacao}.npz')      
         cnn_data_estimated = np.load(cnn_data_path_estimated)
         cnn_error_estimated = cnn_data_estimated['error']
+
+        cnn8_data_path_estimated = os.path.join(dataset_path, f'RedeNeuralConvolucional_Fase', f'CNN_8', f'janelamento_{n_janelamento}', f'results_ocupacao_{ocupacao}.npz')      
+        cnn8_data_estimated = np.load(cnn8_data_path_estimated)
+        cnn8_error_estimated = cnn8_data_estimated['error']
         # Real Amplitude
         real_amplitude_data_path = os.path.join(dataset_path,f'FiltroOtimo',f'FaseEstimada_RealAmplitude', f'janelamento_{n_janelamento}',f'phase_real_amplitude_occupation_{ocupacao}.npz')      
         real_amplitude_data = np.load(real_amplitude_data_path)
@@ -642,15 +648,22 @@ def PlotHistrogramas1(zoom, box, cnn=None):
         #     line = 3.5
         # else:
         #     line = 2
-
-        min_global = min(np.min(of_error), np.min(cnn_error), np.min(cnn_error_estimated), np.min(real_amplitude_error))
-        max_global = max(np.max(of_error), np.max(cnn_error), np.max(cnn_error_estimated), np.max(real_amplitude_error))
+        if cnn8:
+            min_global = min(np.min(of_error), np.min(cnn_error), np.min(cnn_error_estimated), np.min(real_amplitude_error), np.min(cnn8_error), np.min(cnn8_error_estimated))
+            max_global = max(np.max(of_error), np.max(cnn_error), np.max(cnn_error_estimated), np.max(real_amplitude_error), np.max(cnn8_error), np.max(cnn8_error_estimated))
+        else:
+            min_global = min(np.min(of_error), np.min(cnn_error), np.min(cnn_error_estimated), np.min(real_amplitude_error))
+            max_global = max(np.max(of_error), np.max(cnn_error), np.max(cnn_error_estimated), np.max(real_amplitude_error))
         common_bins = np.linspace(min_global, max_global, 150)
         ax[idx].hist(of_error, bins = common_bins,histtype='step', color=of_color, linewidth=3, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$', linestyle='dashed', zorder=5)
         ax[idx].hist(real_amplitude_error, bins= common_bins, histtype='step',color=real_amplitude_color, linewidth=3, linestyle='dashed', label= fr'$\mu = {np.mean(real_amplitude_error):.2f}, \sigma = {np.std(real_amplitude_error):.2f}$', zorder=4 )
         ax[idx].hist(cnn_error, bins = common_bins,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
         if cnn:
             ax[idx].hist(cnn_error_estimated, bins = common_bins,histtype='step', color=cnn_estimated_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error_estimated):.2f}, \sigma = {np.std(cnn_error_estimated):.2f}$')
+        if cnn8:
+            ax[idx].hist(cnn8_error, bins = common_bins,histtype='step', color=cnn8_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$', linestyle='-.', zorder=8)
+            ax[idx].hist(cnn8_error_estimated, bins =common_bins, histtype='step', color=cnn8_estimated_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error_estimated):.2f}, \sigma = {np.std(cnn8_error_estimated):.2f}$', linestyle='-.', zorder=8)
+
         
         ax[idx].text(-0.15, 1.12, f'({chr(97+idx)})', transform=ax[idx].transAxes, fontsize=fontSize+4, va='top')
         ax[idx].set_xlabel(f'Erro de estimação de fase (ns)', fontsize=fontSize)
@@ -754,35 +767,48 @@ def PlotHistrogramas1(zoom, box, cnn=None):
     labels.append(r'$A_{AR}$')
     if cnn:
         cnn_types = [r'$\hat{A}_{CNN-3}$', r'$\hat{A}_{CNN-5}$']
+        if cnn8:
+            cnn_types.append(r'$\hat{A}_{CNN-8}$')
         unique_cnns = list(set(cnn_types))
         for cnn_type in unique_cnns:
             if cnn_type == r"$\hat{A}_{CNN-3}$":
                 color = "#B0B0B0"
-            else: 
+            elif cnn_type == r'$\hat{A}_{CNN-5}$': 
                 color = "#1A1A1A"
+
+            if cnn8:
+                if cnn_type == r'$\hat{A}_{CNN-8}$':
+                    color = cnn8_color
 
             handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
             labels.append(cnn_type)
         
         cnn_estimated_types = [r'$\tau_{CNN-3}$', r'$\tau_{CNN-5}$']
+        if cnn8:
+            cnn_estimated_types.append( r'$\tau_{CNN-8}$')
         unique_estimated_cnns = list(set(cnn_estimated_types))
         for cnn_type in unique_estimated_cnns:
             if cnn_type == r'$\tau_{CNN-3}$':
                 color = "darkorange"
-            else: 
+            elif cnn_type ==  r'$\tau_{CNN-5}$': 
                 color = "deepskyblue"
+            if cnn8:
+                if cnn_type ==  r'$\tau_{CNN-8}$':
+                    color = cnn8_estimated_color
                 
         
             handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
             labels.append(cnn_type)
     else:
-        cnn_types = [r'CNN-3', r'CNN-5']
+        cnn_types = [r'$\hat{A}_{CNN-3}$', r'$\hat{A}_{CNN-5}$']
+        if cnn8:
+            cnn_types.append(r'$\hat{A}_{CNN-8}$')
         unique_cnns = list(set(cnn_types))
         for cnn_type in unique_cnns:
-            if cnn_type == "CNN-5":
-                color = "#1A1A1A"
-            else: 
+            if cnn_type == r"$\hat{A}_{CNN-3}$":
                 color = "#B0B0B0"
+            elif cnn_type == r'$\hat{A}_{CNN-5}$': 
+                color = "#1A1A1A"
         
             handles.append(plt.Line2D([0], [0], color=color, linewidth=2))
             labels.append(cnn_type)
@@ -800,4 +826,4 @@ def PlotHistrogramas1(zoom, box, cnn=None):
     plt.subplots_adjust(hspace=0.4, top=0.92)
     plt.show()
 
-# PlotHistrogramas1(zoom= False, box= False, cnn=True)
+PlotHistrogramas1(zoom= False, box= False, cnn=True, cnn8=True)
