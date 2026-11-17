@@ -200,17 +200,17 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
     cnn8_err = np.array(cnn8_err)
 
     ax.plot(ocupacoes, of_metric,  label=r'$\hat{A}_{OF}$', marker='o', linestyle='-', color=of_color, markersize=6)
-    ax.plot(ocupacoes, real_amplitude_metric,  label=r'$A_{RA}$', marker='o', linestyle='-', color=real_amplitude_color, markersize=4, zorder=3)
-    ax.plot(ocupacoes, cnn3_metric, label=r'$\hat{A}_{CNN3}$', marker='*', linestyle='dashed', color=cnn3_color, zorder=5, markersize=6)
-    ax.plot(ocupacoes, cnn5_metric, label=r'$\hat{A}_{CNN5}$', marker='s', linestyle='-', color=cnn5_color, markersize=6, zorder=2)
+    ax.plot(ocupacoes, real_amplitude_metric,  label=r'$A_{AR}$', marker='o', linestyle='-', color=real_amplitude_color, markersize=4, zorder=3)
+    ax.plot(ocupacoes, cnn3_metric, label=r'$\hat{A}_{CNN-3}$', marker='*', linestyle='dashed', color=cnn3_color, zorder=5, markersize=6)
+    ax.plot(ocupacoes, cnn5_metric, label=r'$\hat{A}_{CNN-5}$', marker='s', linestyle='-', color=cnn5_color, markersize=6, zorder=2)
     if cnn8:
-        ax.plot(ocupacoes, cnn8_metric, label=r'$\hat{A}_{CNN8}$', marker='^', linestyle='-.', color=cnn8_color,zorder=6, markersize=4)
+        ax.plot(ocupacoes, cnn8_metric, label=r'$\hat{A}_{CNN-8}$', marker='^', linestyle='-.', color=cnn8_color,zorder=6, markersize=4)
 
-    ax.plot(ocupacoes, cnn3_estimated_metric, label=r'$\tau_{CNN3}$', linestyle='dashed', markersize=6, color=cnn3_estimated_color, marker='*',zorder=2)
-    ax.plot(ocupacoes, cnn5_estimated_metric, label=r'$\tau_{CNN5}$', linestyle='solid', markersize=6, color=cnn5_estimated_color, marker='s',zorder=1)
+    ax.plot(ocupacoes, cnn3_estimated_metric, label=r'$\tau_{CNN-3}$', linestyle='dashed', markersize=6, color=cnn3_estimated_color, marker='*',zorder=2)
+    ax.plot(ocupacoes, cnn5_estimated_metric, label=r'$\tau_{CNN-5}$', linestyle='solid', markersize=6, color=cnn5_estimated_color, marker='s',zorder=1)
 
     if cnn8:
-        ax.plot(ocupacoes, cnn8_estimated_metric, label=r'$\tau_{CNN8}$', marker='^', linestyle='-.', color=cnn8_estimated_color, zorder=6, markersize=4)
+        ax.plot(ocupacoes, cnn8_estimated_metric, label=r'$\tau_{CNN-8}$', marker='^', linestyle='-.', color=cnn8_estimated_color, zorder=6, markersize=4)
 
     ax.set_xlabel('Ocupação (%)', fontsize=fontSize-2)
     ax.set_ylabel(y_label, fontsize=fontSize-2)

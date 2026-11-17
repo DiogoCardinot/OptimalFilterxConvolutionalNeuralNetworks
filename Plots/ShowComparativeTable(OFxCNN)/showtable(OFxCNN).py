@@ -112,6 +112,7 @@ def MelhoriasCNN():
         of_amplitude_std = OF_data_amplitude['std_error']
         cnn_amplitude_rms = CNN_data_amplitude['rms']
         cnn_amplitude_std = CNN_data_amplitude['std_error']
+
         # FASE
         # std : desvio padrao do erro de estimacao na reconstrucao da fase (nao utiliza os folds para a fase, apenas para A tau)
         of_fase_rms = OF_data_fase['rms'] 
@@ -344,7 +345,7 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
     plt.show()
         
 # PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
-PlotTableComparativeAmplitude(type='Fase', cnn8=False)
+# PlotTableComparativeAmplitude(type='Fase', cnn8=False)
 
 
 '''
@@ -414,13 +415,13 @@ def MelhoriasCNNxOF(ocupacoes=None, type=None):
         cnn8_fase_std = CNN8_data_fase['std']
 
         cnn3_estimated_fase_rms = CNN3_estimated_data_fase['rms']
-        cnn3_estimated_fase_std = CNN3_estimated_data_fase['std_error']
+        cnn3_estimated_fase_std = np.std(CNN3_estimated_data_fase['error'])
 
         cnn5_estimated_fase_rms = CNN5_estimated_data_fase['rms']
-        cnn5_estimated_fase_std = CNN5_estimated_data_fase['std_error']
+        cnn5_estimated_fase_std = np.std(CNN5_estimated_data_fase['error'])
 
         cnn8_estimated_fase_rms = CNN8_estimated_data_fase['rms']
-        cnn8_estimated_fase_std = CNN8_estimated_data_fase['std_error']
+        cnn8_estimated_fase_std = np.std(CNN8_estimated_data_fase['error'])
 
 
         # AMPLITUDE
@@ -532,11 +533,15 @@ def MelhoriasCNNxOF(ocupacoes=None, type=None):
         print(f"Melhoria CNN8 vs OF - Fase RMS:      {melhoria_fase_rms_cnn8:.5f}%")
 
         print(f"Melhoria CNN3 vs OF - Fase STD:      {melhoria_fase_std_cnn3:.5f}%")
-        print(f"Melhoria CNN3 vs OF - Fase STD:      {melhoria_fase_std_cnn5:.5f}%")
-        print(f"Melhoria CNN3 vs OF - Fase STD:      {melhoria_fase_std_cnn8:.5f}%")
+        print(f"Melhoria CNN5 vs OF - Fase STD:      {melhoria_fase_std_cnn5:.5f}%")
+        print(f"Melhoria CNN8 vs OF - Fase STD:      {melhoria_fase_std_cnn8:.5f}%")
         print(f"---------------------------- Fase estimada CNN --------------------------")
         print(f"Melhoria CNN3 vs OF - Fase RMS:      {melhoria_fase_rms_cnn3_estimated:.5f}%")
         print(f"Melhoria CNN5 vs OF - Fase RMS:      {melhoria_fase_rms_cnn5_estimated:.5f}%")
         print(f"Melhoria CNN8 vs OF - Fase RMS:      {melhoria_fase_rms_cnn8_estimated:.5f}%")
 
-# MelhoriasCNNxOF(ocupacoes=ocupacoes, type="Amplitude")
+        print(f"Melhoria CNN3 vs OF - Fase std:      {melhoria_fase_std_cnn3_estimated:.5f}%")
+        print(f"Melhoria CNN5 vs OF - Fase std:      {melhoria_fase_std_cnn5_estimated:.5f}%")
+        print(f"Melhoria CNN8 vs OF - Fase std:      {melhoria_fase_std_cnn8_estimated:.5f}%")
+
+MelhoriasCNNxOF(ocupacoes=ocupacoes, type="Fase")
