@@ -606,7 +606,7 @@ def PlotHistrogramas1(zoom, box, cnn=None, cnn8=None):
     of_color = '#9900ff'
     real_amplitude_color = "#FA3232"
     cnn8_color ="#0BBE65"
-    cnn8_estimated_color = "#10B981"
+    cnn8_estimated_color = "#14E7A1"
     for idx, ocupacao in enumerate(ocupacoes):
         if ocupacao == 10 or ocupacao==50:
             CNN = 5
@@ -658,10 +658,11 @@ def PlotHistrogramas1(zoom, box, cnn=None, cnn8=None):
         ax[idx].hist(of_error, bins = common_bins,histtype='step', color=of_color, linewidth=3, label= fr'$\mu = {np.mean(of_error):.2f}, \sigma = {np.std(of_error):.2f}$', linestyle='dashed', zorder=5)
         ax[idx].hist(real_amplitude_error, bins= common_bins, histtype='step',color=real_amplitude_color, linewidth=3, linestyle='dashed', label= fr'$\mu = {np.mean(real_amplitude_error):.2f}, \sigma = {np.std(real_amplitude_error):.2f}$', zorder=4 )
         ax[idx].hist(cnn_error, bins = common_bins,histtype='step', color=cnn_color, linewidth=3, label= fr'$\mu = {np.mean(cnn_error):.2f}, \sigma = {np.std(cnn_error):.2f}$')
+        if cnn8:
+            ax[idx].hist(cnn8_error, bins = common_bins,histtype='step', color=cnn8_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$', linestyle='-.', zorder=8)
         if cnn:
             ax[idx].hist(cnn_error_estimated, bins = common_bins,histtype='step', color=cnn_estimated_color, linewidth=2, label= fr'$\mu = {np.mean(cnn_error_estimated):.2f}, \sigma = {np.std(cnn_error_estimated):.2f}$')
         if cnn8:
-            ax[idx].hist(cnn8_error, bins = common_bins,histtype='step', color=cnn8_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error):.2f}, \sigma = {np.std(cnn8_error):.2f}$', linestyle='-.', zorder=8)
             ax[idx].hist(cnn8_error_estimated, bins =common_bins, histtype='step', color=cnn8_estimated_color, linewidth=2, label= fr'$\mu = {np.mean(cnn8_error_estimated):.2f}, \sigma = {np.std(cnn8_error_estimated):.2f}$', linestyle='-.', zorder=8)
 
         
@@ -823,7 +824,7 @@ def PlotHistrogramas1(zoom, box, cnn=None, cnn8=None):
         fontsize=fontSize
     )
     # plt.tight_layout()
-    plt.subplots_adjust(hspace=0.4, top=0.92)
+    plt.subplots_adjust(hspace=0.4, top=0.92, left=0.1)
     plt.show()
 
 PlotHistrogramas1(zoom= False, box= False, cnn=True, cnn8=True)
