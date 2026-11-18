@@ -56,11 +56,21 @@ def ImprimeMetricas_Amplitude():
 def ImprimeMetricas_Fase():
     of_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_OF", f'janelamento_{n_janelamento}')
     real_amplitude_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
+    #amplitude estimada pela cnn8
+    cnn8_data_parcial = os.path.join(base_path, "FiltroOtimo", "FaseEstimada_CNN", f'janelamento_{n_janelamento}', "CNN_8")
+    #fase estimada diretamente pela cnn8
+    cnn8_estimated_data_parcial = os.path.join(base_path, "RedeNeuralConvolucional_Fase", "CNN_8", f'janelamento_{n_janelamento}')
+    
     for ocupacao in ocupacoes:
         OF_data_path = os.path.join(of_data_parcial, f"phase_of_occupation_{ocupacao}.npz")
         OF_data = np.load(OF_data_path)
         Real_Amplitude_data_path = os.path.join(real_amplitude_data_parcial, f"phase_real_amplitude_occupation_{ocupacao}.npz")
         Real_Amplitude_data = np.load(Real_Amplitude_data_path)
+        cnn8_data_path = os.path.join(cnn8_data_parcial, f'phase_cnn_occupation_{ocupacao}.npz')
+        cnn8_data = np.load(cnn8_data_path)
+
+        cnn8_estimated_data_path = os.path.join(cnn8_estimated_data_parcial, f'results_ocupacao_{ocupacao}.npz')
+        cnn8_estimated_data = np.load(cnn8_estimated_data_path)
         # data phase: divisao pela amplitude estimada pela CNN
         _, _, CNN_data_fase, CNN_estimated_data_fase, cnn_type = DefinePath_CNN(ocupacao)
 
@@ -68,13 +78,18 @@ def ImprimeMetricas_Fase():
 
         cnn_phase_direta_std = np.std(error_phase_direta_cnn)
 
+        error_phase_direta_cnn8 = cnn8_estimated_data['error']
+        cnn8_phase_direta_std = np.std(error_phase_direta_cnn8)
+
         print(f"{30*'-'} FASE {30*'-'}\nComparacao das Arquiteturas de CNN - Ocupacao {ocupacao}\n")
         print("| Metrica       | RMS      | R^2       | MAE      | MedAE    | Std     |")
         print("|" + "-"*15 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|" + "-"*10 + "|"+ "-"*10 + "|")
         print(f"| OF            | {OF_data['rms']:.6f} | {OF_data['r2']:.6f} | {OF_data['mae']:.6f} | {OF_data['medae']:.6f} | {OF_data['std']:.6f} |")
         print(rf'| {cnn_type} (A estimada) | {CNN_data_fase["rms"]:.6f} | {CNN_data_fase["r2"]:.6f} | {CNN_data_fase["mae"]:.6f} | {CNN_data_fase["medae"]:.6f} |  {CNN_data_fase["std"]:.6f} |')
+        print(rf'| CNN-8 (A estimada) | {cnn8_data["rms"]:.6f} | {cnn8_data["r2"]:.6f} | {cnn8_data["mae"]:.6f} | {cnn8_data["medae"]:.6f} |  {cnn8_data["std"]:.6f} |')
         print(f"| Real Amplitude           | {Real_Amplitude_data['rms']:.6f} | {Real_Amplitude_data['r2']:.6f} | {Real_Amplitude_data['mae']:.6f} | {Real_Amplitude_data['medae']:.6f} | {Real_Amplitude_data['std']:.6f}")
         print(rf'| {cnn_type}        | {CNN_estimated_data_fase['rms']:.6f} | {CNN_estimated_data_fase['r2']:.6f} | {CNN_estimated_data_fase['mae']:.6f} | {CNN_estimated_data_fase['medae']:.6f} |  {cnn_phase_direta_std:.6f}  |')
+        print(rf'| CNN-8        | {cnn8_estimated_data['rms']:.6f} | {cnn8_estimated_data['r2']:.6f} | {cnn8_estimated_data['mae']:.6f} | {cnn8_estimated_data['medae']:.6f} |  {cnn8_phase_direta_std:.6f}  |')
         print(100*"=")
 
 
@@ -184,7 +199,7 @@ def MelhoriasCNN():
 
 # ImprimeMetricas_Amplitude()
 
-# ImprimeMetricas_Fase()
+ImprimeMetricas_Fase()
 # MelhoriasCNN()
 
 # MeanStdAmplitude()
@@ -207,7 +222,10 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
         else:
             chaves = ['OF', 'CNN3', 'CNN5']
     elif type == "Fase":
-        chaves = ['OF', 'Real_Amp', 'CNN3', 'CNN5', 'CNN3_Tau', 'CNN5_Tau']
+        if cnn8:
+            chaves = ['OF', 'Real_Amp', 'CNN3', 'CNN5', "CNN8", 'CNN3_Tau', 'CNN5_Tau', 'CNN8_Tau']
+        else:
+            chaves = ['OF', 'Real_Amp', 'CNN3', 'CNN5', 'CNN3_Tau', 'CNN5_Tau']
     else:
         raise ValueError("Tipo inválido. Escolha 'Amplitude' ou 'Fase'.")
 
@@ -230,10 +248,10 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
                 'Real_Amp':    {'cor': '#FA3232', 'marker': 'o', 'label': r'$A_{AR}$', 'linestyle': 'solid', 'zorder':4, 'markersize':6},
                 'CNN3':        {'cor': '#B0B0B0', 'marker': '*', 'label': r'$\hat{A}_{CNN-3}$', 'linestyle': 'dashed', 'zorder':5, 'markersize':8},
                 'CNN5':        {'cor': '#1A1A1A', 'marker': 's', 'label': r'$\hat{A}_{CNN-5}$', 'linestyle': 'solid', 'zorder':3, 'markersize':8},
-                # 'CNN8':        {'cor': '#0BBE65', 'marker': '*', 'label': r'$\hat{A}_{CNN8}$', 'markersize':4},
+                'CNN8':        {'cor': '#0BBE65', 'marker': '*', 'label': r'$\hat{A}_{CNN-8}$', 'markersize':4, 'zorder': 5, 'linestyle': '-.'},
                 'CNN3_Tau':     {'cor': 'darkorange', 'marker': '*', 'label': r'$\tau_{CNN-3}$', 'linestyle': 'dashed', 'zorder':2, 'markersize':8},
                 'CNN5_Tau':     {'cor': 'deepskyblue', 'marker': 's', 'label': r'$\tau_{CNN-5}$', 'linestyle': '-', 'zorder':1, 'markersize':8},
-                # 'CNN8_Tau':     {'cor': 'deepskyblue', 'marker': '*', 'label': r'$\tau_{CNN8}$', 'markersize':4}
+                'CNN8_Tau':     {'cor': "#14E7A1", 'marker': '*', 'label': r'$\tau_{CNN-8}$', 'markersize':4, 'zorder': 5, 'linestyle': '-.'}
             }
 
 
@@ -268,14 +286,27 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
             _, _, CNN5_data_fase, CNN5_estimated_data_fase, cnn5_type = DefinePath_CNN(ocupacao, 5)
             _, _, CNN8_data_fase, CNN8_estimated_data_fase, cnn8_type = DefinePath_CNN(ocupacao, 8)
 
-            dados_iteracao = {
-                'OF': OF_data,
-                'Real_Amp': Real_Amplitude_data,
-                'CNN3':CNN3_data_fase,     
-                'CNN5': CNN5_data_fase,
-                'CNN3_Tau':  CNN3_estimated_data_fase,
-                'CNN5_Tau': CNN5_estimated_data_fase,
-            }
+            if cnn8:
+                dados_iteracao = {
+                    'OF': OF_data,
+                    'Real_Amp': Real_Amplitude_data,
+                    'CNN3':CNN3_data_fase,     
+                    'CNN5': CNN5_data_fase,
+                    'CNN8': CNN8_data_fase,
+                    'CNN3_Tau':  CNN3_estimated_data_fase,
+                    'CNN5_Tau': CNN5_estimated_data_fase,
+                    'CNN8_Tau': CNN8_estimated_data_fase,
+                }
+            else:
+                dados_iteracao = {
+                    'OF': OF_data,
+                    'Real_Amp': Real_Amplitude_data,
+                    'CNN3':CNN3_data_fase,     
+                    'CNN5': CNN5_data_fase,
+                    'CNN3_Tau':  CNN3_estimated_data_fase,
+                    'CNN5_Tau': CNN5_estimated_data_fase,
+                }
+
 
         for k in chaves:
             rms[k].append(dados_iteracao[k]['rms'])
@@ -341,11 +372,11 @@ def PlotTableComparativeAmplitude(type=None, cnn8=None):
 
     # fig.suptitle(f"Análise de Desempenho de Reconstrução da {type}", fontsize=16, fontweight='bold', y=0.96)
     # plt.tight_layout()
-    plt.subplots_adjust(hspace=0.4, top=0.92)
+    plt.subplots_adjust(hspace=0.4, top=0.92, left=0.1)
     plt.show()
         
 # PlotTableComparativeAmplitude(type='Amplitude', cnn8=True)
-# PlotTableComparativeAmplitude(type='Fase', cnn8=False)
+# PlotTableComparativeAmplitude(type='Fase', cnn8=True)
 
 
 '''
@@ -544,4 +575,4 @@ def MelhoriasCNNxOF(ocupacoes=None, type=None):
         print(f"Melhoria CNN5 vs OF - Fase std:      {melhoria_fase_std_cnn5_estimated:.5f}%")
         print(f"Melhoria CNN8 vs OF - Fase std:      {melhoria_fase_std_cnn8_estimated:.5f}%")
 
-MelhoriasCNNxOF(ocupacoes=ocupacoes, type="Amplitude")
+MelhoriasCNNxOF(ocupacoes=ocupacoes, type="Fase")

@@ -25,7 +25,7 @@ cnn8_color ="#0BBE65"
 real_amplitude_color = "#FA3232"
 cnn3_estimated_color = 'darkorange'
 cnn5_estimated_color = 'deepskyblue'
-cnn8_estimated_color = 'magenta'
+cnn8_estimated_color = '#14E7A1'
 
 
 def LoadData(metric):
@@ -131,7 +131,7 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
             axins.plot(ocupacoes, cnn3_estimated_metric, marker='*', markersize=6, color=cnn3_estimated_color, linewidth=2, linestyle='dashed', zorder=2)
             axins.plot(ocupacoes, cnn5_estimated_metric, marker='s', markersize=6, color=cnn5_estimated_color, linestyle='-', linewidth=2, zorder=1)
             if cnn8:
-                axins.plot(ocupacoes, cnn8_estimated_metric, marker='^', markersize=4, color=cnn8_estimated_color, linestyle='-.', linewidth=2, zorder=6)
+                axins.plot(ocupacoes, cnn8_estimated_metric, marker='*', markersize=4, color=cnn8_estimated_color, linestyle='-.', linewidth=2, zorder=6)
 
             axins.set_xlim(x1,x2)
             axins.set_ylim(y1,y2)
@@ -161,7 +161,7 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
             axins.plot(ocupacoes, cnn3_estimated_metric, marker='*', markersize=6, color=cnn3_estimated_color, linewidth=2, linestyle='dashed', zorder=2)
             axins.plot(ocupacoes, cnn5_estimated_metric, marker='s', markersize=6, color=cnn5_estimated_color, linestyle='-', linewidth=2, zorder=1)
             if cnn8:
-                axins.plot(ocupacoes,cnn8_estimated_metric, marker='^', linestyle='-.', color = cnn8_estimated_color, zorder=6, markersize=4)
+                axins.plot(ocupacoes,cnn8_estimated_metric, marker='*', linestyle='-.', color = cnn8_estimated_color, zorder=6, markersize=4)
 
             axins.set_xlim(x1,x2)
             axins.set_ylim(y1,y2)
@@ -185,7 +185,7 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
             axins1.plot(ocupacoes,cnn3_metric, marker='*',linestyle='dashed', color = cnn3_color, zorder=4, markersize=6)
             axins1.plot(ocupacoes,cnn5_metric, marker='s', color = cnn5_color, zorder=1, markersize=6)
             if cnn8:
-                axins1.plot(ocupacoes,cnn8_metric, marker='^', linestyle='-.', color = cnn8_color, zorder=6, markersize=4)
+                axins1.plot(ocupacoes,cnn8_metric, marker='*', linestyle='-.', color = cnn8_color, zorder=6, markersize=4)
             axins1.set_xlim(x11,x21)
             axins1.set_ylim(y11,y21)
             plt.setp(axins1.get_xticklabels(which='both'), fontsize=8)
@@ -204,13 +204,13 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
     ax.plot(ocupacoes, cnn3_metric, label=r'$\hat{A}_{CNN-3}$', marker='*', linestyle='dashed', color=cnn3_color, zorder=5, markersize=6)
     ax.plot(ocupacoes, cnn5_metric, label=r'$\hat{A}_{CNN-5}$', marker='s', linestyle='-', color=cnn5_color, markersize=6, zorder=2)
     if cnn8:
-        ax.plot(ocupacoes, cnn8_metric, label=r'$\hat{A}_{CNN-8}$', marker='^', linestyle='-.', color=cnn8_color,zorder=6, markersize=4)
+        ax.plot(ocupacoes, cnn8_metric, label=r'$\hat{A}_{CNN-8}$', marker='*', linestyle='-.', color=cnn8_color,zorder=6, markersize=4)
 
     ax.plot(ocupacoes, cnn3_estimated_metric, label=r'$\tau_{CNN-3}$', linestyle='dashed', markersize=6, color=cnn3_estimated_color, marker='*',zorder=2)
     ax.plot(ocupacoes, cnn5_estimated_metric, label=r'$\tau_{CNN-5}$', linestyle='solid', markersize=6, color=cnn5_estimated_color, marker='s',zorder=1)
 
     if cnn8:
-        ax.plot(ocupacoes, cnn8_estimated_metric, label=r'$\tau_{CNN-8}$', marker='^', linestyle='-.', color=cnn8_estimated_color, zorder=6, markersize=4)
+        ax.plot(ocupacoes, cnn8_estimated_metric, label=r'$\tau_{CNN-8}$', marker='*', linestyle='-.', color=cnn8_estimated_color, zorder=6, markersize=4)
 
     ax.set_xlabel('Ocupação (%)', fontsize=fontSize-2)
     ax.set_ylabel(y_label, fontsize=fontSize-2)
@@ -222,4 +222,4 @@ def PlotFaseDispersionOcupacao(metric, cnn8, zoom):
     plt.show()
 
 
-PlotFaseDispersionOcupacao(metric='std', cnn8=False, zoom=True)
+PlotFaseDispersionOcupacao(metric='std', cnn8=True, zoom=True)
