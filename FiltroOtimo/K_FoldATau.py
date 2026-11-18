@@ -120,11 +120,14 @@ for ocupacao in ocupacoes:
         ocupacao: {
             'real_phase': [],
             'estimated_A_tau': [],
-            'indices': []
+            'indices': [],
+            'time_folds': [],
+            'time_mean':0.0,
         }
     }
 
     for fold, (train_index, test_index) in enumerate(tqdm(kf.split(MatrizAmostras), desc=f"Ocupação {ocupacao}",total=K_FOLDS)):
+        start_time = time.perf_counter()
         print(f"Processando Fold {fold + 1}/{K_FOLDS} para ocupacao {ocupacao}")
 
         Training_Matrix, Test_Matrix = MatrizAmostras[train_index], MatrizAmostras[test_index]
@@ -147,7 +150,11 @@ for ocupacao in ocupacoes:
             print(res)
 
         estimated_Atau = Test_Matrix @ w_kfold
-    
+
+        end_time = time.perf_counter()
+        fold_time = end_time - start_time
+
+        results_occupations[ocupacao]['time_folds'].append(fold_time)
         results_occupations[ocupacao]['real_phase'].extend(Test_Fase)
         results_occupations[ocupacao]['estimated_A_tau'].extend(estimated_Atau)
         results_occupations[ocupacao]['indices'].extend(test_index)
@@ -168,7 +175,8 @@ for ocupacao in ocupacoes:
             os.path.join(dataset_output, f"results_occupation_{ocupacao}.npz"),
             real_phase=np.array(results_occupations[ocupacao]['real_phase']),
             estimated_A_tau=np.array(results_occupations[ocupacao]['estimated_A_tau']),
-            indices=np.array(results_occupations[ocupacao]['indices']) 
+            indices=np.array(results_occupations[ocupacao]['indices']),
+            time_mean=np.mean(results_occupations[ocupacao]['time_folds'])
         )
 
     config_file = os.path.join(dataset_output, "Configs")

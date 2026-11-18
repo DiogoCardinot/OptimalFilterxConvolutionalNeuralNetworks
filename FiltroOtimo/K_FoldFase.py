@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import time
 
 n_janelamento = 7
 
@@ -82,24 +83,46 @@ for ocupacao in ocupacoes:
     cnn_estimated_phase = np.zeros(total_indices_iguais)
     real_amplitude_estimated_phase = np.zeros(total_indices_iguais)
     limiar = 10
-    for i in range(total_indices_iguais):
-        if of_amp_aligned[i]<limiar:
-            EPS = limiar
-            of_estimated_phase[i] = a_tau_aligned[i]/EPS
-        else:
-            of_estimated_phase[i] = a_tau_aligned[i]/of_amp_aligned[i]
 
-        if cnn_amp_aligned[i]<limiar:
-            EPS = limiar
-            cnn_estimated_phase[i] = a_tau_aligned[i]/EPS
-        else:
-            cnn_estimated_phase[i] = a_tau_aligned[i]/cnn_amp_aligned[i]
+    # for i in range(total_indices_iguais):
+    #     if of_amp_aligned[i]<limiar:
+    #         EPS = limiar
+    #         of_estimated_phase[i] = a_tau_aligned[i]/EPS
+    #     else:
+    #         of_estimated_phase[i] = a_tau_aligned[i]/of_amp_aligned[i]
 
-        if real_amplitude_aligned[i]<limiar:
-            EPS = limiar
-            real_amplitude_estimated_phase[i] = a_tau_aligned[i]/EPS
-        else:
-            real_amplitude_estimated_phase[i] = a_tau_aligned[i]/real_amplitude_aligned[i]
+    #     if cnn_amp_aligned[i]<limiar:
+    #         EPS = limiar
+    #         cnn_estimated_phase[i] = a_tau_aligned[i]/EPS
+    #     else:
+    #         cnn_estimated_phase[i] = a_tau_aligned[i]/cnn_amp_aligned[i]
+
+    #     if real_amplitude_aligned[i]<limiar:
+    #         EPS = limiar
+    #         real_amplitude_estimated_phase[i] = a_tau_aligned[i]/EPS
+    #     else:
+    #         real_amplitude_estimated_phase[i] = a_tau_aligned[i]/real_amplitude_aligned[i]
+
+    # --- Tempo de divisão: OF ---
+    t0 = time.perf_counter()
+    of_amp_safe = np.where(of_amp_aligned < limiar, limiar, of_amp_aligned)
+    of_estimated_phase = a_tau_aligned / of_amp_safe
+    div_time_total_of = time.perf_counter() - t0
+    div_time_mean_of = div_time_total_of
+
+    # --- Tempo de divisão: CNN ---
+    t0 = time.perf_counter()
+    cnn_amp_safe = np.where(cnn_amp_aligned < limiar, limiar, cnn_amp_aligned)
+    cnn_estimated_phase = a_tau_aligned / cnn_amp_safe
+    div_time_total_cnn = time.perf_counter() - t0
+    div_time_mean_cnn = div_time_total_cnn
+
+    # --- Tempo de divisão: Amplitude Real ---
+    t0 = time.perf_counter()
+    real_amp_safe = np.where(real_amplitude_aligned < limiar, limiar, real_amplitude_aligned)
+    real_amplitude_estimated_phase = a_tau_aligned / real_amp_safe
+    div_time_total_real = time.perf_counter() - t0
+    div_time_mean_real = div_time_total_real
 
 
     of_phase_error = of_estimated_phase - real_phase_aligned
@@ -143,52 +166,54 @@ for ocupacao in ocupacoes:
     
     corr_real_amplitude = np.corrcoef(real_phase_aligned, real_amplitude_estimated_phase)[0, 1] if len(real_phase_aligned) > 1 else 0
 
-    output_path = os.path.join(path, "FaseEstimada_OF", f'janelamento_{n_janelamento}')
-    os.makedirs(output_path, exist_ok=True)
-    output_file = os.path.join(output_path,f"phase_of_occupation_{ocupacao}.npz")
+    # output_path = os.path.join(path, "FaseEstimada_OF", f'janelamento_{n_janelamento}')
+    # os.makedirs(output_path, exist_ok=True)
+    # output_file = os.path.join(output_path,f"phase_of_occupation_{ocupacao}.npz")
     
     
-    np.savez_compressed(
-        output_file,
-        estimated_phase=of_estimated_phase,
-        real_phase=real_phase_aligned,
-        error=of_phase_error,
-        estimated_A_tau=a_tau_aligned,
-        estimated_amplitude=of_amp_aligned,
-        real_amplitude = real_amplitude_aligned,
-        indices=common_indices,
-        rms=rms_of,
-        mean=mean_of,
-        std=std_of,
-        mae=mae_of,
-        medae=medae_of,
-        r2=r2_of,
-        correlation=corr_of,
-        n_samples=len(common_indices)
-    )
+    # np.savez_compressed(
+    #     output_file,
+    #     estimated_phase=of_estimated_phase,
+    #     real_phase=real_phase_aligned,
+    #     error=of_phase_error,
+    #     estimated_A_tau=a_tau_aligned,
+    #     estimated_amplitude=of_amp_aligned,
+    #     real_amplitude = real_amplitude_aligned,
+    #     indices=common_indices,
+    #     rms=rms_of,
+    #     mean=mean_of,
+    #     std=std_of,
+    #     mae=mae_of,
+    #     medae=medae_of,
+    #     r2=r2_of,
+    #     correlation=corr_of,
+    #     n_samples=len(common_indices),
+    #     div_time_total=div_time_total_of,
+    # )
     # CNN
-    output_path_cnn = os.path.join(path, "FaseEstimada_CNN", f'janelamento_{n_janelamento}', f'CNN_{CNN}')
-    os.makedirs(output_path_cnn, exist_ok=True)
-    output_file_cnn = os.path.join(output_path_cnn,f"phase_cnn_occupation_{ocupacao}.npz")
+    # output_path_cnn = os.path.join(path, "FaseEstimada_CNN", f'janelamento_{n_janelamento}', f'CNN_{CNN}')
+    # os.makedirs(output_path_cnn, exist_ok=True)
+    # output_file_cnn = os.path.join(output_path_cnn,f"phase_cnn_occupation_{ocupacao}.npz")
     
-    np.savez_compressed(
-        output_file_cnn,
-        estimated_phase=cnn_estimated_phase,
-        real_phase=real_phase_aligned,
-        error=cnn_phase_error,
-        estimated_A_tau=a_tau_aligned,
-        estimated_amplitude=cnn_amp_aligned,
-        real_amplitude = real_amplitude_aligned,
-        indices=common_indices,
-        rms=rms_cnn,
-        mean=mean_cnn,
-        std=std_cnn,
-        mae=mae_cnn,
-        medae=medae_cnn,
-        r2=r2_cnn,
-        correlation=corr_cnn,
-        n_samples=len(common_indices)
-    )
+    # np.savez_compressed(
+    #     output_file_cnn,
+    #     estimated_phase=cnn_estimated_phase,
+    #     real_phase=real_phase_aligned,
+    #     error=cnn_phase_error,
+    #     estimated_A_tau=a_tau_aligned,
+    #     estimated_amplitude=cnn_amp_aligned,
+    #     real_amplitude = real_amplitude_aligned,
+    #     indices=common_indices,
+    #     rms=rms_cnn,
+    #     mean=mean_cnn,
+    #     std=std_cnn,
+    #     mae=mae_cnn,
+    #     medae=medae_cnn,
+    #     r2=r2_cnn,
+    #     correlation=corr_cnn,
+    #     n_samples=len(common_indices),
+    #     div_time_total=div_time_total_cnn,
+    # )
 
     output_path_real_amplitude = os.path.join(path, "FaseEstimada_RealAmplitude", f'janelamento_{n_janelamento}')
     os.makedirs(output_path_real_amplitude, exist_ok=True)
@@ -210,5 +235,6 @@ for ocupacao in ocupacoes:
         medae=medae_real_amplitude,
         r2=r2_real_amplitude,
         correlation=corr_real_amplitude,
-        n_samples=len(common_indices)
+        n_samples=len(common_indices),
+        div_time_total=div_time_total_real,
     )
